@@ -1,0 +1,22 @@
+{
+  "name": "octopus",
+  "version": "0.0.1",
+  "description": "Multi-module repo build helper parent",
+  "author": "Vilius Lukosius",
+  "license": "ISC",
+  "homepage": "https://github.com/wix/octopus",
+  "scripts": {
+    "bootstrap": "octo bootstrap -n",
+    "test": "octo -v run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wix/octopus"
+  },
+  "bugs": {
+    "url": "https://github.com/wix/octopus/issues"
+  },
+  "devDependencies": {
+    "octopus-cli": "~0.0.1"
+  }
+}

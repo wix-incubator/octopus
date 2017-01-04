@@ -1,6 +1,6 @@
 {
   "name": "octopus-cli",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Multi-module repo build helper",
   "author": "Vilius Lukosius",
   "license": "ISC",
@@ -13,7 +13,7 @@
     "lint": "eslint test/ lib/ scripts/ scripts/commands",
     "pretest": "npm run lint -s",
     "test": "mocha",
-    "release": "npm-version-up"
+    "release": "npm-version-up --no-shrinkwrap"
   },
   "repository": {
     "type": "git",

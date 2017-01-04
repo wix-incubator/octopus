@@ -112,8 +112,7 @@ function findListOfPackagesAndLocalDependencies(baseDir, workDir, depth) {
   workDir = path.resolve(workDir);
   depth = depth || 0;
   return inDir(workDir, function () {
-    const entriesInBaseDir = isAnNpmProject(workDir) ?
-      ['.'] : shelljs.ls() || [];
+    const entriesInBaseDir = shelljs.ls() || [];
 
     const packagesHierarchy = entriesInBaseDir.filter(function (entry) {
       return shelljs.test('-d', entry);
@@ -127,6 +126,11 @@ function findListOfPackagesAndLocalDependencies(baseDir, workDir, depth) {
         return undefined;
       }
     });
+
+    //TODO: make it nicer - now handling as special case
+    if (shelljs.test('-f', path.resolve(baseDir, buildFile))) {
+      packagesHierarchy.push(anNpmPackageObjectFrom(baseDir, path.resolve(baseDir), path.relative(baseDir, baseDir)))
+    }
 
     const packages = _.without(_.flattenDeep(packagesHierarchy), undefined);
 

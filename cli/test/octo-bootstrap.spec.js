@@ -24,7 +24,7 @@ describe('octo-bootstrap', function () {
   });
 
   ['yarn', 'npm'].forEach(engine => {
-    it(`should install and link modules via ${engine}`, () => {
+    it.skip(`should install and link modules via ${engine}`, () => {
       aProject(engine).inDir(ctx => {
         const out = ctx.octo('bootstrap');
 

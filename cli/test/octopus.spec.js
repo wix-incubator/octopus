@@ -19,6 +19,17 @@ describe('octopus', function () {
     });
   });
 
+  it('should support module in root of repo', () => {
+    return fixtures.project()
+      .packageJson({name: 'root-module'})
+      .module('a', module => module.packageJson({version: '1.0.0'}))
+      .inDir(ctx => {
+        const modules = octopus({cwd: ctx.dir}).modules.map(module => module.npm.name);
+        expect(modules).to.deep.equal(['root-module', 'a']);
+      });
+  });
+
+
   function aProject() {
     return fixtures.project()
       .module('a', module => module.packageJson({version: '1.0.0'}))
