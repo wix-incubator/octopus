@@ -5,7 +5,10 @@ const path = require('path'),
 module.exports.project = octopusJsonFile => {
   return empty()
     .addFile('octopus.json', octopusJsonFile || {})
-    .inDir(ctx => ctx.exec('git init'), true);
+    .inDir(ctx => {
+      ctx.exec('git init && git config user.email mail@example.org && git config user.name name');
+
+    }, true);
 };
 
 module.exports.empty = empty;
