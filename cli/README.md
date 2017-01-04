@@ -30,7 +30,7 @@ Run `octo init` that will:
  - dependencies, peerDependencies - hash of dependency names and versions that are enforced across monorepo. Note that dependencies listend in `dependencies` are enforced both for npm `dependencies` and `devDependencies`.
  
  Example:
- ```js
+ ```json
  {
   "engine": "yarn",
   "exclude": ["some-module-to-exclude"],
