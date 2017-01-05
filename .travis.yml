@@ -5,8 +5,14 @@ node_js:
 script:
  - npm run bootstrap
  - npm run test
-#deploy:
-#  provider: npm
-#  email: viliusl@wix.com
-#  api_key:
-#    secure: hxuULUKTW9hecZJBxytaRkwx9urbK/z3Tk3qf+PNHiDUviRFSTSWZqSldqDMOhe+sqOSbR6axDyjR7j9lwp0zODnBQdIzcSx1opMhH30/JYiWaj/VnmLI5bIeiU7gKuSq0EnknqunGmidUjoNtoD2LAjDIjjcGteTz6FXEUTVJzPZcmEvRWAcxrCyvrif/rhXWi4xKR3gb/Pmxv69zyl/vhtcA2rZ8Qt7+VzhFJWK9p3yJhQovnTOAuZ0LofYcH7DBIZt4uuJLxAIV0ZiQWZtM3YGfwW5Rwcq5aHHs05ufb5THu+MVUyGipRd9mQFeGx2CAZiT4lFHwp9QzzJ/sTqH6+PWfa078VkVWWa4EeTeECKKA61LX7wvkFXc3nkOFmV+9iDHsRdhwBFzWVOMCHHvGyRFwhpqBz5nwDWmLaBm0LWmFVzQ/cwDlfpCbSG6VX92yHmEfD0uu6epkX+35yDIum+u/4TcK+kcsdx8gso+9oKR9p1GHIJw+oO4CZ3HU04YvhShqCeNf+DVmYPuX2S8hjWiDlKk5Km7hoQoPRq027Qri8QGcWaGm3RTmuZphC+BGAlTv0epYO2YGaaL4iT0lIIIY4ILdQuNBMRORwxoJvSyP83alhDCkViQQiySVtVsOUhLJhnMKJTM9QFccXEBhhDgnm2A2MxxlrCkuO8tI=
+before_deploy:
+ - npm run release
+deploy:
+  skip_cleanup: true
+  provider: npm
+  email: viliusl@wix.com
+  api_key:
+    secure: hxuULUKTW9hecZJBxytaRkwx9urbK/z3Tk3qf+PNHiDUviRFSTSWZqSldqDMOhe+sqOSbR6axDyjR7j9lwp0zODnBQdIzcSx1opMhH30/JYiWaj/VnmLI5bIeiU7gKuSq0EnknqunGmidUjoNtoD2LAjDIjjcGteTz6FXEUTVJzPZcmEvRWAcxrCyvrif/rhXWi4xKR3gb/Pmxv69zyl/vhtcA2rZ8Qt7+VzhFJWK9p3yJhQovnTOAuZ0LofYcH7DBIZt4uuJLxAIV0ZiQWZtM3YGfwW5Rwcq5aHHs05ufb5THu+MVUyGipRd9mQFeGx2CAZiT4lFHwp9QzzJ/sTqH6+PWfa078VkVWWa4EeTeECKKA61LX7wvkFXc3nkOFmV+9iDHsRdhwBFzWVOMCHHvGyRFwhpqBz5nwDWmLaBm0LWmFVzQ/cwDlfpCbSG6VX92yHmEfD0uu6epkX+35yDIum+u/4TcK+kcsdx8gso+9oKR9p1GHIJw+oO4CZ3HU04YvhShqCeNf+DVmYPuX2S8hjWiDlKk5Km7hoQoPRq027Qri8QGcWaGm3RTmuZphC+BGAlTv0epYO2YGaaL4iT0lIIIY4ILdQuNBMRORwxoJvSyP83alhDCkViQQiySVtVsOUhLJhnMKJTM9QFccXEBhhDgnm2A2MxxlrCkuO8tI=
+  on:
+    branch: master
+    node: '7' # release only after last build success

@@ -4,10 +4,13 @@
   "description": "Multi-module repo build helper parent",
   "author": "Vilius Lukosius",
   "license": "ISC",
+  "private": true,
   "homepage": "https://github.com/wix/octopus",
   "scripts": {
     "bootstrap": "octo bootstrap -n",
-    "test": "octo -v run test"
+    "test": "octo -v run test",
+    "prepublish-all": "octo -av run release",
+    "publish-all": "octo -av exec 'npm publish';"
   },
   "repository": {
     "type": "git",
