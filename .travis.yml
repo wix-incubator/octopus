@@ -6,7 +6,7 @@ script:
  - npm run bootstrap
  - npm run test
 before_deploy:
- - npm run release
+ - npm run publish-all
 deploy:
   skip_cleanup: true
   provider: npm
