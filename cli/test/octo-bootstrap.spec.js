@@ -3,7 +3,7 @@ const fixtures = require('./support/fixtures'),
   shelljs = require('shelljs');
 
 describe('octo-bootstrap', function () {
-  this.timeout(10000);
+  this.timeout(20000);
 
   it('should display help', () => {
     fixtures.project().inDir(ctx => {
