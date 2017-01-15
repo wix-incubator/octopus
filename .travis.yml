@@ -5,8 +5,6 @@ node_js:
 script:
  - npm run bootstrap
  - npm run test
-before_deploy:
- - npm run publish-all
 deploy:
   skip_cleanup: true
   provider: npm
@@ -16,3 +14,5 @@ deploy:
   on:
     branch: master
     node: '7' # release only after last build success
+after_deploy:
+ - npm run publish-all
