@@ -18,7 +18,7 @@ module.exports.defaults = {
   gitHook: shelljs.cat(path.resolve(__dirname + '/../../files/pre-push')).stdout
 };
 
-function empty() {
-  const projectDir = path.resolve('./target', Math.ceil(Math.random() * 100000).toString());
+function empty(dir = './target') {
+  const projectDir = path.resolve(dir, Math.ceil(Math.random() * 100000).toString());
   return new ModuleBuilder(process.cwd(), projectDir, true);
 }

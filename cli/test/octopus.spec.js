@@ -29,7 +29,6 @@ describe('octopus', function () {
       });
   });
 
-
   function aProject() {
     return fixtures.project()
       .module('a', module => module.packageJson({version: '1.0.0'}))
