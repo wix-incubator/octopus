@@ -6,7 +6,7 @@ const log = require('./logger')(),
 
 module.exports.forCommand = (nameFn, fn) => {
   return argv => {
-    const projectRoot = findProjectRoot(process.cwd());
+    const projectRoot = findProjectRoot(process.cwd(), log);
     assert.assertGitRepo(projectRoot, log);
 
     const name = typeof nameFn === 'function' ? nameFn(argv) : nameFn;
