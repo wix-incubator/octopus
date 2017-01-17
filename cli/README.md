@@ -109,7 +109,7 @@ Example:
 octo idea
 ```
 
-# octo deps
+## octo deps
 
 Manage dependencies across all modules. Common scenario is:
  - `octo deps latest` - to get a list of dependencies, that are defined in `octopus.json` and have newer version in registry.
@@ -119,7 +119,7 @@ Manage dependencies across all modules. Common scenario is:
 
 To check available options run `octo help deps`;
 
-# octo modules
+## octo modules
 
 Manage module versions and mark build/unbuild.
 
@@ -129,6 +129,6 @@ Common scenarion could be to update module version:
 
 To check available options run `octo help modules`;
 
-# octo selfupdate
+## octo selfupdate
 
 Update version of octopus-cli:)
