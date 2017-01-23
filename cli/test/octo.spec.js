@@ -16,11 +16,18 @@ describe('octo', function() {
     });
   });
 
-  it('should display help by default', () => {
+  it('should display help if no command is provided', () => {
     empty().inDir(ctx =>
       expect(() => ctx.octo()).to.throw('Usage: octo <command> [options]')
     );
   });
+
+  it('should display help if non-existent command is provided', () => {
+    empty().inDir(ctx =>
+      expect(() => ctx.octo('bubu')).to.throw('Did you mean')
+    );
+  });
+
 
   it('should print version from package.json', () => {
     empty().inDir(ctx => {
@@ -43,4 +50,5 @@ describe('octo', function() {
   });
 
   it.skip('should allow execution from sub-folder of project');
+
 });
