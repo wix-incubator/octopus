@@ -19,5 +19,6 @@ require('yargs')
     type: 'boolean'
   })
   .global('a')
+  .recommendCommands()
   .argv;
 /*eslint-enable */

@@ -1,6 +1,6 @@
 {
   "name": "octopus-cli",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "Multi-module repo build helper",
   "author": "Vilius Lukosius",
   "license": "ISC",
