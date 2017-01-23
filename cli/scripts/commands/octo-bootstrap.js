@@ -18,6 +18,11 @@ exports.builder = yargs => {
       describe: 'do not mark modules as built',
       type: 'boolean'
     })
+    .option('c', {
+      alias: 'clean',
+      describe: 'execute octopus.json clean script before bootstrapping each module',
+      type: 'boolean'
+    })
     .option('v', {
       alias: 'verbose',
       describe: 'verbose output',
@@ -30,6 +35,7 @@ exports.handler = forCommand('octo bootstrap', (octo, config, opts) => {
   const forAll = opts.all;
   const noBuild = opts.noBuild;
   const verbose = opts.verbose;
+  const clean = opts.clean;
 
   if (forAll) {
     log.warn('marking modules with changes as unbuilt');
@@ -43,9 +49,22 @@ exports.handler = forCommand('octo bootstrap', (octo, config, opts) => {
     log.warn(forAll ? 'no modules found' : 'no modules with changes found');
   } else {
     modules.forEach((module, i) => module.inDir(() => {
+      let cleanScript;
+      if (clean) {
+        if (config.scripts && config.scripts.clean) {
+          cleanScript = config.scripts.clean;
+        } else {
+          log.warn('-c provided, but no scripts.clean present in octopus.json - ignoring');
+        }
+      }
+
       log.for(`${module.npm.name} (${module.relativePath}) (${i + 1}/${count})`, () => {
         const cmd = engine.bootstrap(module.links());
         log.for(`install/link (${cmd})`, () => {
+          if (cleanScript) {
+            module.exec(cleanScript, verbose);
+          }
+
           module.exec(cmd, verbose);
           if (!noBuild) {
             module.markBuilt();

@@ -33,6 +33,9 @@ Run `octo init` that will:
  ```json
  {
   "engine": "yarn",
+  "scripts": {
+    "clean": "echo run me before each bootstrapped module if -c is provided"
+  },
   "exclude": ["some-module-to-exclude"],
   "dependencies": {
     "chai": "~3.5.0",
