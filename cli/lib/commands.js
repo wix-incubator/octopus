@@ -12,7 +12,12 @@ module.exports.forCommand = (nameFn, fn) => {
     const name = typeof nameFn === 'function' ? nameFn(argv) : nameFn;
     log.exec(name, () => {
       const conf = config(projectRoot);
-      fn(octopus({cwd: projectRoot, excludes: conf.exclude}), conf, argv);
+      try {
+        fn(octopus({cwd: projectRoot, excludes: conf.exclude}), conf, argv);
+      } catch (e) {
+        console.error(e.message);
+        process.exit(1);
+      }
     });
   };
 };

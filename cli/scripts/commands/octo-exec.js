@@ -41,11 +41,11 @@ exports.handler = forCommand(opts => `octo exec '${opts._.slice(1).join()}'`, (o
     modules.forEach((module, i) =>
       log.for(`${module.npm.name} (${module.relativePath}) (${i + 1}/${count})`, () => {
         module.exec(cmd, verbose);
-        
+
         if (!noBuild) {
           module.markBuilt();
         }
-        
-      }));
+      })
+    );
   }
 });
