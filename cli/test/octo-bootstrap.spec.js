@@ -23,6 +23,25 @@ describe('octo-bootstrap', function () {
     });
   });
 
+  it('should execute scpts.clean if -c flag is provided', () => {
+    fixtures.project({scripts: {clean: 'echo ok > cleaned'}})
+      .module('a', module => module.packageJson({version: '1.0.0'}))
+      .inDir(ctx => {
+        ctx.octo('bootstrap -c');
+        expect(shelljs.test('-f', 'a/cleaned')).to.equal(true);
+      });
+  });
+
+  it('should print warning if -c provided, but no scripts.clean present in octopus.json', () => {
+    fixtures.project()
+      .module('a', module => module.packageJson({version: '1.0.0'}))
+      .inDir(ctx => {
+        const out = ctx.octo('bootstrap -c');
+
+        expect(out).to.be.string('-c provided, but no scripts.clean');
+      });
+  });
+
   ['yarn', 'npm'].forEach(engine => {
     it.skip(`should install and link modules via ${engine}`, () => {
       aProject(engine).inDir(ctx => {
