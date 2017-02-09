@@ -1,6 +1,6 @@
 {
   "name": "octopus-cli",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Multi-module repo build helper",
   "author": "Vilius Lukosius",
   "license": "ISC",
@@ -21,6 +21,9 @@
   },
   "bugs": {
     "url": "https://github.com/wix/octopus/issues"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
     "colors": "~1.1.2",

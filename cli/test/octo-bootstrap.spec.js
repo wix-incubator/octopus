@@ -27,8 +27,9 @@ describe('octo-bootstrap', function () {
     fixtures.project({scripts: {clean: 'echo ok > cleaned'}})
       .module('a', module => module.packageJson({version: '1.0.0'}))
       .inDir(ctx => {
-        ctx.octo('bootstrap -c');
+        const out = ctx.octo('bootstrap -c');
         expect(shelljs.test('-f', 'a/cleaned')).to.equal(true);
+        expect(out).to.be.string('Running clean script');
       });
   });
 
