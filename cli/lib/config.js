@@ -1,6 +1,6 @@
 const path = require('path'),
-  shelljs = require('shelljs');
+  fs = require('fs');
 
 module.exports = cwd => {
-  return JSON.parse(shelljs.cat(path.join(cwd, 'octopus.json')).stdout)
+  return JSON.parse(fs.readFileSync(path.join(cwd, 'octopus.json')));
 };
