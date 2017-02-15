@@ -2,9 +2,9 @@ const shelljs = require('shelljs'),
   path = require('path'),
   objectFilter = require('object-filter'),
   _ = require('lodash'),
-  toposort = require('toposort'),
   gitignoreParser = require('ignore-file'),
-  fs = require('fs');
+  fs = require('fs'),
+  {dag, toposort, startingFrom} = require('./graph');
 
 const targetFileSentinelFilename = 'target/.bibuild-sentinel';
 
@@ -21,11 +21,28 @@ function findListOfNpmPackagesAndLocalDependencies(baseDir) {
   return findListOfPackagesAndLocalDependencies(path.resolve(baseDir), baseDir)
 }
 
-function sortPackagesByDependencies(packages) {
+exports.prepareBuildOrder = function (packages, resumeFrom) {
+  const filteredPackages = resumeFrom ? applyGraphFnToPackages(startingFrom, packages, resumeFrom) : packages;
+  return {
+    order: applyGraphFnToPackages(toposort, filteredPackages),
+    graph: dag(createDependencyEdgesFromPackages(filteredPackages), filteredPackages, aPackage => aPackage.relativePath)
+  }
+};
+
+function applyGraphFnToPackages(fn, packages, ...args) {
   const dependencyEdges = createDependencyEdgesFromPackages(packages);
-  var executionList = toposort.array(_.map(packages, el => el.relativePath), dependencyEdges).reverse();
-  return executionList.map(packageRelativePath => _.find(packages, p => p.relativePath === packageRelativePath));
+  let res = fn.apply(null, [dependencyEdges, packages, aPackage => aPackage.relativePath].concat(args));
+
+  return res.filter(_.isObject);
 }
+
+exports.figureOutPackagesDependingOn = function(packages, onlyDependingOn) {
+  return applyGraphFnToPackages(startingFrom, packages, onlyDependingOn);
+};
+
+function sortPackagesByDependencies(packages) {
+  return applyGraphFnToPackages(toposort, packages);
+};
 
 function findChangedPackages(dir, packages) {
   return inDir(dir, () => packages.filter(p => isPackageChanged(p)))
