@@ -73,12 +73,13 @@ module.exports = opts => {
     pkg.merge = (overrides, isSave) => {
       const packageJson = JSON.parse(shelljs.cat(path.join(pkg.fullPath, 'package.json')).stdout);
       const res = objects.merge(_.cloneDeep(packageJson), overrides);
+      const changes = diff(packageJson, res);
 
-      if (isSave) {
+      if (isSave && changes) {
         fs.writeFileSync(path.join(pkg.fullPath, 'package.json'), JSON.stringify(res, null, 2));
       }
 
-      return diff(packageJson, res);
+      return changes;
     };
 
     pkg.rm = (what, isSave) => {
