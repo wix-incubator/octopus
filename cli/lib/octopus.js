@@ -1,5 +1,6 @@
 const devSupport = require('./wnpm-dev'),
   shelljs = require('shelljs'),
+  execSync = require('child_process').execSync,
   path = require('path'),
   objects = require('./objects'),
   diff = require('jsondiffpatch').diff,
@@ -32,20 +33,35 @@ module.exports = opts => {
         process.chdir(pkg.fullPath);
       }
 
-      const res = shelljs.exec(what, {silent: !verbose});
+      try {
+        let stdout = execSync(what, {stdio: verbose ? 'inherit' : 'pipe'})
 
-      if (res === null) {
-        process.exit(1);
-      }
+        return stdout;
+      } catch (err) {
+        let {stdout, stderr, status, error} = err
 
-      if (res.code) {
-        throw new Error(`Exit code: ${res.code}, output: ${res.stdout} ${res.stderr}`);
-      }
+        if (error) {
+          process.exit(1)
+        }
 
-      if (shouldChange) {
-        process.chdir(dir);
+        if (status) {
+          if (verbose) {
+            // no need to duplicate process output, moreover, any output we now
+            // send to stdio has lost any ASNI codes it may have contained (so
+            // we'll lose colors, etc.).
+            throw new Error(`Exit code: ${status}`);
+          } else {
+            throw new Error(`Exit code: ${status}, output: ${stdout} ${stderr}`);
+          }
+        }
+
+        return stdout;
+      } finally {
+
+        if (shouldChange) {
+          process.chdir(dir);
+        }
       }
-      return res;
     };
 
     pkg.links = () => devSupport.npmLinks(pkg, allPackagesToBuild);

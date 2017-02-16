@@ -25,7 +25,7 @@ describe('octopus', function () {
       .module('a', module => module.packageJson({version: '1.0.0'}))
       .inDir(ctx => {
         const modules = octopus({cwd: ctx.dir}).modules.map(module => module.npm.name);
-        expect(modules).to.deep.equal(['root-module', 'a']);
+        expect(modules).to.deep.equal(['a', 'root-module']);
       });
   });
 
@@ -39,10 +39,37 @@ describe('octopus', function () {
         octo.modules.forEach(module => module.merge({}, true));
         expect(octopus({cwd: ctx.dir}).modules.find(module => module.hasChanges())).to.be.undefined;
       });
-
     });
   });
 
+  it('should only output stdout once if -v is provided and error is returned from process', done => {
+    aProject().inDir(ctx => {
+      try {
+        ctx.octo('exec -v "echo \"test output\" && exit 1"');
+        done(new Error('expected to fail'));
+      }
+      catch (err) {
+        const out = err.output;
+        expect(out).to.be.string('Executing \'octo exec \'echo test,output && exit 1\'\'\n a (a) (1/3)\ntest,output\nExit code: 1\n');
+        done();
+      }
+    });
+  });
+
+  it('should output stdout even if -v is not provided and error is returned from process', done => {
+    aProject().inDir(ctx => {
+      try {
+        ctx.octo('exec "echo \"test output\" && exit 1"');
+        done(new Error('expected to fail'));
+      }
+      catch (err) {
+        const out = err.output;
+        expect(out).to.be.string('Executing \'octo exec \'echo test,output && exit 1\'\'\n a (a) (1/3)\nExit code: 1, output: test,output\n \n');
+        done();
+      }
+    });
+  });
+  
   function aProject() {
     return fixtures.project()
       .module('a', module => module.packageJson({version: '1.0.0'}))
