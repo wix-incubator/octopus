@@ -29,6 +29,20 @@ describe('octopus', function () {
       });
   });
 
+  describe('merge', () => {
+    it('should not write file for no changes', () => {
+      aProject().inDir(ctx => {
+        const octo = octopus({cwd: ctx.dir});
+        octo.modules.forEach(module => module.markBuilt());
+        ctx.exec('sleep 1;');
+
+        octo.modules.forEach(module => module.merge({}, true));
+        expect(octopus({cwd: ctx.dir}).modules.find(module => module.hasChanges())).to.be.undefined;
+      });
+
+    });
+  });
+
   function aProject() {
     return fixtures.project()
       .module('a', module => module.packageJson({version: '1.0.0'}))
