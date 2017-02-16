@@ -25,7 +25,7 @@ describe('octopus', function () {
       .module('a', module => module.packageJson({version: '1.0.0'}))
       .inDir(ctx => {
         const modules = octopus({cwd: ctx.dir}).modules.map(module => module.npm.name);
-        expect(modules).to.deep.equal(['root-module', 'a']);
+        expect(modules).to.deep.equal(['a', 'root-module']);
       });
   });
 
