@@ -29,6 +29,34 @@ describe('octopus', function () {
       });
   });
 
+  it('should only output stdout once if -v is provided and error is returned from process', done => {
+    aProject().inDir(ctx => {
+      try {
+        ctx.octo('exec -v "echo \"test output\" && exit 1"');
+        done(new Error('expected to fail'));
+      }
+      catch (err) {
+        const out = err.output;
+        expect(out).to.be.string('Executing \'octo exec \'echo test,output && exit 1\'\'\n a (a) (1/3)\ntest,output\nExit code: 1\n');
+        done();
+      }
+    });
+  });
+
+  it('should output stdout even if -v is not provided and error is returned from process', done => {
+    aProject().inDir(ctx => {
+      try {
+        ctx.octo('exec "echo \"test output\" && exit 1"');
+        done(new Error('expected to fail'));
+      }
+      catch (err) {
+        const out = err.output;
+        expect(out).to.be.string('Executing \'octo exec \'echo test,output && exit 1\'\'\n a (a) (1/3)\nExit code: 1, output: test,output\n \n');
+        done();
+      }
+    });
+  });
+  
   function aProject() {
     return fixtures.project()
       .module('a', module => module.packageJson({version: '1.0.0'}))
