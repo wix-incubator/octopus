@@ -144,9 +144,7 @@ describe('octo-modules', function () {
           expect(out).to.be.string('b (b) (1/1)');
           expect(out).to.be.string('a: ~1.0.0 -> ~2.0.0');
 
-          // git v2.9.1 changed the output of git status, 
-          // see https://github.com/git/git/blob/e0c1ceafc5bece92d35773a75fff59497e1d9bd5/Documentation/RelNotes/2.9.1.txt#L53
-          expect(ctx.exec('git status')).to.match(/nothing to commit, working (directory|tree) clean/);
+          expect(ctx.exec('git status')).to.be.string('nothing to commit');
           done();
         }
       });
