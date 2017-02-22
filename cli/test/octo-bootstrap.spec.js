@@ -71,6 +71,28 @@ describe('octo-bootstrap', function () {
     });
   });
 
+  it('should install and link a complex project in parallel', () => {
+    aComplexProject().inDir(ctx => {
+      const out = ctx.octo('bootstrap -p -c');
+
+      expect(out).to.be.string('Executing \'octo bootstrap\'');
+
+      expect(out).to.be.string('Starting module: a (a) (1/4)');
+      expect(out).to.be.string('Finished module: a (a) (1/4)');
+      expect(out).to.be.string('Starting module: b (b) (2/4)');
+      expect(out).to.be.string('Starting module: d (d) (3/4)');
+      expect(out).to.be.string('Finished module: b (b) (2/4)');
+      expect(out).to.be.string('Finished module: d (d) (3/4)');
+      expect(out).to.be.string('Starting module: c (c) (4/4)');
+      expect(out).to.be.string('Finished module: c (c) (4/4)');
+
+
+      expect(shelljs.test('-L', 'b/node_modules/a')).to.equal(true);
+      expect(shelljs.test('-L', 'd/node_modules/a')).to.equal(true);
+      expect(shelljs.test('-L', 'c/node_modules/b')).to.equal(true);
+    });
+  });
+
   it('should display output from underlying commands if -v is provided', () => {
     aProject().inDir(ctx => {
       const out = ctx.octo('bootstrap -v');
@@ -121,5 +143,20 @@ describe('octo-bootstrap', function () {
       .module('a', module => module.packageJson({version: '1.0.0', scripts}))
       .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}, scripts}))
       .module('c', module => module.packageJson({version: '1.1.0', dependencies: {'b': '~1.0.0'}, scripts}));
+  }
+
+  function aComplexProject(engine) {
+    const a = '~1.0.0';
+    const b = '~1.0.0';
+
+    const scripts = {
+      test: 'echo | pwd | grep -o \'[^/]*$\' > tested',
+      verify: 'echo | pwd | grep -o \'[^/]*$\' > verified'
+    };
+    return fixtures.project({engine})
+      .module('a', module => module.packageJson({version: '1.0.0', scripts}))
+      .module('b', module => module.packageJson({version: '1.0.0', dependencies: {a}, scripts}))
+      .module('c', module => module.packageJson({version: '1.1.0', dependencies: {b}, scripts}))
+      .module('d', module => module.packageJson({version: '1.0.0', dependencies: {a}, scripts}))
   }
 });
