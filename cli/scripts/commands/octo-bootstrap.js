@@ -95,9 +95,9 @@ const handleParallel = (engine, modules, cleanScript, opts) => {
 
   const bootstrapModule = module => {
     const cmd = engine.bootstrap(module.links());
-    log.info(`Running install/link (${cmd})`);
+    log.info(` ${module.npm.name}: Running install/link (${cmd})`);
 
-    return module.execAsync(cmd)
+    return module.execAsync(cmd, module.fullPath);
   };
 
   const action = module => {
@@ -107,8 +107,8 @@ const handleParallel = (engine, modules, cleanScript, opts) => {
     let action;
 
     if (cleanScript) {
-      log.warn(`Running clean script with command: "${cleanScript}"`);
-      action = module.execAsync(cleanScript).then(() => bootstrapModule(module));
+      log.warn(` ${module.npm.name}: Running clean script: "${cleanScript}"`);
+      action = module.execAsync(cleanScript, module.fullPath).then(() => bootstrapModule(module));
     } else {
       action = bootstrapModule(module);
     }

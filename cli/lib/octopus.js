@@ -69,9 +69,9 @@ module.exports = opts => {
 
     pkg.linksNames = () => Object.keys(pkg.npm.dependencies);
 
-    pkg.execAsync = what => {
+    pkg.execAsync = (what, cwd) => {
       return new Promise((resolve, reject) => {
-        exec(what, (error, stdout, stderr) => {
+        exec(what, {cwd}, (error, stdout, stderr) => {
           if (error === null) {
             resolve(stdout);
           } else {

@@ -84,6 +84,37 @@ function createDependencyEdgesFromPackages(packages) {
   return dependencyEdges;
 }
 
+function makePackageBuilt(dir) {
+  shelljs.mkdir('-p', path.resolve(dir, path.dirname(targetFileSentinelFilename)));
+  shelljs.echo('').to(path.resolve(dir, targetFileSentinelFilename));
+}
+
+function makePackageUnbuilt(dir) {
+  shelljs.rm('-f', path.resolve(dir, targetFileSentinelFilename));
+}
+
+function makePackagesUnbuilt(dirs) {
+  dirs.forEach(makePackageUnbuilt);
+}
+
+function isPackageChanged(packageObject) {
+  const fullPath = packageObject.fullPath;
+  const ignored = gitignoreParser.compile(collectIgnores(fullPath));
+  const targetSentinelForPackage = path.resolve(fullPath, targetFileSentinelFilename);
+  return !shelljs.test('-f', targetSentinelForPackage) ||
+    findLastModifiedTimeOfPackageSources(packageObject.relativePath, ignored) >
+    fs.statSync(targetSentinelForPackage).mtime.getTime();
+}
+
+function findLastModifiedTimeOfPackageSources(dir, ignored) {
+  const entries = shelljs.ls(dir);
+
+  return entries.map(entry => path.join(dir, entry)).filter(entry => !ignored(entry)).map(entry =>
+    shelljs.test('-d', entry) ?
+      findLastModifiedTimeOfPackageSources(entry, ignored) :
+      fs.statSync(entry).mtime.getTime()).reduce((acc, entryTime) => Math.max(acc, entryTime), 0)
+}
+
 function isNodeModulesDir(dir) {
   return dir === 'node_modules';
 }

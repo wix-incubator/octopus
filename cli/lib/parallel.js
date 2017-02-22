@@ -1,4 +1,5 @@
-const getMachineCores = require('os').cpus;
+const getMachineCores = require('os').cpus,
+  log = require('./logger')();
 
 const removeFromArray = (array, elem) => array.splice(array.indexOf(elem), 1);
 
@@ -20,7 +21,7 @@ module.exports = (modules, asyncAction) => {
     }
   });
 
-  const maxConcurrent = getMachineCores().length;
+  const maxConcurrent = 2;//getMachineCores().length;
   let currentConcurrent = 0;
 
   const handleModuleAsync = module => module.inDir(() => {
