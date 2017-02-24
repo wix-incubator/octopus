@@ -2,11 +2,10 @@ const shelljs = require('shelljs'),
   path = require('path'),
   objectFilter = require('object-filter'),
   _ = require('lodash'),
-  gitignoreParser = require('ignore-file'),
   fs = require('fs'),
-  {dag, toposort, startingFrom} = require('./graph');
-
-const targetFileSentinelFilename = 'target/.bibuild-sentinel';
+  {dag, toposort, startingFrom} = require('./graph'),
+  {makePackageBuilt, makePackagesUnbuilt, findChangedPackages} = require('./detect-changes'),
+  inDir = require('./in-dir');
 
 exports.findListOfNpmPackagesAndLocalDependencies = findListOfNpmPackagesAndLocalDependencies;
 exports.sortPackagesByDependencies = sortPackagesByDependencies;
@@ -43,10 +42,6 @@ exports.figureOutPackagesDependingOn = function(packages, onlyDependingOn) {
 function sortPackagesByDependencies(packages) {
   return applyGraphFnToPackages(toposort, packages);
 };
-
-function findChangedPackages(dir, packages) {
-  return inDir(dir, () => packages.filter(p => isPackageChanged(p)))
-}
 
 function figureOutAllPackagesThatNeedToBeBuilt(allPackages, changedPackages) {
   const transitiveClosureOfPackagesToBuild = new Set(_.map(changedPackages, el => el.relativePath));
@@ -87,37 +82,6 @@ function createDependencyEdgesFromPackages(packages) {
   }
 
   return dependencyEdges;
-}
-
-function makePackageBuilt(dir) {
-  shelljs.mkdir('-p', path.resolve(dir, path.dirname(targetFileSentinelFilename)));
-  shelljs.echo('').to(path.resolve(dir, targetFileSentinelFilename));
-}
-
-function makePackageUnbuilt(dir) {
-  shelljs.rm('-f', path.resolve(dir, targetFileSentinelFilename));
-}
-
-function makePackagesUnbuilt(dirs) {
-  dirs.forEach(makePackageUnbuilt);
-}
-
-function isPackageChanged(packageObject) {
-  const fullPath = packageObject.fullPath;
-  const ignored = gitignoreParser.compile(collectIgnores(fullPath, []));
-  const targetSentinelForPackage = path.resolve(fullPath, targetFileSentinelFilename);
-  return !shelljs.test('-f', targetSentinelForPackage) ||
-    findLastModifiedTimeOfPackageSources(packageObject.relativePath, ignored) >
-    fs.statSync(targetSentinelForPackage).mtime.getTime();
-}
-
-function findLastModifiedTimeOfPackageSources(dir, ignored) {
-  const entries = shelljs.ls(dir);
-
-  return entries.map(entry => path.join(dir, entry)).filter(entry => !ignored(entry)).map(entry =>
-    shelljs.test('-d', entry) ?
-      findLastModifiedTimeOfPackageSources(entry, ignored) :
-      fs.statSync(entry).mtime.getTime()).reduce((acc, entryTime) => Math.max(acc, entryTime), 0)
 }
 
 function isNodeModulesDir(dir) {
@@ -224,28 +188,6 @@ function createDependenciesObjectFromDependencies(packageType, deps) {
   return ret;
 }
 
-
-function collectIgnores(dir, acc) {
-  acc = acc || ['target', 'node_modules', 'npm-debug.log'];
-  return _.union(acc, inDir(dir, () => {
-    const slash = path.sep;
-    const ignores = readAndParseGitignore();
-    const parent = dir.split(slash).slice(0, -1).join(slash) || '/';
-    const isRoot = shelljs.test('-d', '.git');
-    return isRoot || dir === slash ? ignores : collectIgnores(parent, ignores);
-  }));
-}
-
-function readAndParseGitignore() {
-  const gitignore = shelljs.test('-f', '.gitignore');
-  return gitignore
-    ? fs.readFileSync('.gitignore', 'utf8')
-      .split('\n')
-      .map(line => line.trim())
-      .filter(line => line && line.charAt(0) !== '#')
-    : [];
-}
-
 function createObjectFromArrayOfObjects(arrayOfObjects, keyInReturnedObject) {
   const ret = {};
 
@@ -254,17 +196,6 @@ function createObjectFromArrayOfObjects(arrayOfObjects, keyInReturnedObject) {
   }
 
   return ret;
-}
-
-function inDir(dir, f) {
-  const originalDir = process.cwd();
-  process.chdir(dir);
-  try {
-    return f();
-  }
-  finally {
-    process.chdir(originalDir);
-  }
 }
 
 function isAnNpmProject(dir) {
