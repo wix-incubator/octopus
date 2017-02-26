@@ -41,7 +41,28 @@ describe('octo-run', function () {
       });
     });
   });
-  
+
+  it('should run in parallel', () => {
+    aProject().inDir(ctx => {
+      const out = ctx.octo('run test verify -p');
+
+      expect(out).to.be.string('Executing \'octo run test verify\'');
+
+      expect(out).to.be.string('Starting module: a (a) (1/3)');
+      expect(out).to.be.string('Finished module: a (a) (1/3)');
+      expect(out).to.be.string('Starting module: b (b) (2/3)');
+      expect(out).to.be.string('Finished module: b (b) (2/3)');
+      expect(out).to.be.string('Starting module: c (c) (3/3)');
+      expect(out).to.be.string('Finished module: c (c) (3/3)');
+
+
+      expect(out).to.be.string('a: test');
+      expect(out).to.be.string('a: verify');
+      expect(ctx.readFile('a/tested')).to.equal('a\n');
+      expect(ctx.readFile('a/verified')).to.equal('a\n');
+    });
+  });
+
   it('should run provided command modules with changes by default and mark modules as built', () => {
     aProject().markBuilt().inDir(ctx => {
       ctx.exec('sleep 2; touch c/touch');

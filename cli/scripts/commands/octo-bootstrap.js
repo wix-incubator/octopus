@@ -3,7 +3,6 @@ const log = require('../../lib/logger')(),
   forCommand = require('../../lib/commands').forCommand,
   engines = require('../../lib/engines'),
   parallel = require('../../lib/parallel');
-  getMachineCores = require('os').cpus;
 
 exports.command = 'bootstrap';
 exports.desc = 'npm install and link all modules';

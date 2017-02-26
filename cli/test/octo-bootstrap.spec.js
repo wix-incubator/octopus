@@ -73,7 +73,7 @@ describe('octo-bootstrap', function () {
 
   it('should install and link a complex project in parallel', () => {
     aComplexProject().inDir(ctx => {
-      const out = ctx.octo('bootstrap -p -c');
+      const out = ctx.octo('bootstrap -p');
 
       expect(out).to.be.string('Executing \'octo bootstrap\'');
 

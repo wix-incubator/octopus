@@ -84,6 +84,26 @@ describe('octo-exec', function () {
     });
   });
 
+  it('should run in parallel', () => {
+    aProject().inDir(ctx => {
+      const out = ctx.octo('exec \'echo aaa\' -p');
+
+      expect(out).to.be.string('Executing \'octo exec \'echo aaa\'\'');
+
+      expect(out).to.be.string('Starting module: a (a) (1/3)');
+      expect(out).to.be.string('Finished module: a (a) (1/3)');
+      expect(out).to.be.string('Starting module: b (b) (2/3)');
+      expect(out).to.be.string('Finished module: b (b) (2/3)');
+      expect(out).to.be.string('Starting module: c (c) (3/3)');
+      expect(out).to.be.string('Finished module: c (c) (3/3)');
+
+
+      expect(out).to.be.string('a: echo aaa');
+      expect(out).to.be.string('b: echo aaa');
+      expect(out).to.be.string('c: echo aaa');
+    });
+  });
+
   function aProject() {
     return fixtures.project()
       .module('a', module => module.packageJson({version: '1.0.0'}))

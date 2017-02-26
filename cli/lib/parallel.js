@@ -21,7 +21,7 @@ module.exports = (modules, asyncAction) => {
     }
   });
 
-  const maxConcurrent = 2;//getMachineCores().length;
+  const maxConcurrent = getMachineCores().length;
   let currentConcurrent = 0;
 
   const handleModuleAsync = module => module.inDir(() => {
