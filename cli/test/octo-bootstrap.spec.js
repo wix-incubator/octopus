@@ -44,7 +44,7 @@ describe('octo-bootstrap', function () {
   });
 
   ['yarn', 'npm'].forEach(engine => {
-    it.skip(`should install and link modules via ${engine}`, () => {
+    it(`should install and link modules via ${engine}`, () => {
       aProject(engine).inDir(ctx => {
         const out = ctx.octo('bootstrap');
 
@@ -57,6 +57,16 @@ describe('octo-bootstrap', function () {
 
         expect(shelljs.test('-L', 'b/node_modules/a')).to.equal(true);
         expect(shelljs.test('-L', 'c/node_modules/b')).to.equal(true);
+      });
+    });
+
+    it(`should install and link when module name is different than dir name using ${engine}`, () => {
+      aConfusingProject(engine).inDir(ctx => {
+        const out = ctx.octo('bootstrap');
+
+        expect(out).to.be.string('Executing \'octo bootstrap\'');
+
+        expect(shelljs.test('-L', 'b/node_modules/pkg-name')).to.equal(true);
       });
     });
   });
@@ -95,6 +105,12 @@ describe('octo-bootstrap', function () {
       expect(out2).to.be.string('a (a) (1/3)');
     });
   });
+
+  function aConfusingProject(engine) {
+    return fixtures.project({engine})
+      .module('dir-name', module => module.packageJson({name: 'pkg-name', version: '1.0.0'}))
+      .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'pkg-name': '~1.0.0'}}));
+  }
 
   function aProject(engine) {
     const scripts = {

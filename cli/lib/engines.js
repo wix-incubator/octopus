@@ -10,7 +10,9 @@ class NpmEngine {
   constructor() {
   }
   
-  bootstrap(links) {
+  bootstrap(module) {
+    const links = module.linksFullPath();
+
     if (links.length > 0) {
       return `npm link '${links.join('\' \'')}' && npm install`;
     } else {
@@ -27,7 +29,9 @@ class YarnEngine {
   constructor() {
   }
 
-  bootstrap(links) {
+  bootstrap(module) {
+    const links = module.linksNames();
+
     if (links.length > 0) {
       return `yarn link '${links.map(link => link.split('/').pop()).join('\' \'')}' && yarn install --ignore-engines && yarn link`;
     } else {

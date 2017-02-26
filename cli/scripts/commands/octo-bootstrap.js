@@ -59,7 +59,7 @@ exports.handler = forCommand('octo bootstrap', (octo, config, opts) => {
       }
 
       log.for(`${module.npm.name} (${module.relativePath}) (${i + 1}/${count})`, () => {
-        const cmd = engine.bootstrap(module.links());
+        const cmd = engine.bootstrap(module);
         log.for(`install/link (${cmd})`, () => {
           if (cleanScript) {
             log.warn(`Running clean script with command: "${cleanScript}"`);
