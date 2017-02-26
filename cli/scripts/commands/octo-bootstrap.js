@@ -64,7 +64,7 @@ exports.handler = forCommand('octo bootstrap', (octo, config, opts) => {
   }
 
   if (parallel) {
-    handleParallel(engine, modules, cleanScript, opts);
+    handleParallel(engine, modules, cleanScript, opts).catch(() => process.exit(1));
   } else {
     handleSync(engine, modules, cleanScript, opts);
   }
@@ -121,5 +121,5 @@ const handleParallel = (engine, modules, cleanScript, opts) => {
     });
   };
 
-  parallel(modules, action);
+  return parallel(modules, action);
 };

@@ -46,7 +46,7 @@ exports.handler = forCommand(opts => `octo exec '${opts._.slice(1).join()}'`, (o
   }
 
   if (parallel) {
-    handleParallel(modules, cmd, opts);
+    handleParallel(modules, cmd, opts).catch(() => process.exit(1));
   } else {
     handleSync(modules, cmd, opts);
   }
@@ -83,5 +83,5 @@ const handleParallel = (modules, cmd, opts) => {
     });
   };
 
-  parallel(modules, action);
+  return parallel(modules, action);
 };

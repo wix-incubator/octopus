@@ -1,6 +1,7 @@
-const fixtures = require('./support/fixtures'),
+const fixtures = require('./../support/fixtures'),
   expect = require('chai').expect,
-  shelljs = require('shelljs');
+  shelljs = require('shelljs'),
+  aProject = require('../test-utils').aProject;
 
 describe('octo-exec', function () {
   this.timeout(10000);
@@ -103,11 +104,4 @@ describe('octo-exec', function () {
       expect(out).to.be.string('c: echo aaa');
     });
   });
-
-  function aProject() {
-    return fixtures.project()
-      .module('a', module => module.packageJson({version: '1.0.0'}))
-      .module('b', module => module.packageJson({version: '1.0.1', dependencies: {'a': '~1.0.0'}}))
-      .module('c', module => module.packageJson({version: '1.1.0', dependencies: {'b': '~1.0.1'}}));
-  }
 });

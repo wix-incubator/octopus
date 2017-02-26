@@ -1,4 +1,4 @@
-const fixtures = require('./support/fixtures'),
+const fixtures = require('./../support/fixtures'),
   expect = require('chai').expect,
   shelljs = require('shelljs');
 

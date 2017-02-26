@@ -57,7 +57,7 @@ exports.handler = forCommand(opts => `octo run ${opts._.slice(1).join(' ')}`, (o
   });
 
   if (parallel) {
-    handleParallel(modules, commands, opts);
+    handleParallel(modules, commands, opts).catch(() => process.exit(1));
   } else {
     handleSync(modules, commands, opts);
   }
@@ -103,5 +103,5 @@ const handleParallel = (modules, commands, opts) => {
     });
   };
 
-  parallel(modules, action);
+  return parallel(modules, action);
 };

@@ -1,6 +1,6 @@
-const empty = require('./support/fixtures').empty,
+const empty = require('./../support/fixtures').empty,
   expect = require('chai').expect,
-  packageJson = require('../package.json'),
+  packageJson = require('../../package.json'),
   os = require('os');
 
 describe('octo', function() {

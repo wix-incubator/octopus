@@ -1,6 +1,7 @@
-const fixtures = require('./support/fixtures'),
+const fixtures = require('./../support/fixtures'),
   expect = require('chai').expect,
-  octopus = require('../lib/octopus');
+  octopus = require('../../lib/octopus'),
+  aProject = require('../test-utils').aProject;
 
 describe('octopus', function () {
   this.timeout(10000);
@@ -69,11 +70,4 @@ describe('octopus', function () {
       }
     });
   });
-  
-  function aProject() {
-    return fixtures.project()
-      .module('a', module => module.packageJson({version: '1.0.0'}))
-      .module('b', module => module.packageJson({version: '1.0.1', dependencies: {'a': '~1.0.0'}}))
-      .module('c', module => module.packageJson({version: '1.1.0', dependencies: {'b': '~1.0.1'}}));
-  }
 });

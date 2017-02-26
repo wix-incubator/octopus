@@ -1,6 +1,7 @@
-const fixtures = require('./support/fixtures'),
+const fixtures = require('./../support/fixtures'),
   expect = require('chai').expect,
-  shelljs = require('shelljs');
+  shelljs = require('shelljs'),
+  {aProject, aComplexProject} = require('../test-utils');
 
 describe('octo-bootstrap', function () {
   this.timeout(20000);
@@ -78,18 +79,20 @@ describe('octo-bootstrap', function () {
       expect(out).to.be.string('Executing \'octo bootstrap\'');
 
       expect(out).to.be.string('Starting module: a (a) (1/4)');
-      expect(out).to.be.string('Finished module: a (a) (1/4)');
       expect(out).to.be.string('Starting module: b (b) (2/4)');
-      expect(out).to.be.string('Starting module: d (d) (3/4)');
+      expect(out).to.be.string('Starting module: c (c) (3/4)');
+      expect(out).to.be.string('Finished module: a (a) (1/4)');
       expect(out).to.be.string('Finished module: b (b) (2/4)');
-      expect(out).to.be.string('Finished module: d (d) (3/4)');
-      expect(out).to.be.string('Starting module: c (c) (4/4)');
-      expect(out).to.be.string('Finished module: c (c) (4/4)');
+      expect(out).to.be.string('Finished module: c (c) (3/4)');
+      expect(out).to.be.string('Starting module: d (d) (4/4)');
+      expect(out).to.be.string('Finished module: d (d) (4/4)');
 
+      // Should start 3 independent projects before finishing the first
+      expect(out.indexOf('Finished module: a (a) (1/4)')).to.be.above(out.indexOf('Starting module: c (c) (3/4)'));
 
-      expect(shelljs.test('-L', 'b/node_modules/a')).to.equal(true);
       expect(shelljs.test('-L', 'd/node_modules/a')).to.equal(true);
-      expect(shelljs.test('-L', 'c/node_modules/b')).to.equal(true);
+      expect(shelljs.test('-L', 'd/node_modules/b')).to.equal(true);
+      expect(shelljs.test('-L', 'd/node_modules/c')).to.equal(true);
     });
   });
 
