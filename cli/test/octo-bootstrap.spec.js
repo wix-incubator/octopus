@@ -43,7 +43,8 @@ describe('octo-bootstrap', function () {
       });
   });
 
-  ['yarn', 'npm'].forEach(engine => {
+  //TODO: add yarn to tests. currently can't do this because there is no yarn on travis
+  ['npm'].forEach(engine => {
     it(`should install and link modules via ${engine}`, () => {
       aProject(engine).inDir(ctx => {
         const out = ctx.octo('bootstrap');
