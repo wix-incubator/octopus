@@ -33,7 +33,7 @@ class YarnEngine {
     const links = module.linksNames();
 
     if (links.length > 0) {
-      return `yarn link '${links.map(link => link.split('/').pop()).join('\' \'')}' && yarn install --ignore-engines && yarn link`;
+      return `yarn link '${links.join('\' \'')}' && yarn install --ignore-engines && yarn link`;
     } else {
       return 'yarn install --ignore-engines && yarn link';
     }
