@@ -33,7 +33,8 @@ describe('octo-run', function () {
     });
   });
 
-  ['npm', 'yarn'].forEach(engine => {
+  //TODO: reenable yarn once link for non-published module works again
+  ['npm'].forEach(engine => {
     it(`should run provided command with ${engine}`, () => {
       aProject({engine, scripts}).inDir(ctx => {
         const out = ctx.octo('run -a test');

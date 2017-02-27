@@ -44,7 +44,8 @@ describe('octo-bootstrap', function () {
       });
   });
 
-  ['npm', 'yarn'].forEach(engine => {
+  //TODO: reenable yarn once link for non-published module works again
+  ['npm'].forEach(engine => {
     it(`should install and link modules via ${engine}`, () => {
       aProject({engine}).inDir(ctx => {
         const out = ctx.octo('bootstrap');
