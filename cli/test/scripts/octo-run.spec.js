@@ -116,17 +116,29 @@ describe('octo-run', function () {
     });
   });
 
-  it('should run command with verbose output if -v is provided', () => {
-    aProject({scripts}).inDir(ctx => {
-      const out = ctx.octo('run -v test');
 
-      expect(out).to.be.string('c@1.1.0 test');
-      expect(out).to.be.string('a (a) (1/3)');
-      expect(ctx.readFile('a/tested')).to.equal('a\n');
+  describe('-v verbose', () => {
+    it('should display output from underlying commands', () => {
+      aProject({scripts}).inDir(ctx => {
+        const out = ctx.octo('run -v test');
+
+        expect(out).to.be.string('c@1.1.0 test');
+        expect(out).to.be.string('a (a) (1/3)');
+        expect(ctx.readFile('a/tested')).to.equal('a\n');
+      });
+    });
+
+    it.only('should display output from underlying commands in parallel -p mode', () => {
+      aProject({scripts}).inDir(ctx => {
+        const out = ctx.octo('run -v -p test');
+
+        expect(out).to.be.string('c@1.1.0 test');
+        expect(out).to.be.string('a (a) (1/3)');
+        expect(ctx.readFile('a/tested')).to.equal('a\n');
+      });
     });
   });
-  
-  
+
   it('should run command for all modules if -a is provided', () => {
     aProject({scripts}).markBuilt().inDir(ctx => {
       ctx.exec('sleep 2');

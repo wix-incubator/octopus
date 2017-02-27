@@ -54,11 +54,21 @@ describe('octo-exec', function () {
     });
   });
 
-  it('should run command with verbose output if -v is provided', () => {
-    aProject().inDir(ctx => {
-      const out = ctx.octo('exec -v "cat package.json"');
+  describe('-v verbose', () => {
+    it('should display output from underlying commands', () => {
+      aProject().inDir(ctx => {
+        const out = ctx.octo('exec -v "cat package.json"');
 
-      expect(out).to.be.string('"name": "c",');
+        expect(out).to.be.string('"name": "c",');
+      });
+    });
+
+    it.only('should display output from underlying commands in parallel -p mode', () => {
+      aProject().inDir(ctx => {
+        const out = ctx.octo('exec -v -p "cat package.json"');
+
+        expect(out).to.be.string('"name": "c",');
+      });
     });
   });
   

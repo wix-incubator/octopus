@@ -96,13 +96,25 @@ describe('octo-bootstrap', function () {
     });
   });
 
-  it('should display output from underlying commands if -v is provided', () => {
-    aProject().inDir(ctx => {
-      const out = ctx.octo('bootstrap -v');
+  describe('-v verbose', () => {
+    it('should display output from underlying commands', () => {
+      aProject().inDir(ctx => {
+        const out = ctx.octo('bootstrap -v');
 
-      expect(out).to.be.string('Executing \'octo bootstrap\'');
-      expect(out).to.be.string('a (a) (1/3)');
-      expect(out).to.be.string('npm WARN a@1.0.0 No description');
+        expect(out).to.be.string('Executing \'octo bootstrap\'');
+        expect(out).to.be.string('a (a) (1/3)');
+        expect(out).to.be.string('npm WARN a@1.0.0 No description');
+      });
+    });
+
+    it.only('should display output from underlying commands in parallel -p mode', () => {
+      aProject().inDir(ctx => {
+        const out = ctx.octo('bootstrap -v -p');
+
+        expect(out).to.be.string('Executing \'octo bootstrap\'');
+        expect(out).to.be.string('Starting module: a (a) (1/3)');
+        expect(out).to.be.string('npm WARN a@1.0.0 No description');
+      });
     });
   });
 
