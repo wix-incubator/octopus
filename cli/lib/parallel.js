@@ -1,9 +1,15 @@
-const getMachineCores = require('os').cpus,
-  log = require('./logger')();
+const log = require('./logger')();
+
+// Initial idea was to set max threads to number of machine cores.
+// This turned out to be quite to much. For now using const 4.
+// const defaultMaxThreads = getMachineCores().length;
+// const getMachineCores = require('os').cpus,
+
+const defaultMaxThreads = 4;
 
 const removeFromArray = (array, elem) => array.splice(array.indexOf(elem), 1);
 
-module.exports = (modules, asyncAction, maximumThreads = getMachineCores().length) => {
+module.exports = (modules, asyncAction, maximumThreads = defaultMaxThreads) => {
   const runnableModules = [];
   const notYetRunnableModules = [];
 
