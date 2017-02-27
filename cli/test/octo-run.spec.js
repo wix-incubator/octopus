@@ -27,8 +27,8 @@ describe('octo-run', function () {
     });
   });
 
-  ['yarn', 'npm'].forEach(engine => {
-    it.skip(`should run provided command with ${engine}`, () => {
+  ['npm', 'yarn'].forEach(engine => {
+    it(`should run provided command with ${engine}`, () => {
       aProject(engine).inDir(ctx => {
         const out = ctx.octo('run -a test');
 

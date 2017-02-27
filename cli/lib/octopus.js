@@ -64,7 +64,9 @@ module.exports = opts => {
       }
     };
 
-    pkg.links = () => devSupport.npmLinks(pkg, allPackagesToBuild);
+    pkg.linksFullPath = () => devSupport.npmLinks(pkg, allPackagesToBuild);
+
+    pkg.linksNames = () => Object.keys(pkg.npm.dependencies);
 
     pkg.markUnbuilt = () => devSupport.makePackagesUnbuilt([pkg.fullPath]);
 
