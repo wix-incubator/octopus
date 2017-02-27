@@ -35,7 +35,7 @@ describe('octo-run', function () {
 
   ['npm', 'yarn'].forEach(engine => {
     it(`should run provided command with ${engine}`, () => {
-      aProject(engine).inDir(ctx => {
+      aProject({engine, scripts}).inDir(ctx => {
         const out = ctx.octo('run -a test');
 
         expect(out).to.be.string('Executing \'octo run test\'');

@@ -82,7 +82,7 @@ const handleSync = (engine, modules, cleanScript, opts) => {
         module.exec(cleanScript, opts.verbose);
       }
 
-      const cmd = engine.bootstrap(module.links());
+      const cmd = engine.bootstrap(module);
       log.for(`install/link (${cmd})`, () => {
         module.exec(cmd, opts.verbose);
         if (!opts.noBuild) {
@@ -97,7 +97,7 @@ const handleParallel = (engine, modules, cleanScript, opts) => {
   let i = 0;
 
   const bootstrapModule = module => {
-    const cmd = engine.bootstrap(module.links());
+    const cmd = engine.bootstrap(module);
     log.info(` ${module.npm.name}: Running install/link (${cmd})`);
 
     return module.execAsync(cmd, module.fullPath);

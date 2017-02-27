@@ -46,7 +46,7 @@ describe('octo-bootstrap', function () {
 
   ['npm', 'yarn'].forEach(engine => {
     it(`should install and link modules via ${engine}`, () => {
-      aProject(engine).inDir(ctx => {
+      aProject({engine}).inDir(ctx => {
         const out = ctx.octo('bootstrap');
 
         expect(out).to.be.string('Executing \'octo bootstrap\'');
@@ -62,7 +62,7 @@ describe('octo-bootstrap', function () {
     });
 
     it(`should install and link when module name is different than dir name using ${engine}`, () => {
-      aConfusingProject(engine).inDir(ctx => {
+      aConfusingProject({engine}).inDir(ctx => {
         const out = ctx.octo('bootstrap');
 
         expect(out).to.be.string('Executing \'octo bootstrap\'');
@@ -177,31 +177,5 @@ describe('octo-bootstrap', function () {
     return fixtures.project({engine})
       .module('dir-name', module => module.packageJson({name: 'pkg-name', version: '1.0.0'}))
       .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'pkg-name': '~1.0.0'}}));
-  }
-
-  function aProject(engine) {
-    const scripts = {
-      test: 'echo | pwd | grep -o \'[^/]*$\' > tested',
-      verify: 'echo | pwd | grep -o \'[^/]*$\' > verified'
-    };
-    return fixtures.project({engine})
-      .module('a', module => module.packageJson({version: '1.0.0', scripts}))
-      .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}, scripts}))
-      .module('c', module => module.packageJson({version: '1.1.0', dependencies: {'b': '~1.0.0'}, scripts}));
-  }
-
-  function aComplexProject(engine) {
-    const a = '~1.0.0';
-    const b = '~1.0.0';
-
-    const scripts = {
-      test: 'echo | pwd | grep -o \'[^/]*$\' > tested',
-      verify: 'echo | pwd | grep -o \'[^/]*$\' > verified'
-    };
-    return fixtures.project({engine})
-      .module('a', module => module.packageJson({version: '1.0.0', scripts}))
-      .module('b', module => module.packageJson({version: '1.0.0', dependencies: {a}, scripts}))
-      .module('c', module => module.packageJson({version: '1.1.0', dependencies: {b}, scripts}))
-      .module('d', module => module.packageJson({version: '1.0.0', dependencies: {a}, scripts}))
   }
 });
