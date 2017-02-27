@@ -11,7 +11,7 @@ chai.use(chaiAsPromised);
 
 const expect = chai.expect;
 
-describe.only('parallel', () => {
+describe('parallel', () => {
   it('should call callback in correct module order', () => {
     const action = sinon.stub();
     action.returns(Promise.resolve());

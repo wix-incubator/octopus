@@ -2,7 +2,8 @@
 const log = require('../../lib/logger')(),
   forCommand = require('../../lib/commands').forCommand,
   engines = require('../../lib/engines'),
-  parallel = require('../../lib/parallel');
+  parallel = require('../../lib/parallel'),
+  assert = require('../../lib/asserts');
 
 exports.command = 'bootstrap';
 exports.desc = 'npm install and link all modules';
@@ -32,15 +33,18 @@ exports.builder = yargs => {
     .option('p', {
       alias: 'parallel',
       describe: 'run in parallel',
-      type: 'boolean'
+      type: 'number',
+      default: -1
     });
 };
 
 exports.handler = forCommand('octo bootstrap', (octo, config, opts) => {
+  assert.assertValidParallelOption(opts, log);
+
   const engine = engines(config);
   const forAll = opts.all;
   const clean = opts.clean;
-  const parallel = opts.parallel;
+  const parallel = opts.parallel !== -1;
 
   if (forAll) {
     log.warn('marking modules with changes as unbuilt');
@@ -125,5 +129,5 @@ const handleParallel = (engine, modules, cleanScript, opts) => {
     });
   };
 
-  return parallel(modules, action);
+  return parallel(modules, action, opts.parallel);
 };

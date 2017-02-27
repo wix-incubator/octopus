@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 const log = require('../../lib/logger')(),
   parallel = require('../../lib/parallel'),
-  forCommand = require('../../lib/commands').forCommand;
+  forCommand = require('../../lib/commands').forCommand,
+  assert = require('../../lib/asserts');
 
 exports.command = 'exec';
 exports.desc = 'execute arbitrary bash script for modules with changes';
@@ -27,15 +28,18 @@ exports.builder = yargs => {
     .option('p', {
       alias: 'parallel',
       describe: 'run in parallel',
-      type: 'boolean'
+      type: 'number',
+      default: -1
     })
     .example('octo exec \'echo 1\'');
 };
 
 exports.handler = forCommand(opts => `octo exec '${opts._.slice(1).join()}'`, (octo, config, opts) => {
+  assert.assertValidParallelOption(opts, log);
+
   const forAll = opts.all;
   const cmd = opts._.slice(1).join();
-  const parallel = opts.parallel;
+  const parallel = opts.parallel !== -1;
 
   const modules = octo.modules.filter(module => forAll ? module : module.needsRebuild());
   const count = modules.length;
@@ -87,5 +91,5 @@ const handleParallel = (modules, cmd, opts) => {
     });
   };
 
-  return parallel(modules, action);
+  return parallel(modules, action, opts.parallel);
 };

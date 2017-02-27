@@ -72,27 +72,57 @@ describe('octo-bootstrap', function () {
     });
   });
 
-  it('should install and link a complex project in parallel', () => {
-    aComplexProject().inDir(ctx => {
-      const out = ctx.octo('bootstrap -p');
+  describe('parallel', () => {
+    it('should install and link a complex project in parallel', () => {
+      aComplexProject().inDir(ctx => {
+        const out = ctx.octo('bootstrap -p');
 
-      expect(out).to.be.string('Executing \'octo bootstrap\'');
+        expect(out).to.be.string('Executing \'octo bootstrap\'');
 
-      expect(out).to.be.string('Starting module: a (a) (1/4)');
-      expect(out).to.be.string('Starting module: b (b) (2/4)');
-      expect(out).to.be.string('Starting module: c (c) (3/4)');
-      expect(out).to.be.string('Finished module: a (a) (1/4)');
-      expect(out).to.be.string('Finished module: b (b) (2/4)');
-      expect(out).to.be.string('Finished module: c (c) (3/4)');
-      expect(out).to.be.string('Starting module: d (d) (4/4)');
-      expect(out).to.be.string('Finished module: d (d) (4/4)');
+        expect(out).to.be.string('Starting module: a (a) (1/4)');
+        expect(out).to.be.string('Starting module: b (b) (2/4)');
+        expect(out).to.be.string('Starting module: c (c) (3/4)');
+        expect(out).to.be.string('Finished module: a (a) (1/4)');
+        expect(out).to.be.string('Finished module: b (b) (2/4)');
+        expect(out).to.be.string('Finished module: c (c) (3/4)');
+        expect(out).to.be.string('Starting module: d (d) (4/4)');
+        expect(out).to.be.string('Finished module: d (d) (4/4)');
 
-      // Should start 3 independent projects before finishing the first
-      expect(out.indexOf('Finished module: a (a) (1/4)')).to.be.above(out.indexOf('Starting module: c (c) (3/4)'));
+        // Should start 3 independent modules before finishing any module
+        const firstFinishedModule = out.indexOf('Finished module');
+        const beforeFirstFinished = out.slice(0, firstFinishedModule);
+        expect(beforeFirstFinished).to.be.string('Starting module: a (a) (1/4)');
+        expect(beforeFirstFinished).to.be.string('Starting module: b (b) (2/4)');
+        expect(beforeFirstFinished).to.be.string('Starting module: c (c) (3/4)');
 
-      expect(shelljs.test('-L', 'd/node_modules/a')).to.equal(true);
-      expect(shelljs.test('-L', 'd/node_modules/b')).to.equal(true);
-      expect(shelljs.test('-L', 'd/node_modules/c')).to.equal(true);
+        expect(shelljs.test('-L', 'd/node_modules/a')).to.equal(true);
+        expect(shelljs.test('-L', 'd/node_modules/b')).to.equal(true);
+        expect(shelljs.test('-L', 'd/node_modules/c')).to.equal(true);
+      });
+    });
+
+    it('limit max threads to -p provided param', () =>{
+      aComplexProject().inDir(ctx => {
+        const out = ctx.octo('bootstrap -p 2');
+
+        expect(out).to.be.string('Executing \'octo bootstrap\'');
+
+        expect(out).to.be.string('Starting module: a (a) (1/4)');
+        expect(out).to.be.string('Finished module: a (a) (1/4)');
+        expect(out).to.be.string('Starting module: b (b) (2/4)');
+        expect(out).to.be.string('Finished module: b (b) (2/4)');
+        expect(out).to.be.string('Starting module: c (c) (3/4)');
+        expect(out).to.be.string('Finished module: c (c) (3/4)');
+        expect(out).to.be.string('Finished module: d (d) (4/4)');
+        expect(out).to.be.string('Finished module: d (d) (4/4)');
+
+        // Should only start third module after first or second has finished (due to max. 2)
+        expect(out.indexOf('Starting module: c (c) (3/4)')).to.be.above(out.indexOf('Finished module'));
+
+        expect(shelljs.test('-L', 'd/node_modules/a')).to.equal(true);
+        expect(shelljs.test('-L', 'd/node_modules/b')).to.equal(true);
+        expect(shelljs.test('-L', 'd/node_modules/c')).to.equal(true);
+      });
     });
   });
 

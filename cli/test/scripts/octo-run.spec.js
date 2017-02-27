@@ -1,7 +1,7 @@
 const fixtures = require('./../support/fixtures'),
   expect = require('chai').expect,
   shelljs = require('shelljs'),
-  aProject = require('../test-utils').aProject;
+  {aProject, aComplexProject} = require('../test-utils');
 
 const scripts = {
   test: 'echo | pwd | grep -o \'[^/]*$\' > tested',
@@ -48,24 +48,74 @@ describe('octo-run', function () {
     });
   });
 
-  it('should run in parallel', () => {
-    aProject({scripts}).inDir(ctx => {
-      const out = ctx.octo('run test verify -p');
+  describe('parallel', () => {
+    it('should run in parallel', () => {
+      aComplexProject({scripts}).inDir(ctx => {
+        const out = ctx.octo('run test -p');
 
-      expect(out).to.be.string('Executing \'octo run test verify\'');
+        expect(out).to.be.string('Executing \'octo run test\'');
 
-      expect(out).to.be.string('Starting module: a (a) (1/3)');
-      expect(out).to.be.string('Finished module: a (a) (1/3)');
-      expect(out).to.be.string('Starting module: b (b) (2/3)');
-      expect(out).to.be.string('Finished module: b (b) (2/3)');
-      expect(out).to.be.string('Starting module: c (c) (3/3)');
-      expect(out).to.be.string('Finished module: c (c) (3/3)');
+        expect(out).to.be.string('Starting module: a (a) (1/4)');
+        expect(out).to.be.string('Finished module: a (a) (1/4)');
+        expect(out).to.be.string('Starting module: b (b) (2/4)');
+        expect(out).to.be.string('Finished module: b (b) (2/4)');
+        expect(out).to.be.string('Starting module: c (c) (3/4)');
+        expect(out).to.be.string('Finished module: c (c) (3/4)');
+        expect(out).to.be.string('Finished module: d (d) (4/4)');
+        expect(out).to.be.string('Finished module: d (d) (4/4)');
+
+        // Should start 3 independent modules before finishing any module
+        const firstFinishedModule = out.indexOf('Finished module');
+        const beforeFirstFinished = out.slice(0, firstFinishedModule);
+        expect(beforeFirstFinished).to.be.string('Starting module: a (a) (1/4)');
+        expect(beforeFirstFinished).to.be.string('Starting module: b (b) (2/4)');
+        expect(beforeFirstFinished).to.be.string('Starting module: c (c) (3/4)');
 
 
-      expect(out).to.be.string('a: test');
-      expect(out).to.be.string('a: verify');
-      expect(ctx.readFile('a/tested')).to.equal('a\n');
-      expect(ctx.readFile('a/verified')).to.equal('a\n');
+        expect(out).to.be.string('a: test');
+        expect(ctx.readFile('a/tested')).to.equal('a\n');
+        expect(ctx.readFile('b/tested')).to.equal('b\n');
+        expect(ctx.readFile('c/tested')).to.equal('c\n');
+        expect(ctx.readFile('d/tested')).to.equal('d\n');
+      });
+    });
+
+    it('limit max threads to -p provided param', () =>{
+      aComplexProject({scripts}).inDir(ctx => {
+        const out = ctx.octo('run test -p 2');
+
+        expect(out).to.be.string('Executing \'octo run test\'');
+
+        expect(out).to.be.string('Starting module: a (a) (1/4)');
+        expect(out).to.be.string('Finished module: a (a) (1/4)');
+        expect(out).to.be.string('Starting module: b (b) (2/4)');
+        expect(out).to.be.string('Finished module: b (b) (2/4)');
+        expect(out).to.be.string('Starting module: c (c) (3/4)');
+        expect(out).to.be.string('Finished module: c (c) (3/4)');
+        expect(out).to.be.string('Finished module: d (d) (4/4)');
+        expect(out).to.be.string('Finished module: d (d) (4/4)');
+
+        // Should only start third module after first or second has finished (due to max. 2)
+        expect(out.indexOf('Starting module: c (c) (3/4)')).to.be.above(out.indexOf('Finished module'));
+
+        expect(out).to.be.string('a: test');
+        expect(ctx.readFile('a/tested')).to.equal('a\n');
+        expect(ctx.readFile('b/tested')).to.equal('b\n');
+        expect(ctx.readFile('c/tested')).to.equal('c\n');
+        expect(ctx.readFile('d/tested')).to.equal('d\n');
+      });
+    });
+
+    it('should show error if -p hides single run command', () => {
+      fixtures.project().inDir(ctx => {
+        expect(() => ctx.octo('run -p test')).to.throw('Not enough non-option arguments: got 0, need at least 1');
+      });
+    });
+
+    it('should show error if -p hides one of multiple run commands', () => {
+      fixtures.project().inDir(ctx => {
+        expect(() => ctx.octo('run -p test verify')).to.throw('-p option must be followed by a number, another option or nothing');
+      });
     });
   });
 
@@ -95,8 +145,7 @@ describe('octo-run', function () {
       expect(ctx.octo('run test')).to.be.string('c (c) (3/3)');
     });
   });
-  
-  
+
   it('should run multiple commands', () => {
     aProject({scripts}).inDir(ctx => {
       const out = ctx.octo('run test verify');
@@ -116,7 +165,6 @@ describe('octo-run', function () {
     });
   });
 
-
   describe('-v verbose', () => {
     it('should display output from underlying commands', () => {
       aProject({scripts}).inDir(ctx => {
@@ -130,7 +178,7 @@ describe('octo-run', function () {
 
     it('should display output from underlying commands in parallel -p mode', () => {
       aProject({scripts}).inDir(ctx => {
-        const out = ctx.octo('run -v -p test');
+        const out = ctx.octo('run -p -v test');
 
         expect(out).to.be.string('c@1.1.0 test');
         expect(out).to.be.string('a (a) (1/3)');
