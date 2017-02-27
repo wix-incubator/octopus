@@ -3,7 +3,7 @@ const getMachineCores = require('os').cpus,
 
 const removeFromArray = (array, elem) => array.splice(array.indexOf(elem), 1);
 
-module.exports = (modules, asyncAction) => {
+module.exports = (modules, asyncAction, maximumThreads = getMachineCores().length) => {
   const runnableModules = [];
   const notYetRunnableModules = [];
 
@@ -21,16 +21,15 @@ module.exports = (modules, asyncAction) => {
     }
   });
 
-  const maxConcurrent = getMachineCores().length;
-  let currentConcurrent = 0;
+  let threadCount = 0;
 
   return new Promise((resolve, reject) => {
     const handleModuleAsync = module => {
-      if (currentConcurrent >= maxConcurrent) {
+      if (threadCount >= maximumThreads) {
         return;
       }
 
-      currentConcurrent++;
+      threadCount++;
       removeFromArray(runnableModules, module);
 
       asyncAction(module).then(() => {
@@ -38,7 +37,7 @@ module.exports = (modules, asyncAction) => {
           resolve();
         }
 
-        currentConcurrent--;
+        threadCount--;
         completedModulesNames.push(module.npm.name);
 
         notYetRunnableModules.slice().forEach(waitingModule => {
