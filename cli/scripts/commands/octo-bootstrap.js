@@ -112,8 +112,12 @@ const handleParallel = (engine, modules, cleanScript, opts) => {
       action = bootstrapModule(module);
     }
 
-    return action.then(() => {
-      log.info(`Finished module: ${name}`);
+    return action.then(({stdout, stderr}) => {
+      if (opts.verbose) {
+        log.info(`Finished module: ${name} with stdout: \n${stdout}\n and stderr: \n${stderr}`);
+      } else {
+        log.info(`Finished module: ${name}`);
+      }
 
       if (!opts.noBuild) {
         module.markBuilt();

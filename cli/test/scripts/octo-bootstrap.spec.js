@@ -107,7 +107,7 @@ describe('octo-bootstrap', function () {
       });
     });
 
-    it.only('should display output from underlying commands in parallel -p mode', () => {
+    it('should display output from underlying commands in parallel -p mode', () => {
       aProject().inDir(ctx => {
         const out = ctx.octo('bootstrap -v -p');
 

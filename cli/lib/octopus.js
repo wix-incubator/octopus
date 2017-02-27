@@ -73,7 +73,7 @@ module.exports = opts => {
       return new Promise((resolve, reject) => {
         exec(what, {cwd}, (error, stdout, stderr) => {
           if (error === null) {
-            resolve(stdout);
+            resolve({stdout, stderr});
           } else {
             reject(new Error(`Exit code: ${error.code}, output: ${stdout} ${stderr}`));
           }

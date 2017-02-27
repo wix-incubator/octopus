@@ -128,7 +128,7 @@ describe('octo-run', function () {
       });
     });
 
-    it.only('should display output from underlying commands in parallel -p mode', () => {
+    it('should display output from underlying commands in parallel -p mode', () => {
       aProject({scripts}).inDir(ctx => {
         const out = ctx.octo('run -v -p test');
 

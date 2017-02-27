@@ -90,7 +90,14 @@ const handleParallel = (modules, commands, opts) => {
     commands.forEach(el => {
       action = action.then(() => {
         log.info(` ${module.npm.name}: ${el.name} (${el.cmd})`);
-        return module.execAsync(el.cmd, module.fullPath);
+        let commandAction = module.execAsync(el.cmd, module.fullPath);
+
+        if (opts.verbose) {
+          commandAction = commandAction.then(({stdout, stderr}) =>
+            log.info(`  ${module.npm.name}: ${el.name} finished with stdout: \n${stdout}\n and stderr: \n${stderr}`));
+        }
+
+        return commandAction;
       });
     });
 

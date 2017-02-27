@@ -72,10 +72,14 @@ const handleParallel = (modules, cmd, opts) => {
     log.info(`Starting module: ${name}`);
 
     log.info(` ${module.npm.name}: ${cmd}`);
-    const action = module.execAsync(cmd, module.fullPath);
+    let action = module.execAsync(cmd, module.fullPath);
 
-    return action.then(() => {
-      log.info(`Finished module: ${name}`);
+    return action.then(({stdout, stderr}) => {
+      if (opts.verbose) {
+        log.info(`Finished module: ${name} with stdout: \n${stdout}\n and stderr: \n${stderr}`);
+      } else {
+        log.info(`Finished module: ${name}`);
+      }
 
       if (!opts.noBuild) {
         module.markBuilt();

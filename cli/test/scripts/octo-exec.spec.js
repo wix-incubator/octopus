@@ -63,7 +63,7 @@ describe('octo-exec', function () {
       });
     });
 
-    it.only('should display output from underlying commands in parallel -p mode', () => {
+    it('should display output from underlying commands in parallel -p mode', () => {
       aProject().inDir(ctx => {
         const out = ctx.octo('exec -v -p "cat package.json"');
 
