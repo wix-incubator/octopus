@@ -27,8 +27,7 @@ describe('octo-run', function () {
     });
   });
 
-  //TODO: add yarn to tests. currently can't do this because there is no yarn on travis
-  ['npm'].forEach(engine => {
+  ['npm', 'yarn'].forEach(engine => {
     it(`should run provided command with ${engine}`, () => {
       aProject(engine).inDir(ctx => {
         const out = ctx.octo('run -a test');
