@@ -1,10 +1,14 @@
 language: node_js
 node_js:
- - '6'
- - '7'
+  - '6'
+  - '7'
+cache:
+  directories:
+    - $HOME/.yarn-cache
 script:
- - npm run bootstrap
- - npm run test
+  - npm install -g yarn
+  - npm run bootstrap
+  - npm run test
 deploy:
   skip_cleanup: true
   provider: npm
@@ -15,6 +19,6 @@ deploy:
     branch: master
     node: '7'
 after_deploy:
- - npm run publish-all
+  - npm run publish-all
 
 

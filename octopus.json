@@ -1,4 +1,5 @@
 {
+  "engine": "yarn",
   "exclude": [
     "octopus"
   ],
