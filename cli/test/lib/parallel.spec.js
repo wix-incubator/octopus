@@ -11,7 +11,7 @@ chai.use(chaiAsPromised);
 
 const expect = chai.expect;
 
-describe('parallel', () => {
+describe.only('parallel', () => {
   it('should call callback in correct module order', () => {
     const action = sinon.stub();
     action.returns(Promise.resolve());
@@ -42,8 +42,8 @@ describe('parallel', () => {
       promise = parallel(octo.modules, module => {
         action(module);
         return new Promise(resolve =>
-          setTimeout(resolve, 500));
-      });
+          setTimeout(resolve, 50));
+      }, 8);
 
       expect(action).to.have.callCount(3);
       expect(action.getCall(0)).to.be.calledWith(octo.modules[0]);
@@ -52,6 +52,32 @@ describe('parallel', () => {
 
       promise = promise.then(() => {
         expect(action).to.have.callCount(4);
+        expect(action.getCall(3)).to.be.calledWith(octo.modules[3]);
+      })
+    });
+
+    return promise;
+  });
+
+  it('should not run more than maximum threads allowed', () => {
+    const action = sinon.spy();
+    let promise;
+
+    aComplexProject().inDir(ctx => {
+      const octo = octopus({cwd: ctx.dir});
+      promise = parallel(octo.modules, module => {
+        action(module);
+        return new Promise(resolve =>
+          setTimeout(resolve, 50));
+      }, 2);
+
+      expect(action).to.have.callCount(2);
+      expect(action.getCall(0)).to.be.calledWith(octo.modules[0]);
+      expect(action.getCall(1)).to.be.calledWith(octo.modules[1]);
+
+      promise = promise.then(() => {
+        expect(action).to.have.callCount(4);
+        expect(action.getCall(2)).to.be.calledWith(octo.modules[2]);
         expect(action.getCall(3)).to.be.calledWith(octo.modules[3]);
       })
     });
