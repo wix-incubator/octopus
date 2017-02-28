@@ -14,3 +14,10 @@ module.exports.assertOctopusProject = (cwd, log) => {
     process.exit(1);
   }
 };
+
+module.exports.assertValidParallelOption = (yargs, log) => {
+  if (Number.isNaN(yargs.parallel)) {
+    log.error('-p option must be followed by a number, another option or nothing. found string instead');
+    process.exit(1);
+  }
+};

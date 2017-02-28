@@ -1,5 +1,6 @@
 const devSupport = require('./wnpm-dev'),
   shelljs = require('shelljs'),
+  exec = require('child_process').exec,
   execSync = require('child_process').execSync,
   path = require('path'),
   objects = require('./objects'),
@@ -67,6 +68,20 @@ module.exports = opts => {
     pkg.linksFullPath = () => devSupport.npmLinks(pkg, allPackagesToBuild);
 
     pkg.linksNames = () => Object.keys(pkg.npm.dependencies);
+
+    pkg.links = () => devSupport.npmLinks(pkg, allPackagesToBuild);
+
+    pkg.execAsync = (what, cwd) => {
+      return new Promise((resolve, reject) => {
+        exec(what, {cwd}, (error, stdout, stderr) => {
+          if (error === null) {
+            resolve({stdout, stderr});
+          } else {
+            reject(new Error(`Exit code: ${error.code}, output: ${stdout} ${stderr}`));
+          }
+        });
+      });
+    };
 
     pkg.markUnbuilt = () => devSupport.makePackagesUnbuilt([pkg.fullPath]);
 

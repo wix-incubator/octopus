@@ -23,13 +23,13 @@ exports.makePackagesUnbuilt = function (dirs) {
   dirs.forEach(makePackageUnbuilt);
 };
 
-exports.findChangedPackages = (dir, packages) => inDir(dir, () => packages.filter(p => isPackageChanged(p)))
+exports.findChangedPackages = (dir, packages) => inDir(dir, () => packages.filter(p => isPackageChanged(p)));
 
 
 function createIgnoreFn(ignores) {
-  const patterns = parseGitIgnore.parse(ignores, {})
-  const matchers = patterns.map(pattern => new Minimatch(pattern))
-  return filePath => matchers.some(matcher => matcher.match(filePath))
+  const patterns = parseGitIgnore.parse(ignores, {});
+  const matchers = patterns.map(pattern => new Minimatch(pattern));
+  return filePath => matchers.some(matcher => matcher.match(filePath));
 }
 
 function isPackageChanged(packageObject) {

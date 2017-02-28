@@ -1,5 +1,5 @@
 const expect = require('chai').expect,
-  objects = require('../lib/objects');
+  objects = require('../../lib/objects');
 
 describe('objects', () => {
 

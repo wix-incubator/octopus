@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 const log = require('../../lib/logger')(),
   forCommand = require('../../lib/commands').forCommand,
-  engines = require('../../lib/engines');
+  parallel = require('../../lib/parallel'),
+  engines = require('../../lib/engines'),
+  assert = require('../../lib/asserts');
 
 exports.command = 'run';
 exports.desc = 'runs npm scripts for modules with changes';
@@ -23,15 +25,22 @@ exports.builder = yargs => {
       alias: 'verbose',
       describe: 'verbose output',
       type: 'boolean'
+    })
+    .option('p', {
+      alias: 'parallel',
+      describe: 'run in parallel',
+      type: 'number',
+      default: -1
     });
 };
 
 exports.handler = forCommand(opts => `octo run ${opts._.slice(1).join(' ')}`, (octo, config, opts) => {
+  assert.assertValidParallelOption(opts, log);
+
   const engine = engines(config);
   const forAll = opts.all;
-  const noBuild = opts.noBuild;
-  const verbose = opts.verbose;
   const scripts = opts._.slice(1);
+  const parallel = opts.parallel !== -1;
 
   if (forAll) {
     log.warn('marking modules with changes as unbuilt');
@@ -41,26 +50,69 @@ exports.handler = forCommand(opts => `octo run ${opts._.slice(1).join(' ')}`, (o
   const modules = octo.modules.filter(module => forAll === true ? module : module.needsRebuild());
   //TODO: so would continue after failure. Test this.
   modules.forEach(module => module.markUnbuilt());
-  const count = modules.length;
 
-  if (count === 0) {
+  if (modules.length === 0) {
     log.warn(forAll ? 'no modules found' : 'no modules with changes found');
-  } else {
-    modules.forEach((module, i) => module.inDir(() => {
-      log.for(`${module.npm.name} (${module.relativePath}) (${i + 1}/${count})`, () => {
-        const effectiveCommands = scripts.map(script => {
-          return { name: script, cmd: engine.run(script)}
-        });
+    return;
+  }
 
-        effectiveCommands.forEach(el => {
-          log.for(` ${el.name} (${el.cmd})`, () => {
-            module.exec(el.cmd, verbose);
-          });
-        });
-        if (!noBuild) {
-          module.markBuilt();
-        }
-      });
-    }));
+  const commands = scripts.map(script => {
+    return { name: script, cmd: engine.run(script)}
+  });
+
+  if (parallel) {
+    handleParallel(modules, commands, opts).catch(() => process.exit(1));
+  } else {
+    handleSync(modules, commands, opts);
   }
 });
+
+const handleSync = (modules, commands, opts) => {
+  modules.forEach((module, i) => module.inDir(() => {
+    log.for(`${module.npm.name} (${module.relativePath}) (${i + 1}/${modules.length})`, () => {
+      commands.forEach(el => {
+        log.for(` ${el.name} (${el.cmd})`, () => {
+          module.exec(el.cmd, opts.verbose);
+        });
+      });
+      if (!opts.noBuild) {
+        module.markBuilt();
+      }
+    });
+  }));
+};
+
+const handleParallel = (modules, commands, opts) => {
+  let i = 0;
+
+  const action = module => {
+    const name = `${module.npm.name} (${module.relativePath}) (${++i}/${modules.length})`;
+    log.info(`Starting module: ${name}`);
+
+    let action = Promise.resolve();
+
+    commands.forEach(el => {
+      action = action.then(() => {
+        log.info(` ${module.npm.name}: ${el.name} (${el.cmd})`);
+        let commandAction = module.execAsync(el.cmd, module.fullPath);
+
+        if (opts.verbose) {
+          commandAction = commandAction.then(({stdout, stderr}) =>
+            log.info(`  ${module.npm.name}: ${el.name} finished with stdout: \n${stdout}\n and stderr: \n${stderr}`));
+        }
+
+        return commandAction;
+      });
+    });
+
+    return action.then(() => {
+      log.info(`Finished module: ${name}`);
+
+      if (!opts.noBuild) {
+        module.markBuilt();
+      }
+    });
+  };
+
+  return parallel(modules, action, opts.parallel);
+};
