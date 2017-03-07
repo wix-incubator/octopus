@@ -5,7 +5,7 @@ An opinionated tool for building, managing and releasing a multi-module npm proj
 # install
 
 ```bash
-npm insall -g octopus-cli
+npm install -g octopus-cli
 ```
 
 # About
@@ -118,7 +118,7 @@ Manage dependencies across all modules. Common scenario is:
  - `octo deps latest` - to get a list of dependencies, that are defined in `octopus.json` and have newer version in registry.
  - update dependenciy versions in `octopus.json`;
  - `octo deps sync --save` - to update `package.json` for modules that need updating as per definitions in `octopus.json`;
- - `octo run bootstrap -n && octo run test` - to insall updated dependencies and run tests to verify if nothing broke.
+ - `octo run bootstrap -n && octo run test` - to intsall updated dependencies and run tests to verify if nothing broke.
 
 To check available options run `octo help deps`;
 
