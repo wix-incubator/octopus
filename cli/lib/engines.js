@@ -11,12 +11,12 @@ class NpmEngine {
   }
   
   bootstrap(module) {
-    const links = module.linksFullPath();
+    const links = module.linksNames();
 
     if (links.length > 0) {
-      return `npm link '${links.join('\' \'')}' && npm install`;
+      return `npm link '${links.join('\' \'')}' && npm install --cache-min 3600 && npm link`;
     } else {
-      return 'npm install';
+      return 'npm install && npm link';
     }
   }
   

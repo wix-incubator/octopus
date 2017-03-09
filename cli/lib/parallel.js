@@ -12,6 +12,7 @@ const removeFromArray = (array, elem) => array.splice(array.indexOf(elem), 1);
 module.exports = (modules, asyncAction, maximumThreads = defaultMaxThreads) => {
   const runnableModules = [];
   const notYetRunnableModules = [];
+  const runningModules = [];
 
   const allModulesNames = modules.map(module => module.npm.name);
   const completedModulesNames = [];
@@ -35,11 +36,18 @@ module.exports = (modules, asyncAction, maximumThreads = defaultMaxThreads) => {
         return;
       }
 
+      if (!canRun(module, completedModulesNames)) {
+        return;
+      }
+
       threadCount++;
       removeFromArray(runnableModules, module);
+      runningModules.push(module);
+
 
       asyncAction(module).then(() => {
-        if(notYetRunnableModules.length === 0) {
+        removeFromArray(runningModules, module);
+        if(notYetRunnableModules.length === 0 && runnableModules.length === 0) {
           resolve();
         }
 
@@ -66,3 +74,13 @@ module.exports = (modules, asyncAction, maximumThreads = defaultMaxThreads) => {
     runnableModules.slice().forEach(handleModuleAsync);
   });
 };
+
+function canRun(module, completedModuleNames) {
+  const relevantDeps = Object.keys(module.npm.dependencies).filter(dep => !completedModuleNames.includes(dep));
+  if (relevantDeps.length === 0) {
+    return true;
+  } else {
+    return false
+  }
+
+}
