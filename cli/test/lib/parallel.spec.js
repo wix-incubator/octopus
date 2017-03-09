@@ -1,15 +1,8 @@
-const chai = require('chai'),
+const expect = require('chai').use(require('sinon-chai')).use(require('chai-as-promised')).expect,
   sinon = require('sinon'),
-  sinonChai = require('sinon-chai'),
   parallel = require('../../lib/parallel'),
   octopus = require('../../lib/octopus'),
-  chaiAsPromised = require('chai-as-promised'),
-  aComplexProject = require('../test-utils').aComplexProject;
-
-chai.use(sinonChai);
-chai.use(chaiAsPromised);
-
-const expect = chai.expect;
+  {aComplexProject, aProject} = require('../test-utils');
 
 describe('parallel', () => {
   it('should call callback in correct module order', () => {
@@ -33,6 +26,35 @@ describe('parallel', () => {
     return promise;
   });
 
+  it('should not run module until its liabilities have completed', () => {
+    const actionStarts = [];
+    const actionFinishes = [];
+    let promise;
+
+    aProject().inDir(ctx => {
+      const octo = octopus({cwd: ctx.dir});
+      promise = parallel(octo.modules, module => {
+        const spy = sinon.spy();
+        actionStarts.push(spy);
+        spy(module);
+        return new Promise(resolve =>
+          setTimeout(() => {
+            const spy = sinon.spy();
+            actionFinishes.push(spy);
+            spy(module);
+            resolve();
+          }, 50));
+      }, 8);
+
+      promise = promise.then(() => {
+        expect(actionFinishes[0]).to.have.been.calledBefore(actionStarts[1]);
+        expect(actionFinishes[1]).to.have.been.calledBefore(actionStarts[2]);
+      })
+    });
+
+    return promise;
+  });
+
   it('should run all independent projects before any has finished', () => {
     const action = sinon.spy();
     let promise;
@@ -41,8 +63,7 @@ describe('parallel', () => {
       const octo = octopus({cwd: ctx.dir});
       promise = parallel(octo.modules, module => {
         action(module);
-        return new Promise(resolve =>
-          setTimeout(resolve, 50));
+        return new Promise(resolve => setTimeout(resolve, 50));
       }, 8);
 
       expect(action).to.have.callCount(3);
@@ -67,8 +88,7 @@ describe('parallel', () => {
       const octo = octopus({cwd: ctx.dir});
       promise = parallel(octo.modules, module => {
         action(module);
-        return new Promise(resolve =>
-          setTimeout(resolve, 50));
+        return new Promise(resolve => setTimeout(resolve, 50));
       }, 2);
 
       expect(action).to.have.callCount(2);
@@ -92,8 +112,7 @@ describe('parallel', () => {
     aComplexProject().inDir(ctx => {
       const octo = octopus({cwd: ctx.dir});
       promise = parallel(octo.modules, () =>
-        new Promise((resolve, reject) =>
-          reject(error))
+        new Promise((resolve, reject) => reject(error))
       );
     });
 
