@@ -130,7 +130,8 @@ module.exports = opts => {
       const res = fn();
       process.chdir(actualcwd);
       return res;
-    }
+    },
+    cwd: opts.cwd
 
   }
 };
