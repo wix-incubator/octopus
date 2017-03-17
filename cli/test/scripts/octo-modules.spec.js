@@ -151,6 +151,25 @@ describe('octo-modules', function () {
       });
     });
 
+    it('should support --strict flag', () => {
+      const project = fixtures.project()
+        .module('a', module => module.packageJson({version: '2.0.0'}))
+        .module('b', module => module.packageJson({version: '1.0.1', dependencies: {'a': '~1.0.0'}}))
+        .module('c', module => module.packageJson({version: '1.1.0', dependencies: {'b': '1.0.1'}}))
+        .markBuilt().gitCommit();
+
+      project.inDir(ctx => {
+        const out = ctx.octo('modules sync --save --strict');
+
+        expect(out).to.be.string('b (b) (1/1)');
+        expect(out).to.be.string('a: ~1.0.0 -> 2.0.0');
+
+        expect(ctx.exec('git diff --stat')).to.be.string('1 file changed, 1 insertion(+), 1 deletion(-)');
+        expect(ctx.readJsonFile('b/package.json')).to.contain.deep.property('dependencies.a', '2.0.0');
+      });
+    });
+
+
     it('should display changes and update package.jsons given --save is provided', () => {
       const project = fixtures.project()
         .module('a', module => module.packageJson({version: '2.0.0'}))

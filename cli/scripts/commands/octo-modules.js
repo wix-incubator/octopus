@@ -13,11 +13,15 @@ exports.builder = yargs => {
     .command('unbuild', 'mark all modules as unbuilt', yargs => yargs, unbuildHander())
     .command('where', 'show where module is used', yargs => yargs.demand(1), showWhereHandler())
     .command('sync', 'sync module versions', yargs => {
-      return yargs.option('s', {
-        alias: 'save',
-        describe: 'persist actions',
-        type: 'boolean'
-      })
+      return yargs
+        .option('save', {
+          describe: 'persist actions',
+          type: 'boolean'
+        })
+        .option('strict', {
+          describe: 'persist actions',
+          type: 'boolean'
+        })
 
     }, syncHander())
     .demand(1);
@@ -27,14 +31,14 @@ function showWhereHandler() {
   return forCommand('octo modules where', (octo, config, opts) => {
     const modules = octo.modules;
     const moduleToFind = opts._.slice(2)[0];
-    
+
     if (!modules.find(el => el.npm.name === moduleToFind)) {
       log.warn(`module '${moduleToFind}' not found`);
       process.exit(1);
     }
-    
+
     const dependees = modules.filter(module => module.npm.dependencies[moduleToFind]);
-    
+
     if (dependees.length === 0) {
       log.warn(`module '${moduleToFind}' is not used in other modules`);
     } else {
@@ -78,8 +82,9 @@ function unbuildHander() {
 function syncHander() {
   return forCommand('octo modules sync', (octo, config, opts) => {
     const save = opts.save;
+    const strict = opts.strict;
     const modules = octo.modules;
-    const depsAndVersions = getModulesAndVersions(modules);
+    const depsAndVersions = getModulesAndVersions(modules, strict);
     const res = modules.map(module => {
       const diff = module.merge({
         dependencies: depsAndVersions,
@@ -109,7 +114,7 @@ function syncHander() {
           });
         });
       });
-      
+
       if (!save) {
         log.warn('Un-synced module versions found, run "octo modules sync --save" to sync module versions.');
         process.exit(1);
@@ -132,9 +137,10 @@ function handleCommand(modules, forEachFn, nothingMsg, maybeMsgFn) {
   }
 }
 //TODO: strip semver or compare with semver
-function getModulesAndVersions(modules) {
+function getModulesAndVersions(modules, strict) {
+  const prefix = strict ? '' : '~';
   return modules.reduce((prev, curr) => {
-    prev[curr.npm.name] = `~${curr.npm.version}`;
+    prev[curr.npm.name] = `${prefix}${curr.npm.version}`;
     return prev;
   }, {});
 }
