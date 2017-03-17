@@ -52,7 +52,6 @@ exports.handler = forCommand(opts => `octo run-script '${opts._.slice(1).join()}
   }
 
 
-
   if (parallel) {
     handleParallel(modules, cmd, opts).catch(() => process.exit(1));
   } else {
