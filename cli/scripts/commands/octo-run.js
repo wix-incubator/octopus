@@ -98,11 +98,16 @@ const handleParallel = (modules, commands, opts) => {
     commands.forEach(el => {
       action = action.then(() => {
         log.info(` ${module.npm.name}: ${el.name} (${el.cmd})`);
-        let commandAction = module.execAsync(el.cmd, module.fullPath);
+        let commandAction = Promise.resolve;
+        if (module.packageJson.scripts && module.packageJson.scripts[el.name]) {
+          commandAction = module.execAsync(el.cmd, module.fullPath);
 
-        if (opts.verbose) {
-          commandAction = commandAction.then(({stdout, stderr}) =>
-            log.info(`  ${module.npm.name}: ${el.name} finished with stdout: \n${stdout}\n and stderr: \n${stderr}`));
+          if (opts.verbose) {
+            commandAction = commandAction.then(({stdout, stderr}) =>
+              log.info(`  ${module.npm.name}: ${el.name} finished with stdout: \n${stdout}\n and stderr: \n${stderr}`));
+          }
+        } else {
+          log.info(`No script ${el.name} present in package.json. Skipping`);
         }
 
         return commandAction;
