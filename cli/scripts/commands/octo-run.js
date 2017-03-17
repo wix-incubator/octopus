@@ -71,9 +71,13 @@ const handleSync = (modules, commands, opts) => {
   modules.forEach((module, i) => module.inDir(() => {
     log.for(`${module.npm.name} (${module.relativePath}) (${i + 1}/${modules.length})`, () => {
       commands.forEach(el => {
-        log.for(` ${el.name} (${el.cmd})`, () => {
-          module.exec(el.cmd, opts.verbose);
-        });
+        if (module.packageJson.scripts && module.packageJson.scripts[el.name]) {
+          log.for(` ${el.name} (${el.cmd})`, () => {
+            module.exec(el.cmd, opts.verbose);
+          });
+        } else {
+          log.info(`No script ${el.name} present in package.json. Skipping`);
+        }
       });
       if (!opts.noBuild) {
         module.markBuilt();
