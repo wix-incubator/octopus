@@ -33,6 +33,22 @@ describe('octo-run', function () {
     });
   });
 
+  it('should skip if npm script is missing', () => {
+    return fixtures.project()
+      .module('a', module => module.packageJson({version: '1.0.0', scripts}))
+      .module('b', module => module.packageJson({version: '1.0.1', dependencies: {'a': '~1.0.0', scripts: {}}}))
+      .inDir(ctx => {
+        const out = ctx.octo('run -a verify');
+
+        expect(out).to.be.string('Executing \'octo run verify\'');
+        expect(out).to.be.string('npm run verify');
+
+        expect(shelljs.test('-f', 'b/verified')).to.equal(false);
+        expect(ctx.readFile('a/verified')).to.equal('a\n');
+      });
+  });
+
+
   //TODO: reenable yarn once link for non-published module works again
   ['npm'].forEach(engine => {
     it(`should run provided command with ${engine}`, () => {
@@ -81,7 +97,7 @@ describe('octo-run', function () {
       });
     });
 
-    it('limit max threads to -p provided param', () =>{
+    it('limit max threads to -p provided param', () => {
       aComplexProject({scripts}).inDir(ctx => {
         const out = ctx.octo('run test -p 2');
 
@@ -192,7 +208,7 @@ describe('octo-run', function () {
     aProject({scripts}).markBuilt().inDir(ctx => {
       ctx.exec('sleep 2');
       expect(ctx.octo('run -n test')).to.be.string('no modules with changes');
-      
+
       const out = ctx.octo('run -a test');
 
       expect(out).to.be.string('marking modules with changes as unbuilt');

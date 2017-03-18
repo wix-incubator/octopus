@@ -71,9 +71,13 @@ const handleSync = (modules, commands, opts) => {
   modules.forEach((module, i) => module.inDir(() => {
     log.for(`${module.npm.name} (${module.relativePath}) (${i + 1}/${modules.length})`, () => {
       commands.forEach(el => {
-        log.for(` ${el.name} (${el.cmd})`, () => {
-          module.exec(el.cmd, opts.verbose);
-        });
+        if (module.packageJson.scripts && module.packageJson.scripts[el.name]) {
+          log.for(` ${el.name} (${el.cmd})`, () => {
+            module.exec(el.cmd, opts.verbose);
+          });
+        } else {
+          log.info(`No script ${el.name} present in package.json. Skipping`);
+        }
       });
       if (!opts.noBuild) {
         module.markBuilt();
@@ -94,11 +98,16 @@ const handleParallel = (modules, commands, opts) => {
     commands.forEach(el => {
       action = action.then(() => {
         log.info(` ${module.npm.name}: ${el.name} (${el.cmd})`);
-        let commandAction = module.execAsync(el.cmd, module.fullPath);
+        let commandAction = Promise.resolve;
+        if (module.packageJson.scripts && module.packageJson.scripts[el.name]) {
+          commandAction = module.execAsync(el.cmd, module.fullPath);
 
-        if (opts.verbose) {
-          commandAction = commandAction.then(({stdout, stderr}) =>
-            log.info(`  ${module.npm.name}: ${el.name} finished with stdout: \n${stdout}\n and stderr: \n${stderr}`));
+          if (opts.verbose) {
+            commandAction = commandAction.then(({stdout, stderr}) =>
+              log.info(`  ${module.npm.name}: ${el.name} finished with stdout: \n${stdout}\n and stderr: \n${stderr}`));
+          }
+        } else {
+          log.info(`No script ${el.name} present in package.json. Skipping`);
         }
 
         return commandAction;
