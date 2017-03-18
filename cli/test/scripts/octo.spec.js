@@ -24,10 +24,15 @@ describe('octo', function() {
 
   it('should display help if non-existent command is provided', () => {
     empty().inDir(ctx =>
-      expect(() => ctx.octo('bubu')).to.throw('Did you mean')
+      expect(() => ctx.octo('qweqweqwe')).to.throw('Unknown argument')
     );
   });
 
+  it('should display help if non-existent command is provided', () => {
+    empty().inDir(ctx =>
+      expect(() => ctx.octo('qwe')).to.throw('Did you mean')
+    );
+  });
 
   it('should print version from package.json', () => {
     empty().inDir(ctx => {
