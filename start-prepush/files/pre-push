@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo 'Syncing project (npm start sync):'
+npm start sync
+
+if [[ -n $(git status --porcelain) ]]; 
+	then 
+	echo "octo deps/modules found things to update - review them, push and commit.";
+	exit 1;
+fi
