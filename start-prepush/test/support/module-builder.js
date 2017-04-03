@@ -25,16 +25,18 @@ class ModuleBuilder {
 
   inDir(fn) {
     process.chdir(this.dir);
-    fn(this);
+
+    try {
+      fn(this);
+    } finally {
+      process.chdir(this.cwd);
+    }
 
     return this;
   }
 
   gitCommit() {
-    inDir(ctx => {
-      ctx.exec('git add -A && git commit -am ok');
-    }, this, true);
-    return this;
+    return this.inDir(() => this.exec('git add -A && git commit -am ok'));
   }
 
   packageJson(overrides) {
