@@ -15,7 +15,7 @@ describe('pre-push hook it', function () {
       .inDir(ctx => {
         ctx.exec('git init && git config user.email mail@example.org && git config user.name name');
         ctx.exec('cp -R ../../node_modules .');
-        ctx.exec(`npm link ../../`);
+        ctx.exec('npm link ../../');
         ctx.exec('git add -A && git commit -am ok');
         ctx.exec(`git remote add origin ${remoteGitRepo.dir}`);
       });
