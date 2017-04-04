@@ -3,8 +3,8 @@
 echo 'Syncing project (npm start sync):'
 npm start sync
 
-if [[ -n $(git status --porcelain) ]]; 
-	then 
+if [[ -n $(git status --porcelain) ]];
+	then
 	echo "sync changed smth in your repo - review, push and commit.";
 	exit 1;
 fi

@@ -1,16 +1,12 @@
 const {empty} = require('./support/fixtures'),
-  {expect} = require('chai'),
-  {removeSync} = require('fs-extra');
+  {expect} = require('chai');
 
 describe('pre-push hook it', function () {
   this.timeout(20000);
 
-  afterEach(() => removeSync('./target'));
-
   it('should add a pre-push hook 2', () => {
-    const remoteGitRepoFolder = empty()
-      .inDir(ctx => ctx.exec('git --bare init'))
-      .dir;
+    const remoteGitRepo = empty()
+      .inDir(ctx => ctx.exec('git --bare init'));
 
     const project = empty()
       .packageJson({name: 'a', scripts: {start: 'start-runner'}})
@@ -21,7 +17,7 @@ describe('pre-push hook it', function () {
         ctx.exec('cp -R ../../node_modules .');
         ctx.exec(`npm link ../../`);
         ctx.exec('git add -A && git commit -am ok');
-        ctx.exec(`git remote add origin ${remoteGitRepoFolder}`);
+        ctx.exec(`git remote add origin ${remoteGitRepo.dir}`);
       });
 
     return project.within(ctx => {

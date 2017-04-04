@@ -21,12 +21,12 @@ module.exports.init = () => start(prepush);
 module.exports.sync = () => start(() => console.log('synced'));
 ```
 
-Add `start-simple-cli` task to `package.json` scripts:  
+Add `start-simple-cli` task to `package.json` scripts:
 ```json
 {
   "scripts": {
     "start": "start-runner"
-  }  
+  }
 }
 ```
 
