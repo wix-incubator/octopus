@@ -1,6 +1,7 @@
 const path = require('path'),
-  shelljs = require('shelljs'),
-  fs = require('fs'),
+  {ensureDirSync, removeSync} = require('fs-extra'),
+  {readFileSync, writeFileSync} = require('fs'),
+  {execSync} = require('child_process'),
   Promise = require('bluebird');
 
 class ModuleBuilder {
@@ -35,10 +36,6 @@ class ModuleBuilder {
     return this;
   }
 
-  gitCommit() {
-    return this.inDir(() => this.exec('git add -A && git commit -am ok'));
-  }
-
   packageJson(overrides) {
     return this.addFile('package.json', aPackageJson(this._dir.split('/').pop(), overrides));
   }
@@ -47,16 +44,16 @@ class ModuleBuilder {
     this.addFolder(path.dirname(name));
 
     if (payload && typeof payload !== 'string') {
-      fs.writeFileSync(path.join(this._dir, name), JSON.stringify(payload, null, 2));
+      writeFileSync(path.join(this._dir, name), JSON.stringify(payload, null, 2));
     } else {
-      fs.writeFileSync(path.join(this._dir, name), payload || '');
+      writeFileSync(path.join(this._dir, name), payload || '');
     }
 
     return this;
   }
 
   addFolder(name) {
-    shelljs.mkdir('-p', path.resolve(this._dir, name));
+    ensureDirSync(path.resolve(this._dir, name));
     return this;
   }
 
@@ -72,17 +69,15 @@ class ModuleBuilder {
   }
 
   exec(cmd) {
-    const res = shelljs.exec(cmd);
-
-    if (res.code) {
-      throw new Error(`Script exited with error code: ${res.code} and output ${res.stdout} + ${res.stderr}`);
-    } else {
-      return res.stdout + res.stderr;
+    try {
+      return execSync(cmd).toString();
+    } catch (e) {
+      throw new Error(`Script exited with error code: ${e.status} and output ${e.stdout} + ${e.stderr}`);
     }
   }
 
   readFile(path) {
-    return shelljs.cat(path).stdout;
+    return readFileSync(path).toString();
   }
 
   readJsonFile(path) {
@@ -92,7 +87,7 @@ class ModuleBuilder {
   within(fn) {
   const clean = () => {
     process.chdir(this.cwd);
-    shelljs.rm('-rf', module.dir);
+    removeSync(this.dir);
   };
 
   process.chdir(this.dir);

@@ -1,10 +1,11 @@
 const {empty} = require('./support/fixtures'),
   {expect} = require('chai'),
-  shelljs = require('shelljs');
+  {removeSync} = require('fs-extra');
 
 describe('pre-push hook it', function () {
-  this.timeout(10000);
-  afterEach(() => shelljs.rm('-rf', './target'));
+  this.timeout(20000);
+
+  afterEach(() => removeSync('./target'));
 
   it('should add a pre-push hook 2', () => {
     const remoteGitRepoFolder = empty()
