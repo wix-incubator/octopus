@@ -1,10 +1,10 @@
 {
-  "name": "octopus-start-prepush",
+  "name": "octopus-test-utils",
   "version": "0.0.1",
-  "description": "task for start that adds prepush git hooks",
+  "description": "test utils for octopus modules",
   "author": "Vilius Lukosius",
   "license": "ISC",
-  "homepage": "https://github.com/wix/octopus/start-prepush",
+  "homepage": "https://github.com/wix/octopus/test-utils",
   "main": "index.js",
   "scripts": {
     "build": ":",
@@ -24,19 +24,18 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "fs-extra": "^2.1.2"
+    "fs-extra": "^2.1.2",
+    "bluebird": "^3.5.0",
+    "shelljs": "~0.7.5"
+  },
+  "peerDependencies": {
+    "mocha": ">=3.0.0"
   },
   "devDependencies": {
-    "shelljs": "~0.7.5",
-    "bluebird": "^3.5.0",
+    "mocha": "~3.2.0",
     "chai": "~3.5.0",
     "eslint": "~3.12.2",
     "eslint-plugin-mocha": "~4.8.0",
-    "mocha": "~3.2.0",
-    "npm-version-up": "~0.0.4",
-    "sinon": "~2.1.0",
-    "sinon-chai": "~2.9.0",
-    "start": "~5.1.0",
-    "start-simple-cli": "~4.1.1"
+    "npm-version-up": "~0.0.4"
   }
 }
