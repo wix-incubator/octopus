@@ -24,12 +24,10 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "fs-extra": "^2.1.2",
-    "shelljs": "~0.7.5"
+    "fs-extra": "^2.1.2"
   },
   "devDependencies": {
-    "shelljs": "~0.7.5",
-    "bluebird": "^3.5.0",
+    "octopus-test-utils": "~0.0.1",
     "chai": "~3.5.0",
     "eslint": "~3.12.2",
     "eslint-plugin-mocha": "~4.8.0",

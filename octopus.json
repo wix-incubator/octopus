@@ -1,5 +1,5 @@
 {
-  "engine": "yarn",
+  "engine": "npm",
   "exclude": [
     "octopus"
   ],

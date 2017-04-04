@@ -1,4 +1,4 @@
-const {empty} = require('./support/fixtures'),
+const {empty} = require('octopus-test-utils'),
   {expect} = require('chai').use(require('sinon-chai')),
   prePush = require('..'),
   {readFileSync} = require('fs'),
