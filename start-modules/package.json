@@ -24,7 +24,11 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "fs-extra": "^2.1.2"
+    "bluebird": "^3.5.0",
+    "deep-keys": "^0.4.0",
+    "fs-extra": "^2.1.2",
+    "lodash": "^4.17.4",
+    "start-input-connector": "^0.2.0"
   },
   "devDependencies": {
     "octopus-modules": "~0.0.1",
@@ -36,7 +40,6 @@
     "npm-version-up": "~0.0.4",
     "sinon": "~2.1.0",
     "sinon-chai": "~2.9.0",
-    "start": "~5.1.0",
-    "start-simple-cli": "~4.1.1"
+    "start": "~5.1.0"
   }
 }
