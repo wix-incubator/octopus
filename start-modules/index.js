@@ -14,7 +14,7 @@ function whereModuleTask(start) {
     modules => log => {
       return Promise.resolve().then(() => modules.forEach(module => {
         const dep = module.dependencies.find(dep => dep.name === moduleName);
-        dep && log(`${module.name}`);
+        dep && log(`${module.name} (${module.relativePath}) (${module.version})`);
       }));
     }
   )

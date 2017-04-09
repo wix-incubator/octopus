@@ -14,7 +14,7 @@ describe('modules tasks', () => {
 
         return sync(start)().then(() => {
           expect(fs.readJson('b/package.json')).to.contain.deep.property('dependencies.a', "~2.0.0");
-          expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', sinon.match('dependencies.a: ~1.0.0 -> ~2.0.0'));
+          expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'dependencies.a: ~1.0.0 -> ~2.0.0');
         });
       });
     });
@@ -27,8 +27,8 @@ describe('modules tasks', () => {
 
       return project.within(() => {
         return list(start)().then(() => {
-          expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', sinon.match('a (nested/a) (1/2)'));
-          expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', sinon.match('b (b) (2/2)'));
+          expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'a (nested/a) (1/2)');
+          expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'b (b) (2/2)');
         });
       });
     });
@@ -41,7 +41,7 @@ describe('modules tasks', () => {
 
       return project.within(() => {
         return where(start)('a').then(() => {
-          expect(reporter).to.have.been.calledWith(sinon.match.any, sinon.match.any, sinon.match('b'));
+          expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'b (b) (1.0.0)');
         });
       });
     });

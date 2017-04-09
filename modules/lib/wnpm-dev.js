@@ -125,7 +125,9 @@ function npmLinks(packageToBuild, allPackages) {
   return Object.keys(packageToBuild.npm.dependencies).map(name => {
     return {
       name,
-      path: allPackagesByName[name].fullPath
+      version: allPackagesByName[name].npm.version,
+      path: allPackagesByName[name].fullPath,
+      relativePath: allPackagesByName[name].relativePath
     }
   });
 }
