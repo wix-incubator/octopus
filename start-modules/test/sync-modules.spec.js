@@ -12,7 +12,7 @@ describe('modules tasks', () => {
       const {reporter, project, start} = setup();
       return project.within(() => {
 
-        return sync(start)().then(() => {
+        return start(sync()).then(() => {
           expect(fs.readJson('b/package.json')).to.contain.deep.property('dependencies.a', "~2.0.0");
           expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'dependencies.a: ~1.0.0 -> ~2.0.0');
         });
@@ -26,7 +26,7 @@ describe('modules tasks', () => {
       const {reporter, project, start} = setup();
 
       return project.within(() => {
-        return list(start)().then(() => {
+        return start(list()).then(() => {
           expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'a (nested/a) (1/2)');
           expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'b (b) (2/2)');
         });
@@ -40,7 +40,7 @@ describe('modules tasks', () => {
       const {reporter, project, start} = setup();
 
       return project.within(() => {
-        return where(start)('a').then(() => {
+        return start(where('a')).then(() => {
           expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'b (b) (1.0.0)');
         });
       });
