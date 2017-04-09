@@ -27,7 +27,7 @@
     "bluebird": "^3.5.0",
     "deep-keys": "^0.4.0",
     "fs-extra": "^2.1.2",
-    "lodash": "^4.17.4",
+    "lodash": "~4.17.4",
     "start-input-connector": "^0.2.0"
   },
   "devDependencies": {

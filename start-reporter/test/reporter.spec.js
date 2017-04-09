@@ -30,7 +30,7 @@ describe('reporter', () => {
     const out = mockConsole();
     reporter(out)('fnName', 'reject', new Error('qwe'));
 
-    expect(out.log).to.have.been.calledWith(sinon.match('[fnName]: failed with Error: qwe'));
+    expect(out.error).to.have.been.calledWith(sinon.match('[fnName]: failed with Error: qwe'));
   });
 
   function mockConsole() {
