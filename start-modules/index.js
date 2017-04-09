@@ -1,73 +1,56 @@
-const modulesTask = require('./lib/modules-task'),
+const loadModules = require('./lib/modules-task'),
   {readJson, mergeJson, writeJson} = require('./lib/modules-each-tasks'),
-  forEachTask = require('./lib/foreach-task'),
+  forEach = require('./lib/foreach-task'),
   {props} = require('./lib/tasks'),
-  inputConnector = require('start-input-connector').default,
   _ = require('lodash');
 
-// function bootstrapTask() {
-//   return () => start(
-//     modulesTask(),
-//     forEachTask(opts => opts.modules)((module, index, count, opts) => start(
-//       inputConnector(module),
-//       exec(module => `npm link ${module.dependencies.map(dep => path).join(' ')}`),
-//       exec(module => 'npm install --cache-min=3600 && npm link')
-//       )
-//     )
-//   )
-// }
-//
-// function testTask() {
-//   return () => start(
-//     modulesTask(),
-//     forEachTask(opts => opts.modules)((module, index, count, opts) => start(
-//       inputConnector(module),
-//       exec(module => `npm run test`)
-//       )
-//     )
-//   )
-// }
-//
+function listModulesTask(start) {
+  return () => start(loadModules, forEach()(_.noop))
+}
+
+function whereModuleTask(start) {
+  return moduleName => start(
+    loadModules,
+    modules => log => {
+      return Promise.resolve().then(() => modules.forEach(module => {
+        const dep = module.dependencies.find(dep => dep.name === moduleName);
+        dep && log(`${module.name}`);
+      }));
+    }
+  )
+}
 
 function syncModulesTask(start) {
+  function modulesAndVersion(modules) {
+    return modules.reduce((acc, val) => {
+      acc[val.name] = `~${val.version}`;
+      return acc;
+    }, {})
+  }
+
   return () => start(
-    modulesTask(),
+    loadModules,
     props({
       modules: modules => modules,
       modulesAndVersions: modules => modulesAndVersion(modules)
     }),
-    forEachTask(opts => opts.modules)((module, index, count, opts) => start(
-      readJson(module)('package.json'),
-      mergeJson({
-        dependencies: opts.modulesAndVersions,
-        devDependencies: opts.modulesAndVersions
-      }),
-      writeJson(module)('package.json')
-      )
+    forEach(opts => opts.modules)((module, input) => {
+        const {modulesAndVersions} = input;
+        const readPackageJson = readJson(module)('package.json');
+        const mergePackageJson = mergeJson({
+          dependencies: modulesAndVersions,
+          devDependencies: modulesAndVersions
+        });
+        const writePackageJson = writeJson(module)('package.json');
+
+        return start(readPackageJson, mergePackageJson, writePackageJson);
+      }
     )
   )
 }
 
-function listModulesTask(start) {
-  return () => start(
-    modulesTask(),
-    forEachTask()(_.noop)
-  )
-}
-
-module.exports.tasks = {
+module.exports = {
   list: listModulesTask,
-  sync: syncModulesTask
+  sync: syncModulesTask,
+  where: whereModuleTask
 };
-
-module.exports.inject = (start, targetModuleExports = module.exports) => {
-  targetModuleExports['modules:list'] = () => listModulesTask(start);
-  targetModuleExports['modules:sync'] = () => syncModulesTask(start);
-};
-
-function modulesAndVersion(modules) {
-  return modules.reduce((acc, val) => {
-    acc[val.name] = val.version;
-    return acc;
-  }, {})
-}

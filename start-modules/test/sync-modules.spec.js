@@ -2,23 +2,59 @@ const {empty, fs} = require('octopus-test-utils'),
   {expect} = require('chai').use(require('sinon-chai')),
   Start = require('start').default,
   sinon = require('sinon'),
-  {tasks} = require('..');
+  {sync, where, list} = require('..');
 
-describe.only('start list task', function () {
-  this.timeout(5000);
+describe('modules tasks', () => {
 
-  it('should list loaded modules', () => {
-    const reporter = sinon.spy();
-    const project = empty()
-      .module('a', module => module.packageJson({name: 'a', version: '2.0.0'}))
-      .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}));
+  describe('sync', () => {
 
-    return project.within(() => {
-      const start = Start();
+    it('should sync module versions', () => {
+      const {reporter, project, start} = setup();
+      return project.within(() => {
 
-      return tasks.sync(start)().then(() => {
-        expect(fs.readJson('b/package.json')).to.contain.deep.property('dependencies.a', "2.0.0");
+        return sync(start)().then(() => {
+          expect(fs.readJson('b/package.json')).to.contain.deep.property('dependencies.a', "~2.0.0");
+          expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', sinon.match('dependencies.a: ~1.0.0 -> ~2.0.0'));
+        });
       });
     });
   });
+
+  describe('list', () => {
+
+    it('should list loaded modules', () => {
+      const {reporter, project, start} = setup();
+
+      return project.within(() => {
+        return list(start)().then(() => {
+          expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', sinon.match('a (nested/a) (1/2)'));
+          expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', sinon.match('b (b) (2/2)'));
+        });
+      });
+    });
+  });
+
+  describe('where', () => {
+
+    it('should show where module is used', () => {
+      const {reporter, project, start} = setup();
+
+      return project.within(() => {
+        return where(start)('a').then(() => {
+          expect(reporter).to.have.been.calledWith(sinon.match.any, sinon.match.any, sinon.match('b'));
+        });
+      });
+    });
+  });
+
+  function setup() {
+    const reporter = sinon.spy();
+    const project = empty()
+      .module('nested/a', module => module.packageJson({name: 'a', version: '2.0.0'}))
+      .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}));
+    const start = Start(reporter);
+
+    return {reporter, project, start};
+  }
+
 });

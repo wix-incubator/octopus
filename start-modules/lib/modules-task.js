@@ -1,6 +1,6 @@
 const {modules} = require('octopus-modules');
 
-module.exports = () => () => {
+module.exports = () => {
   return function buildModules() {
     return Promise.resolve(modules());
   }
