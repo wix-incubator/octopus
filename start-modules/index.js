@@ -27,14 +27,13 @@ function whereModuleTask(moduleName) {
 
 function syncModulesTask(mutateVersion = version => `~${version}`) {
   return () => function syncModules(log, reporter) {
-    const start = Start(reporter);
-    return start(
+    return Start(reporter)(
       loadModules,
       props({
         modules: modules => modules,
         modulesAndVersions: modules => modulesAndVersion(modules, mutateVersion)
       }),
-      forEach(opts => opts.modules)((module, input) => {
+      forEach(opts => opts.modules)((module, input, forEachReporter) => {
           const {modulesAndVersions} = input;
           const readPackageJson = readJson(module)('package.json');
           const mergePackageJson = mergeJson({
@@ -43,7 +42,7 @@ function syncModulesTask(mutateVersion = version => `~${version}`) {
           });
           const writePackageJson = writeJson(module)('package.json');
 
-          return start(readPackageJson, mergePackageJson, writePackageJson);
+          return Start(forEachReporter)(readPackageJson, mergePackageJson, writePackageJson);
         }
       )
     )
