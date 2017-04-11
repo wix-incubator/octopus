@@ -1,12 +1,13 @@
-const {readFileSync, writeFileSync} = require('fs'),
+const Promise = require('bluebird'),
+  fs = Promise.promisifyAll(require('fs')),
   {join} = require('path'),
   _ = require('lodash'),
   deepKeys = require('deep-keys');
 
 module.exports.readJson = module => fileName => () => {
   return function readJson() {
-    return Promise.resolve()
-      .then(() => JSON.parse(readFileSync(join(module.path, fileName)).toString()));
+    return fs.readFileAsync(join(module.path, fileName))
+      .then(JSON.parse);
   }
 };
 
@@ -22,7 +23,8 @@ module.exports.mergeJson = overrides => mergeTo => {
 module.exports.writeJson = module => fileName => json => {
   return function writeJson(log, reporter) {
     return Promise.resolve()
-      .then(() => writeFileSync(join(module.path, fileName), JSON.stringify(json, null, 2)));
+      .then(() => JSON.stringify(json, null, 2))
+      .then(jsonString => fs.writeFileSync(join(module.path, fileName), jsonString));
   }
 };
 
