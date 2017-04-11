@@ -12,9 +12,8 @@ module.exports.readJson = module => fileName => () => {
 };
 
 //TODO: print what has changed
-module.exports.mergeJson = cb => overrides => mergeTo => {
+module.exports.mergeJson = onMerge => overrides => mergeTo => {
   return function mergeJson(log/*, reporter*/) {
-    const onMerge = cb || _.noop;
     return Promise.resolve()
       .then(() => merge(mergeTo, overrides, onMerge));
   }
@@ -59,8 +58,7 @@ function readJsonFile(path, name) {
 
 function isDeepEqual(first, second) {
   try {
-    deepEqual(first, second);
-    return true;
+    return deepEqual(first, second);
   } catch(e) {
     return false;
   }

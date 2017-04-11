@@ -4,6 +4,7 @@ const startModules = require('octopus-start-modules-tasks'),
   Start = require('start').default;
 
 const {iter, modules} = startModules;
+const {readJson, writeJson, mergeJson} = startModules.module;
 
 function listModulesTask() {
   return () => function listModules(log, reporter) {
@@ -15,12 +16,10 @@ function whereModuleTask(moduleName) {
   return () => function whereModule(log, reporter) {
     return Start(reporter)(
       modules.load(),
-      modules => log => {
-        return Promise.resolve().then(() => modules.forEach(module => {
-          const dep = module.dependencies.find(dep => dep.name === moduleName);
-          dep && log(`${module.name} (${module.relativePath}) (${module.version})`);
-        }));
-      }
+      iter.forEach({silent: true})(module => {
+        const dep = module.dependencies.find(dep => dep.name === moduleName);
+        dep && log(`${module.name} (${module.relativePath}) (${module.version})`);
+      })
     )
   }
 }
@@ -33,14 +32,15 @@ function syncModulesTask(mutateVersion = version => `~${version}`) {
         modules: modules => modules,
         modulesAndVersions: modules => modulesAndVersion(modules, mutateVersion)
       }),
-      iter.forEach({mapInput: opts => opts.modules})((module, input) => {
+      iter.forEach({mapInput: opts => opts.modules, silent: true})((module, input) => {
           const {modulesAndVersions} = input;
-          const readPackageJson = startModules.module.readJson(module)('package.json');
-          const mergePackageJson = startModules.module.mergeJson({
+          const readPackageJson = readJson(module)('package.json');
+          const logMerged = input => reporter('mergeJson', 'info', `${module.name}: ${input.key} (${input.currentValue} -> ${input.newValue})`);
+          const mergePackageJson = mergeJson(logMerged)({
             dependencies: modulesAndVersions,
             devDependencies: modulesAndVersions
           });
-          const writePackageJson = startModules.module.writeJson(module)('package.json');
+          const writePackageJson = writeJson(module)('package.json');
 
           return Start(reporter)(readPackageJson, mergePackageJson, writePackageJson);
         }

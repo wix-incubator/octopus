@@ -14,7 +14,7 @@ describe('modules tasks', () => {
 
         return start(sync()).then(() => {
           expect(fs.readJson('b/package.json')).to.contain.deep.property('dependencies.a', "~2.0.0");
-          expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'dependencies.a: ~1.0.0 -> ~2.0.0');
+          expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'b: dependencies.a (~1.0.0 -> ~2.0.0)');
         });
       });
     });
