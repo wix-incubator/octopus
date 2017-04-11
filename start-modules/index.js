@@ -1,8 +1,9 @@
-const {iter, modules} = require('octopus-start-modules-tasks'),
-  {readJson, mergeJson, writeJson} = require('./lib/modules-each-tasks'),
-  {props} = require('./lib/tasks'),
+const startModules = require('octopus-start-modules-tasks'),
   _ = require('lodash'),
+  startTasks = require('octopus-start-tasks'),
   Start = require('start').default;
+
+const {iter, modules} = startModules;
 
 function listModulesTask() {
   return () => function listModules(log, reporter) {
@@ -28,18 +29,18 @@ function syncModulesTask(mutateVersion = version => `~${version}`) {
   return () => function syncModules(log, reporter) {
     return Start(reporter)(
       modules.load(),
-      props({
+      startTasks.props({
         modules: modules => modules,
         modulesAndVersions: modules => modulesAndVersion(modules, mutateVersion)
       }),
       iter.forEach({mapInput: opts => opts.modules})((module, input) => {
           const {modulesAndVersions} = input;
-          const readPackageJson = readJson(module)('package.json');
-          const mergePackageJson = mergeJson({
+          const readPackageJson = startModules.module.readJson(module)('package.json');
+          const mergePackageJson = startModules.module.mergeJson({
             dependencies: modulesAndVersions,
             devDependencies: modulesAndVersions
           });
-          const writePackageJson = writeJson(module)('package.json');
+          const writePackageJson = startModules.module.writeJson(module)('package.json');
 
           return Start(reporter)(readPackageJson, mergePackageJson, writePackageJson);
         }
