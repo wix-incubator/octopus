@@ -15,12 +15,12 @@ const {modules, iter} = require('octopus-start-modules-tasks'),
 const start = new Start();
 
 //will list and print all tasks
-module.exports.listAll = () => Start(modules.list, iter.forEach()(() => {}));
+module.exports.listAll = () => Start(modules.load(), iter.forEach()(() => {}));
 ```
 
 ## API
 
-### modules.list
+### modules.load()
 Wraps `octopus-modules`(../modules#modules) as a `Start` task.  
  
 ### iter.forEach(opts)((module, input, reporter) => Promise)

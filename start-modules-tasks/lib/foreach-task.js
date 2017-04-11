@@ -1,21 +1,15 @@
-const Promise = require('bluebird');
+const Promise = require('bluebird'),
+  _ = require('lodash');
 
-module.exports = (mapInput = input => input) => fn => taskInput => {
+const defaults = {mapInput: input => input, silent: false};
+
+module.exports = ({mapInput = defaults.mapInput, silent = defaults.silent} = defaults) => fn => taskInput => {
   return function forEachModules(log, reporter) {
-    return Promise.each(mapInput(taskInput), (item, index, length) => {
-      log(`${item.name} (${item.relativePath}) (${index + 1}/${length})`);
-      const collectingReport = collectingReporter(reporter);
+    return Promise.map(mapInput(taskInput), (item, index, length) => {
+      silent || log(`${item.name} (${item.relativePath}) (${index + 1}/${length})`);
+
       return Promise.resolve()
-        .then(() => fn(item, taskInput, collectingReport.reporter))
-        .finally(() => collectingReport.flush());
-    });
+        .then(() => fn(item, taskInput, reporter));
+    }).then(_.compact);
   };
 };
-
-function collectingReporter(sourceReporter) {
-  const entries = [];
-  return {
-    reporter: (...args) => entries.push(args),
-    flush: () => entries.forEach(entry => sourceReporter(...entry))
-  }
-}
