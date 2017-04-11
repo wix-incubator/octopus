@@ -22,7 +22,7 @@ describe('module tasks', () => {
     });
   });
 
-  describe('writeJsn', () => {
+  describe('writeJson', () => {
 
     it('should write json file if target does not exist', () => {
       return empty().within(() => {
@@ -57,8 +57,36 @@ describe('module tasks', () => {
         });
       });
     });
-
-
   });
 
+  describe('mergeJson', () => {
+
+    it('should deep merge json and callback with merged nodes', () => {
+      const log = sinon.spy();
+      const input = {
+        a: {
+          b: 1,
+          c: 2
+        }
+      };
+
+      const overrides = {
+        a: {
+          c: 3
+        }
+      };
+
+      return index.module.mergeJson()(overrides)(input)(log).then(res => {
+        expect(res).to.deep.equal({
+          a: {
+            b: 1,
+            c: 3
+          }
+        });
+        expect(log).to.have.been.calledWith('a.c: 2 -> 3');
+      });
+
+    });
+
+  });
 });
