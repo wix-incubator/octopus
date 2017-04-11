@@ -62,7 +62,7 @@ describe('module tasks', () => {
   describe('mergeJson', () => {
 
     it('should deep merge json and callback with merged nodes', () => {
-      const log = sinon.spy();
+      const cb = sinon.spy();
       const input = {
         a: {
           b: 1,
@@ -76,14 +76,14 @@ describe('module tasks', () => {
         }
       };
 
-      return index.module.mergeJson()(overrides)(input)(log).then(res => {
+      return index.module.mergeJson(cb)(overrides)(input)().then(res => {
         expect(res).to.deep.equal({
           a: {
             b: 1,
             c: 3
           }
         });
-        expect(log).to.have.been.calledWith('a.c: 2 -> 3');
+        expect(cb).to.have.been.calledWith(sinon.match({key: 'a.c', currentValue: 2, newValue: 3}));
       });
 
     });

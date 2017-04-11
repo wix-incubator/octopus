@@ -29,3 +29,17 @@ Wraps `octopus-modules`(../modules#modules) as a `Start` task.
 Supports options:
  - mapInput, defaults to input => input: function that, given input other than array of modules - ex. object that contains modules, actually maps it to array of modules;
  - silent, defaults to false: should task print iteration info.
+
+### modules.module.readJson(module)(fileName)
+`Start` tasks that reads json file in cwd of provided module. Returns json object;
+
+### modules.module.mergeJson(cb)(overrides)
+`Start` tasks that deep overrides properties of object in input with ones defined in overrides. Calls `cb` on override event with object:
+  - key;
+  - currentValue;
+  - newValue.
+
+Returns merged json;
+
+### modules.module.writeJson(module)(fileName)
+`Start` tasks that writes input json to cwd of provided module. Returns json object;

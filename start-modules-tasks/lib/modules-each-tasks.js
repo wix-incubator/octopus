@@ -12,10 +12,11 @@ module.exports.readJson = module => fileName => () => {
 };
 
 //TODO: print what has changed
-module.exports.mergeJson = () => overrides => mergeTo => {
+module.exports.mergeJson = cb => overrides => mergeTo => {
   return function mergeJson(log/*, reporter*/) {
+    const onMerge = cb || _.noop;
     return Promise.resolve()
-      .then(() => merge(mergeTo, overrides, log));
+      .then(() => merge(mergeTo, overrides, onMerge));
   }
 };
 
@@ -45,7 +46,7 @@ function merge(dest, source, onMerged = _.noop) {
     const currentValue = _.get(dest, key);
     const newValue = _.get(source, key);
     _.set(dest, key, newValue);
-    onMerged(`${key}: ${currentValue} -> ${newValue}`);
+    onMerged({key, currentValue, newValue});
   });
 
   return dest;
