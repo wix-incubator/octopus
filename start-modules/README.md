@@ -14,19 +14,22 @@ const {sync, where, list} = require('octopus-start-modules'),
 
 const start = new Start();
 
-module.exports['modules:sync'] = sync(start);
-module.exports['modules:where'] = where(start);
-module.exports['modules:list'] = list(start);
+module.exports['modules:sync'] = start(sync());
+module.exports['modules:where'] = start(where());
+module.exports['modules:list'] = start(list());
 ```
 
 ## API
 
-### sync(start): () => start(...)
+### sync(mutateVersion: version => version)
 Returns a function that you can bind to `exports` and that will sync modules across multi-module repo. Syncing modules means:
  - if you have module `a` with version `1.0.0` and another module `b` depends on it, but depends on different version (ex. `~1.0.1`), then modules `b` dependencies will be updated to match that of module `a` declared version.
  
-### list(start): () => start(...)
+Parameters:
+ - mutateVersion - if you want ex. version to be synced to some special semver expression(~) you can do `version => `^${version}``. Defaults to `version => `~${version}`` 
+ 
+### list()
 Returns a function that you can bind to `exports` and that will simply print discovered modules.
 
-### where(start): (moduleName) => start(...)
+### where()
 Returns a function that you can bind to `exports` and that will simply print discovered modules.

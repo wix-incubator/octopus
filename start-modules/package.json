@@ -31,6 +31,8 @@
     "start-input-connector": "^0.2.0"
   },
   "devDependencies": {
+    "octopus-start-tasks": "~0.0.1",
+    "octopus-start-modules-tasks": "~0.0.1",
     "octopus-modules": "~0.0.1",
     "octopus-test-utils": "~0.0.1",
     "chai": "~3.5.0",
