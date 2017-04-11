@@ -2,18 +2,18 @@ const Promise = require('bluebird'),
   fs = Promise.promisifyAll(require('fs')),
   {join} = require('path'),
   _ = require('lodash'),
-  deepKeys = require('deep-keys');
+  deepKeys = require('deep-keys'),
+  deepEqual = require('deep-equal');
 
 module.exports.readJson = module => fileName => () => {
-  return function readJson() {
-    return fs.readFileAsync(join(module.path, fileName))
-      .then(JSON.parse);
+  return function readJson(/*log, reporter*/) {
+    return readJsonFile(module.path, fileName);
   }
 };
 
 //TODO: print what has changed
 module.exports.mergeJson = overrides => mergeTo => {
-  return function mergeJson(log, reporter) {
+  return function mergeJson(log/*, reporter*/) {
     return Promise.resolve()
       .then(() => merge(mergeTo, overrides, log));
   }
@@ -21,10 +21,17 @@ module.exports.mergeJson = overrides => mergeTo => {
 
 //TODO: check if changed
 module.exports.writeJson = module => fileName => json => {
-  return function writeJson(log, reporter) {
-    return Promise.resolve()
-      .then(() => JSON.stringify(json, null, 2))
-      .then(jsonString => fs.writeFileSync(join(module.path, fileName), jsonString));
+  return function writeJson(/*log, reporter*/) {
+    return readJsonFile(module.path, fileName)
+      .catch(() => Promise.resolve())
+      .then(existingJsonOrUndefined => {
+        if (!existingJsonOrUndefined || (existingJsonOrUndefined && !isDeepEqual(existingJsonOrUndefined, json))) {
+          const jsonToWrite = JSON.stringify(json, null, 2);
+          return fs.writeFileSync(join(module.path, fileName), jsonToWrite);
+        } else {
+          return json;
+        }
+      });
   }
 };
 
@@ -42,4 +49,18 @@ function merge(dest, source, onMerged = _.noop) {
   });
 
   return dest;
+}
+
+function readJsonFile(path, name) {
+  return fs.readFileAsync(join(path, name))
+    .then(JSON.parse);
+}
+
+function isDeepEqual(first, second) {
+  try {
+    deepEqual(first, second);
+    return true;
+  } catch(e) {
+    return false;
+  }
 }
