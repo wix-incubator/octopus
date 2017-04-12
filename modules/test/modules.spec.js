@@ -11,7 +11,9 @@ describe('modules', () => {
       .module('a', module => module.packageJson({name: 'a', version: '1.0.0'}))
       .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}));
 
-    expect(emitModuleNames(project.dir)).to.deep.equal(['a', 'b']);
+    return project.within(() => {
+      expect(emitModuleNames()).to.deep.equal(['a', 'b']);
+    });
   });
 
   it('should not traverse into module that is not private', () => {
@@ -20,7 +22,9 @@ describe('modules', () => {
       .module('a', module => module.packageJson({name: 'a', version: '1.0.0'}))
       .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}));
 
-    expect(emitModuleNames(project.dir)).to.deep.equal(['root']);
+    return project.within(() => {
+      expect(emitModuleNames()).to.deep.equal(['root']);
+    });
   });
 
   it('should traverse into nested private module', () => {
@@ -31,7 +35,9 @@ describe('modules', () => {
       })
       .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'c': '~1.0.0'}}));
 
-    expect(emitModuleNames(project.dir)).to.deep.equal(['c', 'b']);
+    return project.within(() => {
+      expect(emitModuleNames(project.dir)).to.deep.equal(['c', 'b']);
+    });
   });
 
   it('should build correct dependency order', () => {
@@ -40,7 +46,10 @@ describe('modules', () => {
       .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}))
       .module('c', module => module.packageJson({version: '1.0.0', dependencies: {'b': '~1.0.0'}}));
 
-    expect(emitModuleNames(project.dir)).to.deep.equal(['a', 'b', 'c']);
+    return project.within(() => {
+      expect(emitModuleNames(project.dir)).to.deep.equal(['a', 'b', 'c']);
+    });
+
   });
 
   it('should fail for cyclic graph', () => {
@@ -48,7 +57,10 @@ describe('modules', () => {
       .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'c': '~1.0.0'}}))
       .module('c', module => module.packageJson({version: '1.0.0', dependencies: {'b': '~1.0.0'}}));
 
-    expect(() => emitModuleNames(project.dir)).to.throw('Cycles detected in dependency graph');
+    return project.within(() => {
+      expect(() => emitModuleNames(project.dir)).to.throw('Cycles detected in dependency graph');
+    });
+
   });
 
   it('should build modules with dependencies', () => {
@@ -56,27 +68,29 @@ describe('modules', () => {
       .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'c': '~1.0.0'}}))
       .module('c', module => module.packageJson({version: '1.0.0'}));
 
-    expect(emitModules(project.dir)).to.shallowDeepEqual([
-      {
-        name: 'c',
-        path: resolve(project.dir, './c'),
-        relativePath: 'c',
-        version: '1.0.0',
-        dependencies: []
-      },
-      {
-        name: 'b',
-        path: resolve(project.dir, './b'),
-        relativePath: 'b',
-        version: '1.0.0',
-        dependencies: [{
+    return project.within(() => {
+      expect(emitModules(project.dir)).to.shallowDeepEqual([
+        {
           name: 'c',
           path: resolve(project.dir, './c'),
           relativePath: 'c',
-          version: '1.0.0'
-        }]
-      }
-    ])
+          version: '1.0.0',
+          dependencies: []
+        },
+        {
+          name: 'b',
+          path: resolve(project.dir, './b'),
+          relativePath: 'b',
+          version: '1.0.0',
+          dependencies: [{
+            name: 'c',
+            path: resolve(project.dir, './c'),
+            relativePath: 'c',
+            version: '1.0.0'
+          }]
+        }
+      ])
+    });
   });
 
   function emitModuleNames(dir) {

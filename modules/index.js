@@ -1,8 +1,8 @@
 const devSupport = require('./lib/wnpm-dev'),
   asModule = require('./lib/module');
 
-module.exports.modules = (rootDir = process.cwd()) => {
-  const allPackagesToBuild = devSupport.findListOfNpmPackagesAndLocalDependencies(rootDir);
+module.exports.modules = () => {
+  const allPackagesToBuild = devSupport.findListOfNpmPackagesAndLocalDependencies(process.cwd());
   const sortedPackagesToBuild = devSupport.sortPackagesByDependencies(allPackagesToBuild);
 
   return sortedPackagesToBuild.map(pkg => {
