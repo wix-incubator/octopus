@@ -1,7 +1,7 @@
 const {resolve} = require('path'),
   ModuleBuilder = require('./lib/module-builder'),
   {rm} = require('shelljs'),
-  {readFileSync} = require('fs'),
+  {readFileSync, writeFileSync} = require('fs'),
   {join} = require('path');
 
 const TEMP_DIR = './target';
@@ -13,5 +13,6 @@ module.exports.empty = () => {
 };
 
 module.exports.fs = {
-  readJson: (name, dir = process.cwd()) => JSON.parse(readFileSync(join(dir, name)).toString())
+  readJson: (name, dir = process.cwd()) => JSON.parse(readFileSync(join(dir, name)).toString()),
+  writeJson: (name, content, dir = process.cwd()) => writeFileSync(join(dir, name), content)
 };

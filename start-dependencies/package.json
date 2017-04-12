@@ -1,7 +1,7 @@
 {
-  "name": "octopus-start-tasks",
+  "name": "octopus-start-dependencies",
   "version": "0.0.1",
-  "description": "generic tasks for start runner",
+  "description": "tasks for start that adds dependency management support",
   "author": "Vilius Lukosius",
   "license": "ISC",
   "homepage": "https://github.com/wix/octopus",
@@ -24,22 +24,23 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "bluebird": "^3.5.0",
-    "lodash": "~4.17.4"
+    "lodash": "~4.17.4",
+    "octopus-start-modules-tasks": "~0.0.1",
+    "octopus-start-tasks": "~0.0.1",
+    "start-concurrent": "^0.1.0"
   },
   "peerDependencies": {
     "start": ">= 5.1.0"
   },
   "devDependencies": {
+    "start": "~5.1.0",
+    "octopus-test-utils": "~0.0.1",
     "chai": "~3.5.0",
     "eslint": "~3.12.2",
     "eslint-plugin-mocha": "~4.8.0",
     "mocha": "~3.2.0",
     "npm-version-up": "~0.0.4",
     "sinon": "~2.1.0",
-    "sinon-chai": "~2.9.0",
-    "start": "^5.1.0",
-    "start-input-connector": "^0.2.0",
-    "octopus-test-utils": "~0.0.1"
+    "sinon-chai": "~2.9.0"
   }
 }
