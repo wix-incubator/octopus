@@ -27,12 +27,11 @@
     "bluebird": "^3.5.0",
     "deep-equal": "^1.0.1",
     "deep-keys": "^0.4.0",
-    "fs-extra": "^2.1.2",
     "lodash": "~4.17.4",
-    "start-input-connector": "^0.2.0"
+    "octopus-modules": "~0.0.1"
   },
   "devDependencies": {
-    "octopus-modules": "~0.0.1",
+    "start-input-connector": "^0.2.0",
     "octopus-test-utils": "~0.0.1",
     "chai": "~3.5.0",
     "eslint": "~3.12.2",

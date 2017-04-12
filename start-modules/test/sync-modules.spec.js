@@ -13,7 +13,7 @@ describe('modules tasks', () => {
       return project.within(() => {
 
         return start(sync()).then(() => {
-          expect(fs.readJson('b/package.json')).to.contain.deep.property('dependencies.a', "~2.0.0");
+          expect(fs.readJson('b/package.json')).to.contain.deep.property('dependencies.a', '~2.0.0');
           expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'b: dependencies.a (~1.0.0 -> ~2.0.0)');
         });
       });
@@ -52,7 +52,7 @@ describe('modules tasks', () => {
     const project = empty()
       .module('nested/a', module => module.packageJson({name: 'a', version: '2.0.0'}))
       .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}));
-    const start = Start(reporter);
+    const start = new Start(reporter);
 
     return {reporter, project, start};
   }

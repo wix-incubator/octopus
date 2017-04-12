@@ -12,7 +12,7 @@ module.exports.readJson = module => fileName => () => {
 };
 
 module.exports.mergeJson = onMerge => overrides => mergeTo => {
-  return function mergeJson(log/*, reporter*/) {
+  return function mergeJson(/*log, reporter*/) {
     return Promise.resolve()
       .then(() => merge(mergeTo, overrides, onMerge));
   }

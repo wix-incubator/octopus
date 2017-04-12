@@ -70,7 +70,7 @@ describe('tasks', () => {
     const project = empty()
       .module('nested/a', module => module.packageJson({name: 'a', version: '2.0.0'}))
       .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}));
-    const start = Start(reporter);
+    const start = new Start(reporter);
 
     return {reporter, project, start, log};
   }

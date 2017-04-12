@@ -1,6 +1,5 @@
 const {empty} = require('octopus-test-utils'),
   {expect} = require('chai').use(require('sinon-chai')),
-  Start = require('start').default,
   index = require('..'),
   sinon = require('sinon'),
   {readFileSync, writeFileSync} = require('fs');
@@ -38,7 +37,7 @@ describe('module tasks', () => {
     it('should overwrite existing json file', () => {
       return empty().within(() => {
         const stubModule = {name: 'a', path: process.cwd(), fullPath: process.cwd()};
-        writeFileSync('f.json', `{"key1":    "val"}`);
+        writeFileSync('f.json', '{"key1":    "val"}');
 
         return index.module.writeJson(stubModule)('f.json')({key: 'val'})().then(json => {
           expect(json).to.deep.equal({key: 'val'});
@@ -49,10 +48,10 @@ describe('module tasks', () => {
     it('should not overwrite existing json file if it has same content', () => {
       return empty().within(() => {
         const stubModule = {name: 'a', path: process.cwd(), fullPath: process.cwd()};
-        const existingJsonFile = `{"key":    "val"}`;
+        const existingJsonFile = '{"key":    "val"}';
         writeFileSync('f.json', existingJsonFile);
 
-        return index.module.writeJson(stubModule)('f.json')({key: 'val'})().then(json => {
+        return index.module.writeJson(stubModule)('f.json')({key: 'val'})().then(() => {
           expect(readFileSync('./f.json').toString()).to.equal(existingJsonFile);
         });
       });
