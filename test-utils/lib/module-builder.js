@@ -96,8 +96,6 @@ class ModuleBuilder {
       .then(() => fn(this))
       .finally(clean);
   }
-
-
 }
 
 function aPackageJson(name, overrides) {

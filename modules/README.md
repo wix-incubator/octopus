@@ -19,3 +19,6 @@ Returns a topologically sorted array of modules with where array item is an obje
    - version: module version;
    - path: absolute module path;
    - relativePath: path relative to root of repo;
+
+### removeUnchanged(modules): modules
+Removed modules form provided list that have no changes in fs.

@@ -23,7 +23,7 @@ exports.makePackagesUnbuilt = function (dirs) {
   dirs.forEach(makePackageUnbuilt);
 };
 
-exports.findChangedPackages = (dir, packages) => inDir(dir, () => packages.filter(p => isPackageChanged(p)));
+exports.findChangedPackages = (dir, packages) => packages.filter(isPackageChanged);
 
 
 function createIgnoreFn(ignores) {
@@ -33,12 +33,12 @@ function createIgnoreFn(ignores) {
 }
 
 function isPackageChanged(packageObject) {
-  const fullPath = packageObject.fullPath;
+  const fullPath = packageObject.path;
   let ignores = collectIgnores(fullPath, []);
   const ignored = createIgnoreFn(ignores);
   const targetSentinelForPackage = path.resolve(fullPath, targetFileSentinelFilename);
   return !shelljs.test('-f', targetSentinelForPackage) ||
-    modifiedAfter(packageObject.fullPath, '.', ignored, fs.statSync(targetSentinelForPackage).mtime.getTime())
+    modifiedAfter(fullPath, '.', ignored, fs.statSync(targetSentinelForPackage).mtime.getTime())
 }
 
 function modifiedAfter(baseDir, dir, ignored, timeStamp) {
