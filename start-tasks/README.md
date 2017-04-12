@@ -24,3 +24,9 @@ will return `{one: 'say what'}`.
  
 ### log(strOrFn)
 `Start` task that logs provided String or function `input => String` via `Start` reporter.
+
+### readJson(fileName)
+`Start` task that reads json file and returns a json object.
+
+### exec(cmd)
+`Start` task that executed a command and returns {stdout, stderr}.

@@ -1,6 +1,6 @@
 const {expect} = require('chai').use(require('sinon-chai')),
   sinon = require('sinon'),
-  {props, log, readJson} = require('..'),
+  {props, log, readJson, exec} = require('..'),
   start = require('start').default,
   inputConnector = require('start-input-connector').default,
   {empty, fs} = require('octopus-test-utils');
@@ -59,6 +59,15 @@ describe('tasks', () => {
         return start()(readJson('f.json')).then(res => {
           expect(res).to.deep.equal({key: 'value'});
         });
+      });
+    });
+  });
+
+  describe('exec', () => {
+
+    it('executes a command and returns output', () => {
+      return start()(exec('echo a')).then(res => {
+        expect(res.stdout).to.equal('a');
       });
     });
   });
