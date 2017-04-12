@@ -11,7 +11,6 @@ module.exports.readJson = module => fileName => () => {
   }
 };
 
-//TODO: print what has changed
 module.exports.mergeJson = onMerge => overrides => mergeTo => {
   return function mergeJson(log/*, reporter*/) {
     return Promise.resolve()
@@ -19,7 +18,6 @@ module.exports.mergeJson = onMerge => overrides => mergeTo => {
   }
 };
 
-//TODO: check if changed
 module.exports.writeJson = module => fileName => json => {
   return function writeJson(/*log, reporter*/) {
     return readJsonFile(module.path, fileName)
@@ -27,14 +25,13 @@ module.exports.writeJson = module => fileName => json => {
       .then(existingJsonOrUndefined => {
         if (!existingJsonOrUndefined || (existingJsonOrUndefined && !isDeepEqual(existingJsonOrUndefined, json))) {
           const jsonToWrite = JSON.stringify(json, null, 2);
-          return fs.writeFileSync(join(module.path, fileName), jsonToWrite);
+          return fs.writeFileAsync(join(module.path, fileName), jsonToWrite).then(() => json);
         } else {
           return json;
         }
       });
   }
 };
-
 
 function merge(dest, source, onMerged = _.noop) {
   const destKeys = deepKeys(dest);
@@ -44,8 +41,10 @@ function merge(dest, source, onMerged = _.noop) {
   sharedKeys.forEach(key => {
     const currentValue = _.get(dest, key);
     const newValue = _.get(source, key);
-    _.set(dest, key, newValue);
-    onMerged({key, currentValue, newValue});
+    if (currentValue !== newValue) {
+      _.set(dest, key, newValue);
+      onMerged({key, currentValue, newValue});
+    }
   });
 
   return dest;
@@ -59,7 +58,7 @@ function readJsonFile(path, name) {
 function isDeepEqual(first, second) {
   try {
     return deepEqual(first, second);
-  } catch(e) {
+  } catch (e) {
     return false;
   }
 }

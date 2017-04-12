@@ -35,12 +35,12 @@ function syncModulesTask(mutateVersion = version => `~${version}`) {
       iter.forEach({mapInput: opts => opts.modules, silent: true})((module, input) => {
           const {modulesAndVersions} = input;
           const readPackageJson = readJson(module)('package.json');
-          const logMerged = input => reporter('mergeJson', 'info', `${module.name}: ${input.key} (${input.currentValue} -> ${input.newValue})`);
+          const writePackageJson = writeJson(module)('package.json');
+          const logMerged = input => log(`${module.name}: ${input.key} (${input.currentValue} -> ${input.newValue})`);
           const mergePackageJson = mergeJson(logMerged)({
             dependencies: modulesAndVersions,
             devDependencies: modulesAndVersions
           });
-          const writePackageJson = writeJson(module)('package.json');
 
           return Start(reporter)(readPackageJson, mergePackageJson, writePackageJson);
         }

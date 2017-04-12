@@ -84,6 +84,7 @@ describe('module tasks', () => {
           }
         });
         expect(cb).to.have.been.calledWith(sinon.match({key: 'a.c', currentValue: 2, newValue: 3}));
+        expect(cb).to.have.been.calledOnce;
       });
 
     });
