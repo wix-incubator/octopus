@@ -48,6 +48,15 @@ module.exports.unbuild = () => start(
   ))
 )
 
+module.exports.release = () => start(
+  startModulesTasks.modules.load(),
+  startModulesTasks.iter.async()((module, input, asyncReporter) => Start(asyncReporter)(
+    startModulesTasks.module.exec(module)('npm run release'),
+    startModulesTasks.module.exec(module)('npm publish')
+  ))
+)
+
+
 module.exports.clean = () => start(
   startModulesTasks.modules.load(),
   startModulesTasks.iter.async()((module, input, asyncReporter) => Start(asyncReporter)(
