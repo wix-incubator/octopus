@@ -6,7 +6,8 @@ Octopus is a set of modules for [start](https://github.com/start-runner/start) b
  - presets for managing versions across multiple modules, sync module versions;
  - generic tasks that you compose and achieve basically anything.
 
-Modules:
+## Modules
+
  - [modules](modules) - exports functions for finding modules, filtering, etc.
  - [start-modules](start-modules) - npm module management: syncing versions, listing, showing where one of modules is used in repo;
  - [start-dependencies](start-dependencies) - manage dependencies across multiple modules;
