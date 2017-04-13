@@ -16,10 +16,10 @@ function whereModuleTask(moduleName) {
   return () => function whereModule(log, reporter) {
     return start(reporter)(
       modules.load(),
-      iter.forEach({silent: true})(module => {
+      iter.async({silent: true})((module, input, asyncReporter) => {
         const dep = module.dependencies.find(dep => dep.name === moduleName);
         if (dep) {
-          log(`${module.name} (${module.relativePath}) (${module.version})`);
+          asyncReporter('whereModule', 'info', `${module.name} (${module.relativePath}) (${module.version})`);
         }
       })
     )
@@ -34,7 +34,7 @@ function syncModulesTask(mutateVersion = version => `~${version}`) {
         modules: modules => modules,
         modulesAndVersions: modules => modulesAndVersion(modules, mutateVersion)
       }),
-      iter.forEach({mapInput: opts => opts.modules, silent: true})((module, input) => {
+      iter.async({mapInput: opts => opts.modules, silent: true})((module, input, asyncReporter) => {
         const {modulesAndVersions} = input;
         const readPackageJson = readJson(module)('package.json');
         const writePackageJson = writeJson(module)('package.json');
@@ -44,7 +44,7 @@ function syncModulesTask(mutateVersion = version => `~${version}`) {
           devDependencies: modulesAndVersions
         });
 
-        return start(reporter)(readPackageJson, mergePackageJson, writePackageJson);
+        return start(asyncReporter)(readPackageJson, mergePackageJson, writePackageJson);
       })
     )
   }

@@ -25,14 +25,14 @@ function syncDependenciesTask() {
         modules: inputArray => inputArray[0],
         dependencies: inputArray => asDependencies(inputArray[1])
       }),
-      iter.forEach({mapInput: opts => opts.modules, silent: true})((module, input) => {
+      iter.async({mapInput: opts => opts.modules, silent: true})((module, input, asyncReporter) => {
         const {dependencies} = input;
         const readPackageJson = readJson(module)('package.json');
         const writePackageJson = writeJson(module)('package.json');
         const logMerged = input => log(`${module.name}: ${input.key} (${input.currentValue} -> ${input.newValue})`);
         const mergePackageJson = mergeJson(logMerged)(dependencies);
 
-        return start(reporter)(readPackageJson, mergePackageJson, writePackageJson);
+        return start(asyncReporter)(readPackageJson, mergePackageJson, writePackageJson);
       })
     )
   }

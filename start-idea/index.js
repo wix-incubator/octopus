@@ -23,8 +23,8 @@ module.exports = () => () => {
       modulesTasks.modules.load(),
       createWorkspaceXmlTask(),
       createModulesXml(),
-      modulesTasks.iter.forEach()(module => {
-        return innerStart(
+      modulesTasks.iter.async()((module, input, asyncReporter) => {
+        return start(asyncReporter)(
           modulesTasks.module.exec(module)('rm -f *.iml'),
           createModuleIml(module)
         )

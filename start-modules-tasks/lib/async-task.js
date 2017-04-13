@@ -1,10 +1,12 @@
+const Promise = require('bluebird');
+
 const DEFAULTS = {
   mapInput: input => input,
   silent: false,
   threads: 4
 };
 
-module.exports = ({mapInput = DEFAULTS.mapInput, threads = DEFAULTS.threads} = DEFAULTS) => asyncAction => taskInput => {
+module.exports = ({mapInput = DEFAULTS.mapInput, silent = DEFAULTS.silent, threads = DEFAULTS.threads} = DEFAULTS) => asyncAction => taskInput => {
 
   const modules = mapInput(taskInput);
   const runnableModules = [];
@@ -26,7 +28,7 @@ module.exports = ({mapInput = DEFAULTS.mapInput, threads = DEFAULTS.threads} = D
 
   let threadCount = 0;
 
-  return function forEachModules(log, reporter) {
+  return function asyncModules(log, reporter) {
     return new Promise((resolve, reject) => {
       const handleModuleAsync = module => {
         if (threadCount >= threads) {
@@ -41,7 +43,14 @@ module.exports = ({mapInput = DEFAULTS.mapInput, threads = DEFAULTS.threads} = D
         removeFromArray(runnableModules, module);
         runningModules.push(module);
 
-        asyncAction(module, taskInput, reporter).then(() => {
+        const taskReporter = collectingReporter(reporter);
+        //TODO: test silent
+        if (!silent) {
+          taskReporter.reporter('asyncModules', 'info', `${module.name} (${module.relativePath}) (${completedModulesNames.length + 1}/${modules.length})`);
+        }
+
+        return asyncAction(module, taskInput, taskReporter.reporter).then(() => {
+          taskReporter.flush();
           removeFromArray(runningModules, module);
           if (notYetRunnableModules.length === 0 && runnableModules.length === 0) {
             resolve();
@@ -61,6 +70,7 @@ module.exports = ({mapInput = DEFAULTS.mapInput, threads = DEFAULTS.threads} = D
 
           runnableModules.slice().forEach(handleModuleAsync);
         }).catch(error => {
+          taskReporter.flush();
           reject(error);
         });
       };
@@ -83,4 +93,14 @@ function canRun(module, completedModuleNames) {
 
 function removeFromArray(array, elem) {
   return array.splice(array.indexOf(elem), 1);
+}
+
+//TODO: test reporter
+function collectingReporter(reporter) {
+  const collectedItems = [];
+
+  return {
+    reporter: (...args) => collectedItems.push(args),
+    flush: () => collectedItems.forEach(args => reporter(...args))
+  }
 }
