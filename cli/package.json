@@ -26,27 +26,27 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "async": "^2.1.4",
-    "colors": "~1.1.2",
-    "findup-sync": "~0.4.3",
-    "graphlib": "^2.1.1",
-    "handlebars": "~4.0.6",
-    "jsondiffpatch": "~0.2.4",
-    "lodash": "~4.17.4",
-    "minimatch": "^3.0.3",
-    "object-filter": "~1.0.2",
-    "parse-gitignore": "^0.3.1",
-    "shelljs": "~0.7.5",
-    "yargs": "~6.6.0"
+    "async": "2.1.4",
+    "colors": "1.1.2",
+    "findup-sync": "0.4.3",
+    "graphlib": "2.1.1",
+    "handlebars": "4.0.6",
+    "jsondiffpatch": "0.2.4",
+    "lodash": "4.17.4",
+    "minimatch": "3.0.3",
+    "object-filter": "1.0.2",
+    "parse-gitignore": "0.3.1",
+    "shelljs": "0.7.5",
+    "yargs": "6.6.0"
   },
   "devDependencies": {
-    "chai": "~3.5.0",
-    "chai-as-promised": "^6.0.0",
-    "eslint": "~3.12.2",
-    "eslint-plugin-mocha": "~4.8.0",
-    "mocha": "~3.2.0",
-    "npm-version-up": "~0.0.4",
-    "sinon": "^1.17.7",
-    "sinon-chai": "^2.8.0"
+    "chai": "3.5.0",
+    "chai-as-promised": "6.0.0",
+    "eslint": "3.12.2",
+    "eslint-plugin-mocha": "4.8.0",
+    "mocha": "3.2.0",
+    "npm-version-up": "0.0.4",
+    "sinon": "1.17.7",
+    "sinon-chai": "2.8.0"
   }
 }
