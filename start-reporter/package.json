@@ -30,8 +30,7 @@
     "mocha": "3.2.0",
     "npm-version-up": "0.0.4",
     "sinon": "1.17.7",
-    "sinon-chai": "2.8.0",
-    "strip-color": "0.1.0"
+    "sinon-chai": "2.8.0"
   },
   "dependencies": {
     "chalk": "1.1.3"

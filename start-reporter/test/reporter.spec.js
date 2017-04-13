@@ -1,7 +1,6 @@
 const {expect} = require('chai').use(require('sinon-chai')),
   sinon = require('sinon'),
-  reporter = require('..'),
-  strip = require('strip-color');
+  reporter = require('..');
 
 describe('reporter', () => {
 
@@ -9,7 +8,7 @@ describe('reporter', () => {
     const out = mockConsole();
     reporter(out)('fnName', 'info', 'bubu');
 
-    expect(out.log).to.have.been.calledWith(strip('[fnName]: bubu'));
+    expect(out.log).to.have.been.calledWith(sinon.match(/fnName.*bubu/));
   });
 
   it('should not log start/resolve messages', () => {
@@ -31,7 +30,7 @@ describe('reporter', () => {
     const out = mockConsole();
     reporter(out)('fnName', 'reject', new Error('qwe'));
 
-    expect(out.error).to.have.been.calledWith(sinon.match(strip('[fnName]: failed with Error: qwe')));
+    expect(out.error).to.have.been.calledWith(sinon.match(/fnName.*failed with Error: qwe/));
   });
 
   function mockConsole() {
