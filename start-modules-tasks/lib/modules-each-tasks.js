@@ -3,7 +3,9 @@ const Promise = require('bluebird'),
   {join} = require('path'),
   _ = require('lodash'),
   deepKeys = require('deep-keys'),
-  deepEqual = require('deep-equal');
+  deepEqual = require('deep-equal'),
+  execa = require('exec-then'),
+  modules = require('octopus-modules');
 
 module.exports.readJson = module => fileName => () => {
   return function readJson(/*log, reporter*/) {
@@ -32,6 +34,28 @@ module.exports.writeJson = module => fileName => json => {
       });
   }
 };
+
+module.exports.exec = module => command => () => {
+  return function exec(log/*, reporter*/) {
+    log(`executing '${command}'`);
+    return execa(command, {cwd: module.path});
+  }
+};
+
+//TODO: pass-through input
+module.exports.markBuilt = module => () => {
+  return function markBuilt(/*log, reporter*/) {
+    return Promise.resolve().then(() => modules.markBuilt(module));
+  }
+};
+
+//TODO: pass-through input
+module.exports.markUnbuilt = module => input => {
+  return function markUnbuilt(/*log, reporter*/) {
+    return Promise.resolve().then(() => modules.markUnbuilt(module));
+  }
+};
+
 
 function merge(dest, source, onMerged = _.noop) {
   const destKeys = deepKeys(dest);

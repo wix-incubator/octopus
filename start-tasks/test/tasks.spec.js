@@ -1,6 +1,6 @@
 const {expect} = require('chai').use(require('sinon-chai')),
   sinon = require('sinon'),
-  {props, log, readJson, exec} = require('..'),
+  {props, log, readJson, exec, ifTrue} = require('..'),
   start = require('start').default,
   inputConnector = require('start-input-connector').default,
   {empty, fs} = require('octopus-test-utils');
@@ -31,7 +31,6 @@ describe('tasks', () => {
   });
 
   describe('log', () => {
-
     it('should log provided string and return original input', () => {
       const reporter = sinon.spy();
       return start(reporter)(inputConnector('InputStr'), log('log entry')).then(res => {
@@ -47,13 +46,12 @@ describe('tasks', () => {
         expect(res).to.equal('InputStr');
       });
     });
-
   });
 
   describe('readJson', () => {
 
     it('should log result of provided function over input and return original input', () => {
-      empty().within(() => {
+      return empty().within(() => {
         fs.writeJson('f.json', {key: 'value'});
 
         return start()(readJson('f.json')).then(res => {
@@ -65,10 +63,31 @@ describe('tasks', () => {
 
   describe('exec', () => {
 
-    it('executes a command and returns output', () => {
-      return start()(exec('echo a')).then(res => {
-        expect(res.stdout).to.equal('a');
+    it('executes a command, prints it and returns output', () => {
+      const reporter = sinon.spy();
+      return start(reporter)(exec('echo a')).then(res => {
+        expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'executing \'echo a\'');
+        expect(res.stdout).to.equal('a\n');
       });
     });
   });
+
+  describe('ifTrue', () => {
+
+    it('execute command if condition is true', () => {
+      const fn = sinon.stub().returns(Promise.resolve());
+      return start()(ifTrue(true)(fn)).then(() => {
+        expect(fn).to.have.been.called;
+      });
+    });
+
+    it('does not execute command if condition is false', () => {
+      const fn = sinon.stub().returns(Promise.resolve());
+      return start()(ifTrue(false)(fn)).then(() => {
+        expect(fn).to.not.have.been.called;
+      });
+    });
+
+  });
+
 });

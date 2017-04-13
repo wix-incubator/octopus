@@ -6,12 +6,12 @@ const defaults = {mapInput: input => input, silent: false};
 module.exports = ({mapInput = defaults.mapInput, silent = defaults.silent} = defaults) => fn => taskInput => {
   return function forEachModules(log, reporter) {
     return Promise.map(mapInput(taskInput), (item, index, length) => {
-      if (!silent) {
-        log(`${item.name} (${item.relativePath}) (${index + 1}/${length})`);
-      }
-
-      return Promise.resolve()
-        .then(() => fn(item, taskInput, reporter));
-    }).then(_.compact);
+      return Promise.resolve().then(() => {
+        if (!silent) {
+          log(`${item.name} (${item.relativePath}) (${index + 1}/${length})`);
+        }
+        return fn(item, taskInput, reporter);
+      });
+    }, {concurrency: 1}).then(_.compact);
   };
 };

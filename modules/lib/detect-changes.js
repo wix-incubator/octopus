@@ -15,6 +15,7 @@ exports.makePackageBuilt = function (dir) {
 
 
 exports.makePackageUnbuilt = makePackageUnbuilt;
+
 function makePackageUnbuilt(dir) {
   shelljs.rm('-f', path.resolve(dir, targetFileSentinelFilename));
 }

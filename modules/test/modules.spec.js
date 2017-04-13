@@ -16,6 +16,18 @@ describe('modules', () => {
     });
   });
 
+  it('should not traverse into node_modules', () => {
+    const project = fixtures.empty()
+      .packageJson({name: 'root', private: true, dependencies: {name: 'a', version: '1.0.0'}})
+      .module('node_modules/a', module => module.packageJson({name: 'a', version: '1.0.0'}))
+      .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}));
+
+    return project.within(() => {
+      expect(emitModuleNames()).to.deep.equal(['b']);
+    });
+  });
+
+
   it('should not traverse into module that is not private', () => {
     const project = fixtures.empty()
       .packageJson({name: 'root', dependencies: {name: 'a', version: '1.0.0'}})

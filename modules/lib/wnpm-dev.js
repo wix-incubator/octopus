@@ -84,19 +84,23 @@ function createDependencyEdgesFromPackages(packages) {
   return dependencyEdges;
 }
 
+function isNodeModulesDir(dir) {
+  return dir === 'node_modules';
+}
+
 function findListOfPackagesAndLocalDependencies(baseDir, workDir, depth) {
   workDir = path.resolve(workDir);
   depth = depth || 0;
   return inDir(workDir, function () {
     let packagesHierarchy = [];
 
-    if (isAnNpmPrivateProject(workDir) || !isAnNpmProject(workDir)) {
+    if ((isAnNpmPrivateProject(workDir) || !isAnNpmProject(workDir)) && !isNodeModulesDir(workDir)) {
       const entriesInBaseDir = shelljs.ls() || [];
 
       packagesHierarchy = entriesInBaseDir
         .filter(entry => shelljs.test('-d', entry))
         .map(function (dir) {
-          if (!isAnNpmProject(dir) || isAnNpmPrivateProject(dir)) {
+          if ((!isAnNpmProject(dir) || isAnNpmPrivateProject(dir)) && !isNodeModulesDir(dir)) {
             return findListOfPackagesAndLocalDependencies(baseDir, dir, anNpmPackageObjectFrom, depth + 1);
           }
           else if (isAnNpmProject(dir)) {

@@ -22,7 +22,16 @@ module.exports.listAll = () => Start(modules.load(), iter.forEach()(() => {}));
 
 ### modules.load()
 Wraps `octopus-modules`(../modules#modules) as a `Start` task.  
- 
+
+### modules.removeUnchanged()
+Removes modules from list returned ex. by `modules.load()` that were not changed after last `module.markBuilt`.  
+
+### module.markBuilt(module)
+Marks module as built.
+
+### module.markUnbuilt(module)
+Marks module as unbuilt.
+
 ### iter.forEach(opts)((module, input, reporter) => Promise)
 `Start` tasks that allows to iterate over result of `modules.list`.
 
