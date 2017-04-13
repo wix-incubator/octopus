@@ -8,6 +8,8 @@
   "homepage": "https://github.com/wix/octopus",
   "scripts": {
     "postinstall": "start-runner init",
+    "bootstrap": "start-runner bootstrap",
+    "test": "start-runner test",
     "start": "start-runner"
   },
   "repository": {

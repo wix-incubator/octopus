@@ -28,8 +28,7 @@ module.exports.bootstrap = () => start(
     startTasks.ifTrue(module.dependencies.length > 0)(() =>
       Start(asyncReporter)(startModulesTasks.module.exec(module)(`npm link ${module.dependencies.map(item => item.path).join(' ')}`))
     ),
-    startModulesTasks.module.exec(module)('npm install --cache-min 3600 && npm link'),
-    startModulesTasks.module.markBuilt(module)
+    startModulesTasks.module.exec(module)('npm install --cache-min 3600 && npm link')
   ))
 )
 
