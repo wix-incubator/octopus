@@ -1,8 +1,6 @@
 const fixtures = require('octopus-test-utils'),
   {expect} = require('chai').use(require('chai-shallow-deep-equal')),
   {modules, removeUnchanged, markBuilt, markUnbuilt} = require('..'),
-  shelljs = require('shelljs'),
-  fs = require('fs'),
   {makePackageBuilt} = require('../lib/detect-changes');
 
 describe('package changes', () => {

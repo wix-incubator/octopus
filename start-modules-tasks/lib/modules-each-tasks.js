@@ -50,7 +50,7 @@ module.exports.markBuilt = module => () => {
 };
 
 //TODO: pass-through input
-module.exports.markUnbuilt = module => input => {
+module.exports.markUnbuilt = module => () => {
   return function markUnbuilt(/*log, reporter*/) {
     return Promise.resolve().then(() => modules.markUnbuilt(module));
   }

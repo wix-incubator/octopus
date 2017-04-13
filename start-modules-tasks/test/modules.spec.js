@@ -51,9 +51,10 @@ describe('tasks', () => {
           tasks.iter.forEach()(item => start(tasks.module.markBuilt(item))),
           inputConnector(rawModulesList),
           tasks.modules.removeUnchanged()).then(filteredModules => {
-          expect(filteredModules.length).to.equal(0);
-          expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'Filtered-out 2 unchanged modules');
-        });
+            expect(filteredModules.length).to.equal(0);
+            expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'Filtered-out 2 unchanged modules');
+          }
+        );
       });
     });
   });
@@ -70,16 +71,18 @@ describe('tasks', () => {
           tasks.iter.forEach()(item => start(tasks.module.markBuilt(item))),
           inputConnector(rawModulesList),
           tasks.modules.removeUnchanged()).then(filteredModules => {
-          expect(filteredModules.length).to.equal(0);
+            expect(filteredModules.length).to.equal(0);
 
-          return start(
-            inputConnector(rawModulesList),
-            tasks.iter.forEach()(item => start(tasks.module.markUnbuilt(item))),
-            inputConnector(rawModulesList),
-            tasks.modules.removeUnchanged()).then(filteredModules => {
-              expect(filteredModules.length).to.equal(2);
-          });
-        });
+            return start(
+              inputConnector(rawModulesList),
+              tasks.iter.forEach()(item => start(tasks.module.markUnbuilt(item))),
+              inputConnector(rawModulesList),
+              tasks.modules.removeUnchanged()).then(filteredModules => {
+                expect(filteredModules.length).to.equal(2);
+              }
+            );
+          }
+        );
       });
     });
   });
