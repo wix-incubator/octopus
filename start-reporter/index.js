@@ -1,8 +1,38 @@
-module.exports = (out = console) => (name, type, message) => {
+const chalk = require('chalk');
 
-  if (type === 'info' && typeof message !== 'undefined') {
-    out.log(`[${name}]: ${message}`);
-  } else if (type === 'reject') {
-    out.error(`[${name}]: failed with ${message.stack}`);
+//TODO: test this
+class Colors {
+  constructor() {
+    this._allColors = ['green', 'yellow', 'blue', 'magenta', 'cyan', 'gray'];
+    this._current = [];
   }
+
+  next() {
+    if (this._current.length === 0) {
+      this._current = this._allColors;
+    }
+
+    return this._current.pop();
+  }
+}
+
+
+module.exports = (out = console) => {
+  const colors = new Colors();
+  const namesAndColors = {};
+
+  return (name, type, message) => {
+    if (type === 'info' && typeof message !== 'undefined') {
+      if (!namesAndColors[name]) {
+        namesAndColors[name] = colors.next();
+      }
+
+      const color = namesAndColors[name];
+
+      out.log(`[${chalk[color](name)}]: ${message}`);
+    } else if (type === 'reject') {
+      out.error(`[${chalk.red(name)}]: failed with ${message.stack}`);
+    }
+  };
 };
+
