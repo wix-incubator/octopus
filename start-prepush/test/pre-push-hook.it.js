@@ -35,6 +35,6 @@ const prepush = require('octopus-start-prepush');
 
 const start = new Start();
 
-module.exports.init = () => start(prepush);
+module.exports.init = () => start(prepush());
 module.exports.sync = () => start(() => () => Promise.resolve().then(() => console.log('sync invoked')));
 `;

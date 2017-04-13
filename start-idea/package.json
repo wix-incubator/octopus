@@ -25,8 +25,8 @@
   },
   "dependencies": {
     "handlebars": "^4.0.6",
-    "octopus-start-modules-tasks": "^2.1.2",
-    "octopus-start-tasks": "^2.1.2"
+    "octopus-start-modules-tasks": "~0.0.1",
+    "octopus-start-tasks": "~0.0.1"
   },
   "peerDependencies": {
     "start": ">= 5.1.0"

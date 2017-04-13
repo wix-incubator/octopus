@@ -80,6 +80,4 @@ describe('pre-push hook', () => {
     expect(shelljs.test('-f', 'a/a.iml')).to.equal(true);
     expect(shelljs.test('-f', 'b/b.iml')).to.equal(true);
   }
-
-
 });
