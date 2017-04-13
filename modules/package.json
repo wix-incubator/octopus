@@ -1,0 +1,46 @@
+{
+  "name": "octopus-modules",
+  "version": "0.0.1",
+  "description": "Multi-module repo graph handler",
+  "author": "Vilius Lukosius",
+  "main": "index.js",
+  "license": "ISC",
+  "homepage": "https://github.com/wix/octopus",
+  "scripts": {
+    "build": ":",
+    "lint": "eslint *.js **/*.js",
+    "test": "mocha 'test/**/*.spec.js' 'test/**/*.it.js'",
+    "posttest": "npm run lint -s",
+    "release": "npm-version-up --no-shrinkwrap"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wix/octopus"
+  },
+  "bugs": {
+    "url": "https://github.com/wix/octopus/issues"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "dependencies": {
+    "graphlib": "2.1.1",
+    "lodash": "4.17.4",
+    "minimatch": "3.0.3",
+    "object-filter": "1.0.2",
+    "parse-gitignore": "0.3.1",
+    "shelljs": "0.7.5"
+  },
+  "devDependencies": {
+    "chai": "3.5.0",
+    "chai-as-promised": "6.0.0",
+    "chai-shallow-deep-equal": "1.4.6",
+    "eslint": "3.12.2",
+    "eslint-plugin-mocha": "4.8.0",
+    "mocha": "3.2.0",
+    "npm-version-up": "0.0.4",
+    "octopus-test-utils": "~0.0.1",
+    "sinon": "1.17.7",
+    "sinon-chai": "2.8.0"
+  }
+}

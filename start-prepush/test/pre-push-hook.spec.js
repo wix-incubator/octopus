@@ -11,7 +11,7 @@ describe('pre-push hook', () => {
     const prePushHookFile = readFileSync('./files/pre-push').toString();
 
     return empty().within(ctx => {
-      return prePush()(log).then(() => {
+      return prePush()()(log).then(() => {
         expect(log).to.have.been.calledWithMatch('Adding pre-push hook');
         expect(prePushHookFile).to.equal(ctx.readFile('.git/hooks/pre-push'))
       })

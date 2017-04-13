@@ -10,7 +10,7 @@ npm install --save-dev octopus-start-prepush
 
 # Usage
 
-Add task to **tasks.js** and another task `sync` that will be invoked before git push: 
+Add task to **modules.spec.js** and another task `sync` that will be invoked before git push: 
 ```js
 const Start = require('start'),
  prepush = require('octopus-start-prepush');

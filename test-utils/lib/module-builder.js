@@ -58,7 +58,7 @@ class ModuleBuilder {
   }
 
   module(name, cb) {
-    const module = new ModuleBuilder(this._dir, path.join(this._dir, name), false);
+    const module = new ModuleBuilder(this._cwd, path.join(this._dir, name), false);
 
     if (cb) {
       inDir(cb, module);
@@ -96,8 +96,6 @@ class ModuleBuilder {
       .then(() => fn(this))
       .finally(clean);
   }
-
-
 }
 
 function aPackageJson(name, overrides) {
