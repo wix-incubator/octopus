@@ -26,6 +26,12 @@ Wraps `octopus-modules`(../modules#modules) as a `Start` task.
 ### modules.removeUnchanged()
 Removes modules from list returned ex. by `modules.load()` that were not changed after last `module.markBuilt`.  
 
+### modules.removeGitUnchanged(refspec)
+Removes modules from list returned ex. by `modules.load()` that do not have changes when compared to `refspec` - branch or such.  
+
+### modules.removeExtraneousDependencies()
+Removes dependencies in modules that are left after `removeUnchanged` or `removeGitUnchanged`. In some cases you might want for dependencies to stay (npm links) and in others you want them to be removed.  
+
 ### module.markBuilt(module)
 Marks module as built.
 

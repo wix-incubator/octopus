@@ -41,15 +41,15 @@ describe('tasks', () => {
 
   describe('modules.removeGitUnchanged', () => {
 
-    it.only('removes modules without changes', () => {
+    it('removes modules without changes', () => {
       const reporter = sinon.spy();
-      const log = sinon.spy();
       const start = new Start(reporter);
 
       return empty()
         .module('nested/a', module => module.packageJson({name: 'a', version: '2.0.0'}))
+        .module('ba', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}))
         .inDir(ctx => {
-          // ctx.exec('git init && git config user.email mail@example.org && git config user.name name');
+          ctx.exec('git init && git config user.email mail@example.org && git config user.name name');
           ctx.exec('git add -A && git commit -am ok');
           ctx.exec('git checkout -b test');
         })
@@ -61,23 +61,30 @@ describe('tasks', () => {
           const rawModulesList = modules();
           return start(inputConnector(rawModulesList), tasks.modules.removeGitUnchanged('master')).then(filteredModules => {
             expect(filteredModules.length).to.equal(1);
-            expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'Filtered-out 1 unchanged modules');
+            expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'Filtered-out 2 unchanged modules');
           });
         });
+    });
+  });
 
+  describe('modules.removeUnchanged', () => {
 
+    it('removes modules without changes', () => {
+      const {reporter, start, project} = setup();
 
-      // return project.within(ctx => {
-      //   ctx.exec('git init && git config user.email mail@example.org && git config user.name name');
-      //   ctx.exec('git add -A && git commit -am ok');
-      //
-      //   const rawModulesList = modules();
-      //   markBuilt(rawModulesList[0]);
-      //   return start(inputConnector(rawModulesList), tasks.modules.removeUnchanged()).then(filteredModules => {
-      //     expect(filteredModules.length).to.equal(1);
-      //     expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'Filtered-out 1 unchanged modules');
-      //   });
-      // });
+      return project.within(() => {
+        const rawModulesList = modules();
+        markBuilt(rawModulesList[0]);
+        return start(
+          inputConnector(rawModulesList),
+          tasks.modules.removeUnchanged(),
+          tasks.modules.removeExtraneousDependencies())
+          .then(filteredModules => {
+            expect(filteredModules.length).to.equal(1);
+            expect(filteredModules[0].dependencies.length).to.equal(0);
+            expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'Cleaned extraneous dependencies');
+          });
+      });
     });
   });
 

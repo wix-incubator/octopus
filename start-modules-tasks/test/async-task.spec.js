@@ -8,11 +8,13 @@ describe('async-task', () => {
 
   it('should call callback in correct module order', () => {
     const action = sinon.stub();
+    const reporter = sinon.spy();
+    const log = sinon.spy();
     action.returns(Promise.resolve());
 
     return aComplexProject().within(() => {
       const loadedModules = modules();
-      const promise = asyncTask()(action)(loadedModules)().then(() => {
+      const promise = asyncTask()(action)(loadedModules)(log, reporter).then(() => {
         expect(action).to.have.callCount(4);
 
         expect(action.getCall(0)).to.be.calledWith(loadedModules[0]);
@@ -26,6 +28,9 @@ describe('async-task', () => {
   });
 
   it('should not run module until its liabilities have completed', () => {
+    const reporter = sinon.spy();
+    const log = sinon.spy();
+
     const actionStarts = [];
     const actionFinishes = [];
 
@@ -44,7 +49,7 @@ describe('async-task', () => {
 
     return aProject().within(() => {
       const loadedModules = modules();
-      return asyncTask({threads: 8})(action)(loadedModules)().then(() => {
+      return asyncTask({threads: 8})(action)(loadedModules)(log, reporter).then(() => {
         expect(actionFinishes[0]).to.have.been.calledBefore(actionStarts[1]);
         expect(actionFinishes[1]).to.have.been.calledBefore(actionStarts[2]);
       });
@@ -53,6 +58,9 @@ describe('async-task', () => {
 
   it('should run all independent projects before any has finished', () => {
     const action = sinon.spy();
+    const reporter = sinon.spy();
+    const log = sinon.spy();
+
     const asyncAction = module => {
       action(module);
       return new Promise(resolve => setTimeout(resolve, 50));
@@ -60,7 +68,7 @@ describe('async-task', () => {
 
     return aComplexProject().within(() => {
       const loadedModules = modules();
-      const promise = asyncTask({threads: 8})(asyncAction)(loadedModules)();
+      const promise = asyncTask({threads: 8})(asyncAction)(loadedModules)(log, reporter);
 
       //TODO: not great
       expect(action).to.have.callCount(3);
@@ -77,6 +85,9 @@ describe('async-task', () => {
 
   it('should not run more than maximum threads allowed', () => {
     const action = sinon.spy();
+    const reporter = sinon.spy();
+    const log = sinon.spy();
+
     const asyncAction = module => {
       action(module);
       return new Promise(resolve => setTimeout(resolve, 50));
@@ -84,7 +95,7 @@ describe('async-task', () => {
 
     return aComplexProject().within(() => {
       const loadedModules = modules();
-      const promise = asyncTask({threads: 2})(asyncAction)(loadedModules)();
+      const promise = asyncTask({threads: 2})(asyncAction)(loadedModules)(log, reporter);
 
       expect(action).to.have.callCount(2);
       expect(action.getCall(0)).to.be.calledWith(loadedModules[0]);
@@ -99,12 +110,14 @@ describe('async-task', () => {
   });
 
   it('should reject if async action rejects', () => {
+    const reporter = sinon.spy();
+    const log = sinon.spy();
     const error = new Error('some message');
     const asyncAction = () => new Promise((resolve, reject) => reject(error));
 
     return aComplexProject().within(() => {
       const loadedModules = modules();
-      const promise = asyncTask()(asyncAction)(loadedModules)();
+      const promise = asyncTask()(asyncAction)(loadedModules)(log, reporter);
 
       return expect(promise).to.eventually.be.rejectedWith(error)
     });

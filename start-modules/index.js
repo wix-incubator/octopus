@@ -17,10 +17,12 @@ function whereModuleTask(moduleName) {
     return start(reporter)(
       modules.load(),
       iter.async({silent: true})((module, input, asyncReporter) => {
-        const dep = module.dependencies.find(dep => dep.name === moduleName);
-        if (dep) {
-          asyncReporter('whereModule', 'info', `${module.name} (${module.relativePath}) (${module.version})`);
-        }
+        return Promise.resolve().then(() => {
+          const dep = module.dependencies.find(dep => dep.name === moduleName);
+          if (dep) {
+            asyncReporter('whereModule', 'info', `${module.name} (${module.relativePath}) (${module.version})`);
+          }
+        })
       })
     )
   }
