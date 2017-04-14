@@ -123,6 +123,20 @@ describe('async-task', () => {
     });
   });
 
+  it('should return provided input to next task', () => {
+    const action = sinon.stub();
+    const reporter = sinon.spy();
+    const log = sinon.spy();
+    action.returns(Promise.resolve('ok'));
+
+    return aComplexProject().within(() => {
+      const loadedModules = modules();
+      return asyncTask()(action)(loadedModules)(log, reporter).then(result => {
+        expect(result).to.deep.equal(loadedModules);
+      });
+    });
+  });
+
   function aComplexProject({scripts} = {}) {
     const a = '~1.0.0';
     const b = '~1.0.1';

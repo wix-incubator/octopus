@@ -76,7 +76,7 @@ module.exports = ({mapInput = DEFAULTS.mapInput, silent = DEFAULTS.silent, threa
       };
 
       runnableModules.slice().forEach(handleModuleAsync);
-    });
+    }).then(() => taskInput);
   };
 };
 

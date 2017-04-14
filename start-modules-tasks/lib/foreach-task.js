@@ -13,6 +13,6 @@ module.exports = ({mapInput = defaults.mapInput, silent = defaults.silent} = def
         }
         return Promise.resolve().then(() => fn(item, taskInput, reporter)).then(res => results.push(res));
       });
-    }).then(() => _.compact(results));
+    }).then(() => taskInput);
   };
 };
