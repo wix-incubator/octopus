@@ -1,7 +1,9 @@
 const {empty} = require('octopus-test-utils'),
   {expect} = require('chai').use(require('sinon-chai')).use(require('chai-as-promised')),
   sinon = require('sinon'),
-  {assert} = require('..');
+  git = require('..'),
+  _ = require('lodash'),
+  exec = require('child_process').execSync;
 
 describe('git tasks', () => {
 
@@ -13,7 +15,7 @@ describe('git tasks', () => {
       return initialized().within(ctx => {
         ctx.exec('git checkout -b test');
 
-        const promise = assert.branch('master')()(log, reporter);
+        const promise = git.assert.branch('master')()(log, reporter);
 
         return expect(promise).to.eventually.be.rejectedWith('expected branch to be master, but found test');
       });
@@ -25,7 +27,7 @@ describe('git tasks', () => {
       return initialized().within(ctx => {
         ctx.exec('git checkout -b test');
 
-        return assert.branch('test')()(log, reporter);
+        return git.assert.branch('test')()(log, reporter);
       });
     });
   });
@@ -38,7 +40,7 @@ describe('git tasks', () => {
       return initialized().within(ctx => {
         ctx.exec('touch qwe.q && git add -A');
 
-        const promise = assert.clean()()(log, reporter);
+        const promise = git.assert.clean()()(log, reporter);
 
         return expect(promise).to.eventually.be.rejectedWith('uncommitted changes found');
       });
@@ -50,7 +52,7 @@ describe('git tasks', () => {
       return initialized().within(ctx => {
         ctx.exec('touch qwe.q');
 
-        const promise = assert.clean()()(log, reporter);
+        const promise = git.assert.clean()()(log, reporter);
 
         return expect(promise).to.eventually.be.rejectedWith('uncommitted changes found');
       });
@@ -61,7 +63,7 @@ describe('git tasks', () => {
       const log = sinon.spy();
       const reporter = sinon.spy();
       return initialized().within(() => {
-        return assert.clean()()(log, reporter);
+        return git.assert.clean()()(log, reporter);
       });
     });
   });
@@ -75,7 +77,7 @@ describe('git tasks', () => {
         ctx.exec('git checkout -b test');
         ctx.exec('touch qwe.z && git add -A && git commit -am ok');
 
-        const promise = assert.upToDateWith('master')()(log, reporter);
+        const promise = git.assert.upToDateWith('master')()(log, reporter);
 
         return expect(promise).to.eventually.be.rejectedWith('current is not up-to-date with master');
       });
@@ -85,10 +87,55 @@ describe('git tasks', () => {
       const log = sinon.spy();
       const reporter = sinon.spy();
       return initialized().within(() => {
-        return assert.upToDateWith('master')()(log, reporter);
+        return git.assert.upToDateWith('master')()(log, reporter);
       });
     });
   });
+
+  describe('get latest tag', () => {
+
+    it('should return latest tag by expression', () => {
+      const log = sinon.spy();
+      const reporter = sinon.spy();
+      return initialized().within(ctx => {
+        const now = Date.now();
+        ctx.exec(`git tag 'GA-smth-${now - 100}'`);
+        ctx.exec(`git tag 'GA-smth-${now - 50}'`);
+        ctx.exec(`git tag 'GA-smth-${now}'`);
+
+        return git.latestTag('GA-smth-*')()(log, reporter).then(tag => {
+          expect(tag).to.equal(`GA-smth-${now}`);
+        });
+      });
+    });
+
+    it('should fail if no tags matching pattern found', () => {
+      const log = sinon.spy();
+      const reporter = sinon.spy();
+
+      return initialized().within(ctx => {
+        const promise = git.latestTag('GA-smth-*')()(log, reporter);
+
+        return expect(promise).to.eventually.be.rejectedWith('not tags matching pattern GA-smth-* found');
+      });
+    });
+  });
+
+  describe('tag', () => {
+
+    it('should create a git tag', () => {
+      const log = sinon.spy();
+      const reporter = sinon.spy();
+      return initialized().within(ctx => {
+
+        return git.tag('GA-smth-*')()(log, reporter).then(createdTag => {
+          const tag = _.compact(exec(`git tag -l --sort=taggerdate 'GA-smth-*'`).toString().split('\n')).pop();
+          expect(tag).to.equal(createdTag);
+        });
+      });
+    });
+  });
+
 
   function initialized() {
     return empty().inDir(ctx => {

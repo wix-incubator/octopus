@@ -1,6 +1,4 @@
-const startModules = require('octopus-start-modules-tasks'),
-  startTasks = require('octopus-start-tasks'),
-  start = require('start').default,
+const start = require('start').default,
   concurrent = require('start-concurrent').default,
   exec = require('child_process').execSync,
   assert = require('assert'),
@@ -35,9 +33,35 @@ function assertUpToDateWith(expectedBranch) {
   }
 }
 
+function latestTag(pattern) {
+  return () => function latestTag(log, reporter) {
+    return Promise.resolve().then(() => {
+      const tags = _.compact(exec(`git tag -l --sort=taggerdate '${pattern}'`).toString().split('\n'));
+
+      assert(tags.length !== 0, `not tags matching pattern ${pattern} found`);
+
+      return tags.pop();
+    });
+  }
+}
+
+
+function tag(pattern) {
+  return () => function latestTag(log, reporter) {
+    return Promise.resolve().then(() => {
+      const now = Date.now();
+      const tag = `${pattern.replace('*', '')}${now}`;
+      exec(`git tag '${tag}'`);
+      return tag;
+    });
+  }
+}
 
 module.exports.assert = {
   branch: assertGitBranch,
   clean: assertClean,
   upToDateWith: assertUpToDateWith
 };
+
+module.exports.latestTag = latestTag;
+module.exports.tag = tag;
