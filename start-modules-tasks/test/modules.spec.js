@@ -138,28 +138,17 @@ describe('tasks', () => {
 
   describe('iter.forEach', () => {
 
-    it('should iterate over provided modules, log info and return results of provided function', () => {
+    it('should iterate over provided modules, log info and return provided input', () => {
       const {reporter, start, project} = setup();
       const iterFn = item => item.name;
 
       return project.within(() => {
-        return start(tasks.modules.load(), tasks.iter.forEach()(iterFn)).then(res => {
-          expect(res).to.deep.equal(['a', 'b']);
+        const rawModulesList = modules();
+        return start(inputConnector(rawModulesList), tasks.iter.forEach()(iterFn)).then(res => {
+          expect(res).to.deep.equal(rawModulesList);
           expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'a (nested/a) (1/2)');
           expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'b (b) (2/2)');
         });
-      });
-    });
-
-    it('should not return falsy values', () => {
-      const {log, project} = setup();
-      const iterFn = item => item.name === 'a' && item.name;
-
-
-      return project.within(() => {
-        const projectModules = modules();
-        return tasks.iter.forEach()(iterFn)(projectModules)(log)
-          .then(res => expect(res).to.deep.equal(['a']));
       });
     });
 

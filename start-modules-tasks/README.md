@@ -45,6 +45,8 @@ Supports options:
  - mapInput, defaults to input => input: function that, given input other than array of modules - ex. object that contains modules, actually maps it to array of modules;
  - silent, defaults to false: should task print iteration info.
 
+Tasks returns provided input.
+
 ### iter.async(opts)((module, input, reporter) => Promise)
 `Start` tasks that allows to iterate over result of asynchronously `modules.load`.
 
@@ -52,6 +54,8 @@ Supports options:
  - mapInput, defaults to input => input: function that, given input other than array of modules - ex. object that contains modules, actually maps it to array of modules;
  - silent, defaults to false: should task print iteration info;
  - threads, defaults to 4: number of parallel threads.
+
+Tasks returns provided input. 
 
 ### modules.module.readJson(module)(fileName)
 `Start` tasks that reads json file in cwd of provided module. Returns json object;
