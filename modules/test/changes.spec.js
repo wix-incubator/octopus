@@ -21,7 +21,7 @@ describe('package changes', () => {
       });
     });
 
-    it('should filter-out unchanged modules', () => {
+    it.only('should filter-out unchanged modules', () => {
       const project = fixtures.empty()
         .module('a', module => module.packageJson({name: 'a', version: '1.0.0'}))
         .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}))
