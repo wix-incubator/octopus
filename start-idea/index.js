@@ -53,7 +53,7 @@ function createModulesXml() {
   return modules => function createModulesXml(/*log, reporter*/) {
     return Promise.resolve().then(() => {
       templates.ideaModulesFile('.idea/modules.xml', modules.map(module => {
-        const group = (module.path === module.relativePath) ? undefined : module.relativePath.replace('/' + module.path, '');
+        const group = module.relativePath.replace(module.path).replace('/' + module.name, '');
         return {name: module.name, dir: module.relativePath, group: group};
       }));
     }).then(() => modules);
@@ -72,7 +72,8 @@ function createModuleIml(module) {
         }
       });
 
-      templates.ideaModuleImlFile(join(module.path, module.name + '.iml'), sourceFolders);
+      const imlFile = join(module.path, module.name + '.iml');
+      templates.ideaModuleImlFile(imlFile, sourceFolders);
     });
   }
 }

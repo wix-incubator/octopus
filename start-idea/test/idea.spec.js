@@ -58,6 +58,18 @@ describe('pre-push hook', () => {
     });
   });
 
+  it('adds modules to groups if they are in subfolders', () => {
+    return aProject().within(() => {
+      return start()(idea()).then(() => {
+        const modulesXml = shelljs.cat('.idea/modules.xml').stdout;
+
+        expect(modulesXml).to.be.string('group="nested"');
+        expect(modulesXml).to.not.be.string('group="a/a"');
+      });
+    });
+  });
+
+
   it('creates git-based ./idea/vcs.xml', () => {
     return aProject().within(() => {
       return start()(idea()).then(() => {
@@ -69,7 +81,8 @@ describe('pre-push hook', () => {
   function aProject() {
     return empty()
       .module('a', module => module.packageJson({version: '1.0.0'}))
-      .module('b', module => module.packageJson({version: '1.0.1', dependencies: {'a': '~1.0.0'}}));
+      .module('b', module => module.packageJson({version: '1.0.1', dependencies: {'a': '~1.0.0'}}))
+      .module('nested/c', module => module.packageJson({name: 'c', version: '1.0.1', dependencies: {'a': '~1.0.0'}}));
   }
 
   function assertIdeaFilesGenerated() {
@@ -79,5 +92,6 @@ describe('pre-push hook', () => {
     expect(shelljs.test('-f', '.idea/modules.xml')).to.equal(true);
     expect(shelljs.test('-f', 'a/a.iml')).to.equal(true);
     expect(shelljs.test('-f', 'b/b.iml')).to.equal(true);
+    expect(shelljs.test('-f', 'nested/c/c.iml')).to.equal(true);
   }
 });
