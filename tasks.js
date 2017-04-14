@@ -50,6 +50,10 @@ module.exports.unbuild = () => start(
 
 module.exports.release = () => start(
   startModulesTasks.modules.load(),
+  startTasks.log('Checking if on master'),
+  startTasks.exec('[[ $(git rev-parse --abbrev-ref HEAD) != "master" ]]'),//verify on master
+  startTasks.log('Checking if master is up-to-date'),
+  startTasks.exec('[ $(git rev-parse HEAD) = $(git ls-remote $(git rev-parse --abbrev-ref @{u} | sed "s/\// /g") | cut -f1) ] || exit 1'),//check up-to-date
   startModulesTasks.iter.async()((module, input, asyncReporter) => Start(asyncReporter)(
     startModulesTasks.module.exec(module)('npm run release'),
     startModulesTasks.module.exec(module)('npm publish')
