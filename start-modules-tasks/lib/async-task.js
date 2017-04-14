@@ -52,7 +52,7 @@ module.exports = ({mapInput = DEFAULTS.mapInput, silent = DEFAULTS.silent, threa
         return asyncAction(module, taskInput, taskReporter.reporter).then(() => {
           taskReporter.flush();
           removeFromArray(runningModules, module);
-          if (notYetRunnableModules.length === 0 && runnableModules.length === 0) {
+          if (notYetRunnableModules.length === 0 && runnableModules.length === 0 && runningModules.length === 0) {
             resolve();
           }
 
