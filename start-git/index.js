@@ -3,7 +3,8 @@ const startModules = require('octopus-start-modules-tasks'),
   start = require('start').default,
   concurrent = require('start-concurrent').default,
   exec = require('child_process').execSync,
-  assert = require('assert');
+  assert = require('assert'),
+  _ = require('lodash');
 
 function assertGitBranch(expectedBranchName) {
   return () => function assertGitBranch(log, reporter) {
@@ -19,7 +20,17 @@ function assertClean() {
     return Promise.resolve().then(() => {
       const uncommitedLog = exec('git status --porcelain').toString();
 
-      assert(uncommitedLog.length === 0, `'uncommitted changes found': ${uncommitedLog}`);
+      assert(uncommitedLog.length === 0, `uncommitted changes found: ${uncommitedLog}`);
+    });
+  }
+}
+
+function assertUpToDateWith(expectedBranch) {
+  return () => function assertUpToDateWith(log, reporter) {
+    return Promise.resolve().then(() => {
+      const uncommitedLog = _.compact(exec(`git rev-list HEAD...${expectedBranch}`).toString().split('\n'));
+
+      assert(uncommitedLog.length === 0, `current is not up-to-date with ${expectedBranch}. commits: ${uncommitedLog.join(', ')}`);
     });
   }
 }
@@ -27,5 +38,6 @@ function assertClean() {
 
 module.exports.assert = {
   branch: assertGitBranch,
-  clean: assertClean
+  clean: assertClean,
+  upToDateWith: assertUpToDateWith
 };

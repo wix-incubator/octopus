@@ -66,6 +66,29 @@ describe('git tasks', () => {
     });
   });
 
+  describe('assert up-to-date', () => {
+
+    it('should reject if provided branch is not-up-to-date with remote', () => {
+      const log = sinon.spy();
+      const reporter = sinon.spy();
+      return initialized().within(ctx => {
+        ctx.exec('git checkout -b test');
+        ctx.exec('touch qwe.z && git add -A && git commit -am ok');
+
+        const promise = assert.upToDateWith('master')()(log, reporter);
+
+        return expect(promise).to.eventually.be.rejectedWith('current is not up-to-date with master');
+      });
+    });
+
+    it('should not reject for up-to-date branch', () => {
+      const log = sinon.spy();
+      const reporter = sinon.spy();
+      return initialized().within(() => {
+        return assert.upToDateWith('master')()(log, reporter);
+      });
+    });
+  });
 
   function initialized() {
     return empty().inDir(ctx => {
