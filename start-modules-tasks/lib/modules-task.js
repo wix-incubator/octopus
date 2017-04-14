@@ -28,9 +28,6 @@ module.exports.removeGitUnchanged = branchName => loadedModules => {
     return Promise.resolve().then(() => {
       const changes = _.compact(execSync(`git diff --name-only ${branchName}`).toString().split('\n'));
       const afterRemoval = modules.removeUnchanged(loadedModules, changes);
-      // const afterRemoval = loadedModules.filter(module => {
-      //   return changes.find(file => file.startsWith(module.relativePath + '/'))
-      // });
       log(`Filtered-out ${loadedModules.length - afterRemoval.length} unchanged modules`);
       return afterRemoval;
     });

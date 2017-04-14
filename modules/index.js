@@ -34,7 +34,7 @@ module.exports.markUnbuilt = module => {
 };
 
 function figureOutAllPackagesThatNeedToBeBuilt(allPackages, changedPackages) {
-  const transitiveClosureOfPackagesToBuild = new Set(_.map(changedPackages, el => el.relativePath));
+  const transitiveClosureOfPackagesToBuild = new Set(changedPackages.map(el => el.relativePath));
   let dependencyEdges = createDependencyEdgesFromPackages(allPackages);
 
   let dependencyEdgesLengthBeforeFiltering = dependencyEdges.length;
@@ -58,18 +58,22 @@ function figureOutAllPackagesThatNeedToBeBuilt(allPackages, changedPackages) {
 }
 
 function createDependencyEdgesFromPackages(packages) {
-  const setOfAllPackageNames = new Set(_.flatten(packages.map(packageNames)));
-  const packagesByNpmName = _.keyBy(packages.filter(p => p.npm), 'npm.name');
+  const setOfAllPackageNames = new Set(packages.map(p => p.relativePath));
+  const packagesByNpmName = _.keyBy(packages, 'relativePath');
 
   const dependencyEdges = [];
-  for (let packageObject of packages) {
-
-    for (let dep of packageObject.npm ? Object.keys(packageObject.npm.dependencies) : []) {
-      if (setOfAllPackageNames.has(dep)) {
-        dependencyEdges.push([packageObject.relativePath, packagesByNpmName[dep].relativePath])
+  packages.forEach(packageObject => {
+    (packageObject.dependencies || []).forEach(({relativePath}) => {
+      if (setOfAllPackageNames.has(relativePath)) {
+        dependencyEdges.push([packageObject.relativePath, packagesByNpmName[relativePath].relativePath])
       }
-    }
-  }
+    });
+    // for (let dep of packageObject.npm ? Object.keys(packageObject.npm.dependencies) : []) {
+    //   if (setOfAllPackageNames.has(dep)) {
+    //     dependencyEdges.push([packageObject.relativePath, packagesByNpmName[dep].relativePath])
+    //   }
+    // }
+  });
 
   return dependencyEdges;
 }

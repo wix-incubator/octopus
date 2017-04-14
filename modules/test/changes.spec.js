@@ -21,17 +21,17 @@ describe('package changes', () => {
       });
     });
 
-    it.only('should filter-out unchanged modules', () => {
+    it('should filter-out unchanged modules', () => {
       const project = fixtures.empty()
         .module('a', module => module.packageJson({name: 'a', version: '1.0.0'}))
-        .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}))
+        .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}));
 
       return project.within(() => {
-        makePackageBuilt('b');
+        makePackageBuilt('a');
 
         const loadedModules = modules();
         const unchangedModuleNames = removeUnchanged(loadedModules).map(module => module.name);
-        expect(unchangedModuleNames).to.deep.equal(['a']);
+        expect(unchangedModuleNames).to.deep.equal(['b']);
       });
     });
 
@@ -42,11 +42,12 @@ describe('package changes', () => {
         .module('c', module => module.packageJson({version: '1.0.0', dependencies: {'b': '~1.0.0'}}));
 
       return project.within(() => {
+        makePackageBuilt('a');
         makePackageBuilt('c');
 
         const loadedModules = modules();
         const unchangedModuleNames = removeUnchanged(loadedModules).map(module => module.name);
-        expect(unchangedModuleNames).to.deep.equal(['a', 'b']);
+        expect(unchangedModuleNames).to.deep.equal(['b', 'c']);
       });
     });
   });
