@@ -47,21 +47,21 @@ describe('tasks', () => {
 
       return empty()
         .module('nested/a', module => module.packageJson({name: 'a', version: '2.0.0'}))
-        .module('ba', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}))
+        .module('ba', module => module.packageJson({version: '1.0.0', dependencies: {'b': '~1.0.0'}}))
         .inDir(ctx => {
           ctx.exec('git init && git config user.email mail@example.org && git config user.name name');
           ctx.exec('git add -A && git commit -am ok');
           ctx.exec('git checkout -b test');
         })
-        .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}))
+        .module('b', module => module.packageJson({version: '1.0.0'}))
         .inDir(ctx => {
           ctx.exec('git add -A && git commit -am ok');
         })
         .within(() => {
           const rawModulesList = modules();
           return start(inputConnector(rawModulesList), tasks.modules.removeGitUnchanged('master')).then(filteredModules => {
-            expect(filteredModules.length).to.equal(1);
-            expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'Filtered-out 2 unchanged modules');
+            expect(filteredModules.length).to.equal(2);
+            expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'Filtered-out 1 unchanged modules');
           });
         });
     });
