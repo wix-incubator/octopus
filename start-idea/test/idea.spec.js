@@ -64,7 +64,7 @@ describe('pre-push hook', () => {
         const modulesXml = shelljs.cat('.idea/modules.xml').stdout;
 
         expect(modulesXml).to.be.string('group="nested"');
-        expect(modulesXml).to.not.be.string('group="a/a"');
+        expect(modulesXml).to.not.be.string('group="a"');
       });
     });
   });
