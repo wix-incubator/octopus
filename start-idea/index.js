@@ -53,10 +53,12 @@ function createModulesXml() {
   return modules => function createModulesXml(/*log, reporter*/) {
     return Promise.resolve().then(() => {
       templates.ideaModulesFile('.idea/modules.xml', modules.map(module => {
-        if (module.relativePath === module.name) {
-          return {name: module.name, dir: module.relativePath};
+        if (module.relativePath.indexOf('/') > -1) {
+          const parts = module.relativePath.split('/');
+          parts.pop();
+          return {name: module.name, dir: module.relativePath, group: parts.join('/')};
         } else {
-          return {name: module.name, dir: module.relativePath, group: module.relativePath.replace(`/${module.name}`, '')};
+          return {name: module.name, dir: module.relativePath};
         }
       }));
     }).then(() => modules);

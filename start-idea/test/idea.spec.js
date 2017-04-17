@@ -65,6 +65,7 @@ describe('pre-push hook', () => {
 
         expect(modulesXml).to.be.string('group="nested"');
         expect(modulesXml).to.not.be.string('group="a"');
+        expect(modulesXml).to.not.be.string('group="ba"');
       });
     });
   });
@@ -81,7 +82,7 @@ describe('pre-push hook', () => {
   function aProject() {
     return empty()
       .module('a', module => module.packageJson({version: '1.0.0'}))
-      .module('b', module => module.packageJson({version: '1.0.1', dependencies: {'a': '~1.0.0'}}))
+      .module('ba', module => module.packageJson({name: 'b', version: '1.0.1', dependencies: {'a': '~1.0.0'}}))
       .module('nested/c', module => module.packageJson({name: 'c', version: '1.0.1', dependencies: {'a': '~1.0.0'}}));
   }
 
@@ -91,7 +92,7 @@ describe('pre-push hook', () => {
     expect(shelljs.test('-f', '.idea/vcs.xml')).to.equal(true);
     expect(shelljs.test('-f', '.idea/modules.xml')).to.equal(true);
     expect(shelljs.test('-f', 'a/a.iml')).to.equal(true);
-    expect(shelljs.test('-f', 'b/b.iml')).to.equal(true);
+    expect(shelljs.test('-f', 'ba/b.iml')).to.equal(true);
     expect(shelljs.test('-f', 'nested/c/c.iml')).to.equal(true);
   }
 });
