@@ -2,7 +2,8 @@ const start = require('start').default,
   concurrent = require('start-concurrent').default,
   exec = require('child_process').execSync,
   assert = require('assert'),
-  _ = require('lodash');
+  _ = require('lodash'),
+  dateformat = require('dateformat');
 
 function assertGitBranch(expectedBranchName) {
   return () => function assertGitBranch(log, reporter) {
@@ -36,7 +37,7 @@ function assertUpToDateWith(expectedBranch) {
 function latestTag(pattern) {
   return () => function latestTag(log, reporter) {
     return Promise.resolve().then(() => {
-      const tags = _.compact(exec(`git tag -l --sort=taggerdate '${pattern}'`).toString().split('\n'));
+      const tags = _.compact(exec(`git tag -l --sort=taggerdate '${pattern}-*'`).toString().split('\n'));
 
       assert(tags.length !== 0, `not tags matching pattern ${pattern} found`);
 
@@ -49,7 +50,8 @@ function latestTag(pattern) {
 function tag(pattern) {
   return () => function latestTag(log, reporter) {
     return Promise.resolve().then(() => {
-      const now = Date.now();
+      const now = dateformat(Date.now(), 'yyy-MM-dd-HH_mm_ss_l');
+
       const tag = `${pattern.replace('*', '')}${now}`;
       exec(`git tag '${tag}'`);
       return tag;

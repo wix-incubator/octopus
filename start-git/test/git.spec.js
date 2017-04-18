@@ -3,7 +3,8 @@ const {empty} = require('octopus-test-utils'),
   sinon = require('sinon'),
   git = require('..'),
   _ = require('lodash'),
-  exec = require('child_process').execSync;
+  exec = require('child_process').execSync,
+  dateformat = require('dateformat');
 
 describe('git tasks', () => {
 
@@ -97,14 +98,16 @@ describe('git tasks', () => {
     it('should return latest tag by expression', () => {
       const log = sinon.spy();
       const reporter = sinon.spy();
+      const format = timeMs => dateformat(timeMs, 'yyy-MM-dd-HH_mm_ss_l');
       return initialized().within(ctx => {
         const now = Date.now();
-        ctx.exec(`git tag 'GA-smth-${now - 100}'`);
-        ctx.exec(`git tag 'GA-smth-${now - 50}'`);
-        ctx.exec(`git tag 'GA-smth-${now}'`);
+
+        ctx.exec(`git tag 'GA-smth-${format(now - 100)}'`);
+        ctx.exec(`git tag 'GA-smth-${format(now - 50)}'`);
+        ctx.exec(`git tag 'GA-smth-${format(now)}'`);
 
         return git.latestTag('GA-smth-*')()(log, reporter).then(tag => {
-          expect(tag).to.equal(`GA-smth-${now}`);
+          expect(tag).to.equal(`GA-smth-${format(now)}`);
         });
       });
     });
