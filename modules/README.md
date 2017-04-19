@@ -19,6 +19,9 @@ Returns a topologically sorted array of modules with where array item is an obje
    - path: absolute module path;
    - relativePath: path relative to root of repo;
 
+### removeNotInPatsh(modules, paths): modules
+Removes modules who does not have matching entries in `paths` array. Example is if you have list of changed files and you pass it, only modules and dependees will be left in tree.
+
 ### removeUnchanged(modules, label = 'default'): modules
 Removed modules form provided list that have no changes in fs for given label.
 
