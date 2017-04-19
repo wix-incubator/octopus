@@ -21,10 +21,6 @@ describe('package changes', () => {
       });
     });
 
-    it('should require label to be provided', () => {
-
-    });
-
     it('should filter-out unchanged modules', () => {
       const project = fixtures.empty()
         .module('a', module => module.packageJson({name: 'a', version: '1.0.0'}))
@@ -38,6 +34,22 @@ describe('package changes', () => {
         expect(unchangedModuleNames).to.deep.equal(['b']);
       });
     });
+
+    it('should filter-out unchanged modules with custom labels', () => {
+      const project = fixtures.empty()
+        .module('a', module => module.packageJson({name: 'a', version: '1.0.0'}))
+        .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}));
+
+      return project.within(() => {
+        makePackageBuilt('a', 'custom');
+        makePackageBuilt('b');
+
+        const loadedModules = modules();
+        const unchangedModuleNames = removeUnchanged(loadedModules, 'custom').map(module => module.name);
+        expect(unchangedModuleNames).to.deep.equal(['b']);
+      });
+    });
+
 
     it('should include dependencies of changed modules', () => {
       const project = fixtures.empty()

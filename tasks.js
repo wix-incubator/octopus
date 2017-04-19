@@ -35,7 +35,7 @@ module.exports.bootstrap = () => start(
 module.exports.test = () => start(
   startModulesTasks.modules.load(),
   startModulesTasks.modules.removeUnchanged(),
-  startModulesTasks.iter.forEach()(module => start(
+  startModulesTasks.iter.async()(module => start(
     startModulesTasks.module.exec(module)('npm run test'),
     startModulesTasks.module.markBuilt(module)
   ))

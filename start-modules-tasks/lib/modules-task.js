@@ -13,10 +13,10 @@ module.exports.load = () => () => {
   }
 };
 
-module.exports.removeUnchanged = () => loadedModules => {
+module.exports.removeUnchanged = label => loadedModules => {
   return function removeUnchanged(log/*, reporter*/) {
     return Promise.resolve().then(() => {
-      const afterRemoval = modules.removeUnchanged(loadedModules);
+      const afterRemoval = modules.removeUnchanged(loadedModules, label);
       log(`Filtered-out ${loadedModules.length - afterRemoval.length} unchanged modules`);
       return afterRemoval;
     });

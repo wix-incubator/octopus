@@ -43,16 +43,16 @@ module.exports.exec = module => command => () => {
 };
 
 //TODO: pass-through input
-module.exports.markBuilt = module => () => {
+module.exports.markBuilt = (module, label) => () => {
   return function markBuilt(/*log, reporter*/) {
-    return Promise.resolve().then(() => modules.markBuilt()(module));
+    return Promise.resolve().then(() => modules.markBuilt(label)(module));
   }
 };
 
 //TODO: pass-through input
-module.exports.markUnbuilt = module => () => {
+module.exports.markUnbuilt = (module, label) => () => {
   return function markUnbuilt(/*log, reporter*/) {
-    return Promise.resolve().then(() => modules.markUnbuilt()(module));
+    return Promise.resolve().then(() => modules.markUnbuilt(label)(module));
   }
 };
 
