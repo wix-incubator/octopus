@@ -10,15 +10,19 @@ describe('package changes', () => {
     it('should return empty array if all modules are built', () => {
       const project = fixtures.empty()
         .module('a', module => module.packageJson({name: 'a', version: '1.0.0'}))
-        .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}))
+        .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}));
 
       return project.within(() => {
-        makePackageBuilt('a');
-        makePackageBuilt('b');
+        makePackageBuilt('a', 'default');
+        makePackageBuilt('b', 'default');
 
         const loadedModules = modules();
         expect(removeUnchanged(loadedModules).length).to.equal(0);
       });
+    });
+
+    it('should require label to be provided', () => {
+
     });
 
     it('should filter-out unchanged modules', () => {
@@ -27,7 +31,7 @@ describe('package changes', () => {
         .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}));
 
       return project.within(() => {
-        makePackageBuilt('a');
+        makePackageBuilt('a', 'default');
 
         const loadedModules = modules();
         const unchangedModuleNames = removeUnchanged(loadedModules).map(module => module.name);
@@ -42,8 +46,8 @@ describe('package changes', () => {
         .module('c', module => module.packageJson({version: '1.0.0', dependencies: {'b': '~1.0.0'}}));
 
       return project.within(() => {
-        makePackageBuilt('a');
-        makePackageBuilt('c');
+        makePackageBuilt('a', 'default');
+        makePackageBuilt('c', 'default');
 
         const loadedModules = modules();
         const unchangedModuleNames = removeUnchanged(loadedModules).map(module => module.name);
@@ -52,36 +56,39 @@ describe('package changes', () => {
     });
   });
 
-  describe('mark', () => {
+  [undefined, 'custom-label'].forEach(label => {
+    describe(`mark with label that is ${label}`, () => {
 
-    it('should mark package as built', () => {
-      const project = fixtures.empty()
-        .module('a', module => module.packageJson({name: 'a', version: '1.0.0'}))
-        .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}))
+      it('should mark package as built', () => {
+        const project = fixtures.empty()
+          .module('a', module => module.packageJson({name: 'a', version: '1.0.0'}))
+          .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}))
 
-      return project.within(() => {
-        const loadedModules = modules();
+        return project.within(() => {
+          const loadedModules = modules();
 
-        loadedModules.forEach(markBuilt);
+          loadedModules.forEach(markBuilt(label));
 
-        expect(removeUnchanged(loadedModules).length).to.equal(0);
+          expect(removeUnchanged(loadedModules, label).length).to.equal(0);
+        });
       });
-    });
 
-    it('should mark package as unbuilt', () => {
-      const project = fixtures.empty()
-        .module('a', module => module.packageJson({name: 'a', version: '1.0.0'}))
-        .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}))
+      it('should mark package as unbuilt', () => {
+        const project = fixtures.empty()
+          .module('a', module => module.packageJson({name: 'a', version: '1.0.0'}))
+          .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}))
 
-      return project.within(() => {
-        const loadedModules = modules();
+        return project.within(() => {
+          const loadedModules = modules();
 
-        loadedModules.forEach(markBuilt);
-        expect(removeUnchanged(loadedModules).length).to.equal(0);
+          loadedModules.forEach(markBuilt(label));
+          expect(removeUnchanged(loadedModules, label).length).to.equal(0);
 
-        loadedModules.forEach(markUnbuilt);
-        expect(removeUnchanged(loadedModules).length).to.equal(2);
+          loadedModules.forEach(markUnbuilt(label));
+          expect(removeUnchanged(loadedModules, label).length).to.equal(2);
+        });
       });
+
     });
 
   });

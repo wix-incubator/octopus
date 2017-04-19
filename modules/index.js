@@ -13,24 +13,24 @@ module.exports.modules = () => {
   });
 };
 
-module.exports.removeUnchanged = (modules, paths) => {
-  if (paths) {
-    const changedPackages = modules.filter(module => {
-      return paths.find(file => file.startsWith(module.relativePath + '/'))
-    });
-    return figureOutAllPackagesThatNeedToBeBuilt(modules, changedPackages);
-  } else {
-    const changedPackages = devSupport.findChangedPackages(process.cwd(), modules);
-    return figureOutAllPackagesThatNeedToBeBuilt(modules, changedPackages);
-  }
+module.exports.removeNotInPaths = (modules, paths) => {
+  const changedPackages = modules.filter(module => {
+    return paths.find(file => file.startsWith(module.relativePath + '/'))
+  });
+  return figureOutAllPackagesThatNeedToBeBuilt(modules, changedPackages);
 };
 
-module.exports.markBuilt = module => {
-  return makePackageBuilt(module.path);
+module.exports.removeUnchanged = (modules, label = 'default') => {
+  const changedPackages = devSupport.findChangedPackages(process.cwd(), modules, label);
+  return figureOutAllPackagesThatNeedToBeBuilt(modules, changedPackages);
 };
 
-module.exports.markUnbuilt = module => {
-  return makePackageUnbuilt(module.path);
+module.exports.markBuilt = (label = 'default') => module => {
+  return makePackageBuilt(module.path, label);
+};
+
+module.exports.markUnbuilt = (label = 'default') => module => {
+  return makePackageUnbuilt(module.path, label);
 };
 
 function figureOutAllPackagesThatNeedToBeBuilt(allPackages, changedPackages) {

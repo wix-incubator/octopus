@@ -30,7 +30,7 @@ describe('tasks', () => {
 
       return project.within(() => {
         const rawModulesList = modules();
-        markBuilt(rawModulesList[0]);
+        markBuilt()(rawModulesList[0]);
         return start(inputConnector(rawModulesList), tasks.modules.removeUnchanged()).then(filteredModules => {
           expect(filteredModules.length).to.equal(1);
           expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'Filtered-out 1 unchanged modules');
@@ -74,7 +74,7 @@ describe('tasks', () => {
 
       return project.within(() => {
         const rawModulesList = modules();
-        markBuilt(rawModulesList[0]);
+        markBuilt()(rawModulesList[0]);
         return start(
           inputConnector(rawModulesList),
           tasks.modules.removeUnchanged(),

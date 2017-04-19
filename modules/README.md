@@ -16,15 +16,14 @@ Returns a topologically sorted array of modules with where array item is an obje
  - relativePath: path relative to root of repo;
  - dependencies: array of modules that this module depends on in same repo. Obects with properties:
    - name: module name;
-   - version: module version;
    - path: absolute module path;
    - relativePath: path relative to root of repo;
 
-### removeUnchanged(modules): modules
-Removed modules form provided list that have no changes in fs.
+### removeUnchanged(modules, label = 'default'): modules
+Removed modules form provided list that have no changes in fs for given label.
 
-### markBuilt(module)
-Marks module as built.
+### markBuilt(label = 'default')(module)
+Marks module as built with given label.
 
-### markUnbuilt(module)
-Marks module as built.
+### markUnbuilt(label = 'default')(module)
+Marks module as unbuilt for given label.

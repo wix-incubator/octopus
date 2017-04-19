@@ -1,7 +1,10 @@
 const fixtures = require('octopus-test-utils'),
   {expect} = require('chai').use(require('chai-shallow-deep-equal')),
-  emitModules = require('..').modules,
+  modules = require('..'),
   {resolve} = require('path');
+
+const emitModules = modules.modules;
+const removeByPath = modules.removeNotInPaths;
 
 describe('modules', () => {
 
@@ -48,7 +51,7 @@ describe('modules', () => {
       .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'c': '~1.0.0'}}));
 
     return project.within(() => {
-      expect(emitModuleNames(project.dir)).to.deep.equal(['c', 'b']);
+      expect(emitModuleNames()).to.deep.equal(['c', 'b']);
     });
   });
 
@@ -59,7 +62,7 @@ describe('modules', () => {
       .module('c', module => module.packageJson({version: '1.0.0', dependencies: {'b': '~1.0.0'}}));
 
     return project.within(() => {
-      expect(emitModuleNames(project.dir)).to.deep.equal(['a', 'b', 'c']);
+      expect(emitModuleNames()).to.deep.equal(['a', 'b', 'c']);
     });
 
   });
@@ -70,7 +73,7 @@ describe('modules', () => {
       .module('c', module => module.packageJson({version: '1.0.0', dependencies: {'b': '~1.0.0'}}));
 
     return project.within(() => {
-      expect(() => emitModuleNames(project.dir)).to.throw('Cycles detected in dependency graph');
+      expect(() => emitModuleNames()).to.throw('Cycles detected in dependency graph');
     });
 
   });
@@ -81,7 +84,7 @@ describe('modules', () => {
       .module('c', module => module.packageJson({version: '1.0.0'}));
 
     return project.within(() => {
-      expect(emitModules(project.dir)).to.shallowDeepEqual([
+      expect(emitModules()).to.shallowDeepEqual([
         {
           name: 'c',
           path: resolve(project.dir, './c'),
@@ -105,7 +108,20 @@ describe('modules', () => {
     });
   });
 
-  function emitModuleNames(dir) {
-    return emitModules(dir).map(module => module.name);
+  it('remove modules without changes as defined by provided paths', () => {
+    const project = fixtures.empty()
+      .module('a', module => module.packageJson({name: 'a', version: '1.0.0'}))
+      .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}))
+      .module('c', module => module.packageJson({version: '1.0.0', dependencies: {'b': '~1.0.0'}}));
+
+    return project.within(() => {
+      const withRemoved = removeByPath(emitModules(), ['b/.touch']);
+      expect(withRemoved.map(module => module.name)).to.deep.equal(['b', 'c']);
+    });
+
+  });
+
+  function emitModuleNames() {
+    return emitModules().map(module => module.name);
   }
 });

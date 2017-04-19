@@ -45,14 +45,14 @@ module.exports.exec = module => command => () => {
 //TODO: pass-through input
 module.exports.markBuilt = module => () => {
   return function markBuilt(/*log, reporter*/) {
-    return Promise.resolve().then(() => modules.markBuilt(module));
+    return Promise.resolve().then(() => modules.markBuilt()(module));
   }
 };
 
 //TODO: pass-through input
 module.exports.markUnbuilt = module => () => {
   return function markUnbuilt(/*log, reporter*/) {
-    return Promise.resolve().then(() => modules.markUnbuilt(module));
+    return Promise.resolve().then(() => modules.markUnbuilt()(module));
   }
 };
 
