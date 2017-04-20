@@ -23,8 +23,11 @@ module.exports.listAll = () => Start(modules.load(), iter.forEach()(() => {}));
 ### modules.load()
 Wraps `octopus-modules`(../modules#modules) as a `Start` task.  
 
-### modules.removeUnchanged()
-Removes modules from list returned ex. by `modules.load()` that were not changed after last `module.markBuilt`.  
+### modules.removeUnchanged(label = 'default')
+Removes modules from list returned ex. by `modules.load()` that were not changed after last `module.markBuilt`.
+
+Parameters:
+ - label - custom label where you can have several groups of built/unbuilt modules and have built/unbuilt for separate tasks/groups of tasks.
 
 ### modules.removeGitUnchanged(refspec)
 Removes modules from list returned ex. by `modules.load()` that do not have changes when compared to `refspec` - branch or such.  
@@ -32,11 +35,17 @@ Removes modules from list returned ex. by `modules.load()` that do not have chan
 ### modules.removeExtraneousDependencies()
 Removes dependencies in modules that are left after `removeUnchanged` or `removeGitUnchanged`. In some cases you might want for dependencies to stay (npm links) and in others you want them to be removed.  
 
-### module.markBuilt(module)
+### module.markBuilt(module, label = 'default')
 Marks module as built.
 
-### module.markUnbuilt(module)
+Parameters:
+ - label - custom label where you can have several groups of built/unbuilt modules and have built/unbuilt for separate tasks/groups of tasks.
+
+### module.markUnbuilt(module, label = 'default')
 Marks module as unbuilt.
+
+Parameters:
+ - label - custom label where you can have several groups of built/unbuilt modules and have built/unbuilt for separate tasks/groups of tasks.
 
 ### iter.forEach(opts)((module, input, reporter) => Promise)
 `Start` tasks that allows to iterate over result of `modules.list`.

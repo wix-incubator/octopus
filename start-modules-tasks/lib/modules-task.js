@@ -13,10 +13,10 @@ module.exports.load = () => () => {
   }
 };
 
-module.exports.removeUnchanged = () => loadedModules => {
+module.exports.removeUnchanged = label => loadedModules => {
   return function removeUnchanged(log/*, reporter*/) {
     return Promise.resolve().then(() => {
-      const afterRemoval = modules.removeUnchanged(loadedModules);
+      const afterRemoval = modules.removeUnchanged(loadedModules, label);
       log(`Filtered-out ${loadedModules.length - afterRemoval.length} unchanged modules`);
       return afterRemoval;
     });
@@ -27,7 +27,7 @@ module.exports.removeGitUnchanged = branchName => loadedModules => {
   return function removeGitUnchanged(log/*, reporter*/) {
     return Promise.resolve().then(() => {
       const changes = _.compact(execSync(`git diff --name-only ${branchName}`).toString().split('\n'));
-      const afterRemoval = modules.removeUnchanged(loadedModules, changes);
+      const afterRemoval = modules.removeNotInPaths(loadedModules, changes);
       log(`Filtered-out ${loadedModules.length - afterRemoval.length} unchanged modules`);
       return afterRemoval;
     });

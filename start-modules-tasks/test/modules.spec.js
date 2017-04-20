@@ -30,7 +30,7 @@ describe('tasks', () => {
 
       return project.within(() => {
         const rawModulesList = modules();
-        markBuilt(rawModulesList[0]);
+        markBuilt()(rawModulesList[0]);
         return start(inputConnector(rawModulesList), tasks.modules.removeUnchanged()).then(filteredModules => {
           expect(filteredModules.length).to.equal(1);
           expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'Filtered-out 1 unchanged modules');
@@ -74,7 +74,7 @@ describe('tasks', () => {
 
       return project.within(() => {
         const rawModulesList = modules();
-        markBuilt(rawModulesList[0]);
+        markBuilt()(rawModulesList[0]);
         return start(
           inputConnector(rawModulesList),
           tasks.modules.removeUnchanged(),
@@ -86,6 +86,25 @@ describe('tasks', () => {
           });
       });
     });
+
+    it('removes modules without changes by label', () => {
+      const {reporter, start, project} = setup();
+
+      return project.within(() => {
+        const rawModulesList = modules();
+        markBuilt('custom')(rawModulesList[0]);
+        return start(
+          inputConnector(rawModulesList),
+          tasks.modules.removeUnchanged('custom'),
+          tasks.modules.removeExtraneousDependencies())
+          .then(filteredModules => {
+            expect(filteredModules.length).to.equal(1);
+            expect(filteredModules[0].dependencies.length).to.equal(0);
+            expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'Cleaned extraneous dependencies');
+          });
+      });
+    });
+
   });
 
   describe('modules.markBuilt', () => {
@@ -106,6 +125,24 @@ describe('tasks', () => {
         );
       });
     });
+
+    it('marks module as built with custom label', () => {
+      const {reporter, start, project} = setup();
+
+      return project.within(() => {
+        const rawModulesList = modules();
+        return start(
+          inputConnector(rawModulesList),
+          tasks.iter.forEach()(item => start(tasks.module.markBuilt(item, 'custom'))),
+          inputConnector(rawModulesList),
+          tasks.modules.removeUnchanged('custom')).then(filteredModules => {
+            expect(filteredModules.length).to.equal(0);
+            expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'Filtered-out 2 unchanged modules');
+          }
+        );
+      });
+    });
+
   });
 
   describe('modules.markUnbuilt', () => {
@@ -134,6 +171,32 @@ describe('tasks', () => {
         );
       });
     });
+
+    it('marks module as unbuilt with custom label', () => {
+      const {start, project} = setup();
+
+      return project.within(() => {
+        const rawModulesList = modules();
+        return start(
+          inputConnector(rawModulesList),
+          tasks.iter.forEach()(item => start(tasks.module.markBuilt(item, 'custom'))),
+          inputConnector(rawModulesList),
+          tasks.modules.removeUnchanged('custom')).then(filteredModules => {
+            expect(filteredModules.length).to.equal(0);
+
+            return start(
+              inputConnector(rawModulesList),
+              tasks.iter.forEach()(item => start(tasks.module.markUnbuilt(item, 'custom'))),
+              inputConnector(rawModulesList),
+              tasks.modules.removeUnchanged('custom')).then(filteredModules => {
+                expect(filteredModules.length).to.equal(2);
+              }
+            );
+          }
+        );
+      });
+    });
+
   });
 
   describe('iter.forEach', () => {

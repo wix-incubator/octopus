@@ -6,25 +6,21 @@ const path = require('path');
 const inDir = require('./in-dir').sync;
 const _ = require('lodash');
 
-const targetFileSentinelFilename = 'target/.bibuild-sentinel';
+const targetFileSentinelFilename = label => `target/.octo-${label}-sentinel`;
 
-exports.makePackageBuilt = function (dir) {
-  shelljs.mkdir('-p', path.resolve(dir, path.dirname(targetFileSentinelFilename)));
-  fs.writeFileSync(path.resolve(dir, targetFileSentinelFilename), '');
+module.exports.makePackageBuilt = (dir, label) => {
+  shelljs.mkdir('-p', path.resolve(dir, path.dirname(targetFileSentinelFilename(label))));
+  fs.writeFileSync(path.resolve(dir, targetFileSentinelFilename(label)), '');
 };
 
-
-exports.makePackageUnbuilt = makePackageUnbuilt;
-
-function makePackageUnbuilt(dir) {
-  shelljs.rm('-f', path.resolve(dir, targetFileSentinelFilename));
-}
-
-exports.makePackagesUnbuilt = function (dirs) {
-  dirs.forEach(makePackageUnbuilt);
+module.exports.makePackageUnbuilt = (dir, label) => {
+  shelljs.rm('-f', path.resolve(dir, targetFileSentinelFilename(label)));
 };
 
-exports.findChangedPackages = (dir, packages) => packages.filter(isPackageChanged);
+module.exports.findChangedPackages = (dir, packages, label) => {
+  const isPackageChangedLabeled = isPackageChanged(label);
+  return packages.filter(isPackageChangedLabeled);
+};
 
 
 function createIgnoreFn(ignores) {
@@ -33,13 +29,15 @@ function createIgnoreFn(ignores) {
   return filePath => matchers.some(matcher => matcher.match(filePath));
 }
 
-function isPackageChanged(packageObject) {
-  const fullPath = packageObject.path;
-  let ignores = collectIgnores(fullPath, []);
-  const ignored = createIgnoreFn(ignores);
-  const targetSentinelForPackage = path.resolve(fullPath, targetFileSentinelFilename);
-  return !shelljs.test('-f', targetSentinelForPackage) ||
-    modifiedAfter(fullPath, '.', ignored, fs.statSync(targetSentinelForPackage).mtime.getTime())
+function isPackageChanged(label) {
+  return packageObject => {
+    const fullPath = packageObject.path;
+    let ignores = collectIgnores(fullPath, []);
+    const ignored = createIgnoreFn(ignores);
+    const targetSentinelForPackage = path.resolve(fullPath, targetFileSentinelFilename(label));
+    return !shelljs.test('-f', targetSentinelForPackage) ||
+      modifiedAfter(fullPath, '.', ignored, fs.statSync(targetSentinelForPackage).mtime.getTime());
+  };
 }
 
 function modifiedAfter(baseDir, dir, ignored, timeStamp) {
