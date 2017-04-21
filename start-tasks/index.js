@@ -46,3 +46,9 @@ module.exports.ifTrue = condition => task => () => {
     }
   }
 };
+
+module.exports.map = fn => input => {
+  return function map(log/*, reporter*/) {
+    return Promise.resolve().then(() => fn(input, log));
+  }
+};

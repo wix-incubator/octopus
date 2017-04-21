@@ -30,3 +30,10 @@ will return `{one: 'say what'}`.
 
 ### exec(cmd)
 `Start` task that executed a command and returns {stdout, stderr}.
+
+### map(fn)
+`Start` task that calls a provided function with (input, log), where:
+ - input - task input;
+ - log - log function.
+ 
+and returns output of `fn` function.

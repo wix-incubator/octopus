@@ -1,6 +1,6 @@
 const {expect} = require('chai').use(require('sinon-chai')),
   sinon = require('sinon'),
-  {props, log, readJson, exec, ifTrue} = require('..'),
+  {props, log, readJson, exec, ifTrue, map} = require('..'),
   start = require('start').default,
   inputConnector = require('start-input-connector').default,
   {empty, fs} = require('octopus-test-utils');
@@ -87,7 +87,21 @@ describe('tasks', () => {
         expect(fn).to.not.have.been.called;
       });
     });
-
   });
 
+  describe('map', () => {
+
+    it('should invoke provided object value functions with input and return mapped response', () => {
+      const log = sinon.spy();
+      const fn = (input, log) => {
+        log(input);
+        return input + 'processed'
+      };
+
+      return map(fn)('input')(log).then(output => {
+        expect(output).to.equal('inputprocessed');
+        expect(log).to.have.been.calledWith('input');
+      });
+    });
+  });
 });
