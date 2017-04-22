@@ -24,14 +24,16 @@ describe('package changes', () => {
     it('should filter-out unchanged modules', () => {
       const project = fixtures.empty()
         .module('a', module => module.packageJson({name: 'a', version: '1.0.0'}))
-        .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}));
+        .module('b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}}))
+        .module('c', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0', 'b': '~1.0.0'}}))
+        .module('d', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0', 'c': '~1.0.0'}}));
 
       return project.within(() => {
         makePackageBuilt('a', 'default');
 
         const loadedModules = modules();
         const unchangedModuleNames = removeUnchanged(loadedModules).map(module => module.name);
-        expect(unchangedModuleNames).to.deep.equal(['b']);
+        expect(unchangedModuleNames).to.deep.equal(['b', 'c', 'd']);
       });
     });
 

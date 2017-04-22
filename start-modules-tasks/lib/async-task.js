@@ -1,4 +1,5 @@
-const Promise = require('bluebird');
+const Promise = require('bluebird'),
+  _ = require('lodash');
 
 const DEFAULTS = {
   mapInput: input => input,
@@ -14,7 +15,7 @@ module.exports = ({mapInput = DEFAULTS.mapInput, silent = DEFAULTS.silent, threa
   const runningModules = [];
 
   const allModulesNames = modules.map(module => module.name);
-  const completedModulesNames = [];
+  const completedModulesNames = buildCompletedModuleNames(modules);
 
   const isDepBuilt = dep => !allModulesNames.includes(dep) || completedModulesNames.includes(dep);
 
@@ -103,4 +104,10 @@ function collectingReporter(reporter) {
     reporter: (...args) => collectedItems.push(args),
     flush: () => collectedItems.forEach(args => reporter(...args))
   }
+}
+
+function buildCompletedModuleNames(modules) {
+  const moduleToBuildNames = modules.map(module => module.name);
+  const dependencyNames = _.flatten(modules.map(module => module.dependencies.map(dep => dep.name)));
+  return _.difference(dependencyNames, moduleToBuildNames);
 }
