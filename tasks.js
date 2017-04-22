@@ -54,6 +54,6 @@ module.exports.release = () => start(
   startModulesTasks.modules.load(),
   startModulesTasks.iter.async()((module, input, asyncReporter) => Start(asyncReporter)(
     startModulesTasks.module.exec(module)('npm run release'),
-    startModulesTasks.module.exec(module)('npm publish')
+    startModulesTasks.module.exec(module)('npm publish || true')
   ))
 )
