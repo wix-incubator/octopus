@@ -22,7 +22,9 @@ module.exports.removeNotInPaths = (modules, paths) => {
 
 module.exports.removeUnchanged = (modules, label = 'default') => {
   const changedPackages = devSupport.findChangedPackages(process.cwd(), modules, label);
-  return figureOutAllPackagesThatNeedToBeBuilt(modules, changedPackages);
+  const allPackages = figureOutAllPackagesThatNeedToBeBuilt(modules, changedPackages);
+  return allPackages;
+  //return devSupport.sortPackagesByDependencies(allPackages);
 };
 
 module.exports.markBuilt = (label = 'default') => module => {
@@ -68,11 +70,6 @@ function createDependencyEdgesFromPackages(packages) {
         dependencyEdges.push([packageObject.relativePath, packagesByNpmName[relativePath].relativePath])
       }
     });
-    // for (let dep of packageObject.npm ? Object.keys(packageObject.npm.dependencies) : []) {
-    //   if (setOfAllPackageNames.has(dep)) {
-    //     dependencyEdges.push([packageObject.relativePath, packagesByNpmName[dep].relativePath])
-    //   }
-    // }
   });
 
   return dependencyEdges;

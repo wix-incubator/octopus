@@ -1,7 +1,7 @@
 const expect = require('chai').use(require('sinon-chai')).use(require('chai-as-promised')).expect,
   sinon = require('sinon'),
   asyncTask = require('../lib/async-task'),
-  {modules} = require('octopus-modules'),
+  {modules, markBuilt} = require('octopus-modules'),
   {empty} = require('octopus-test-utils');
 
 describe('async-task', () => {
@@ -106,6 +106,21 @@ describe('async-task', () => {
         expect(action.getCall(2)).to.be.calledWith(loadedModules[2]);
         expect(action.getCall(3)).to.be.calledWith(loadedModules[3]);
       });
+    });
+  });
+
+  it('should filter-out extraneous dependencies', () => {
+    const action = sinon.stub();
+    const reporter = sinon.spy();
+    const log = sinon.spy();
+    action.returns(Promise.resolve());
+
+    return aComplexProject().within(() => {
+      const loadedModules = modules();
+      const partialModules = loadedModules.filter(module => module.name === 'c' || module.name === 'd');
+
+      return asyncTask()(action)(partialModules)(log, reporter)
+        .then(() => expect(action).to.have.callCount(2));
     });
   });
 
