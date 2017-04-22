@@ -1,5 +1,4 @@
-const Promise = require('bluebird'),
-  _ = require('lodash');
+const Promise = require('bluebird');
 
 const defaults = {mapInput: input => input, silent: false};
 

@@ -1,7 +1,7 @@
 const expect = require('chai').use(require('sinon-chai')).use(require('chai-as-promised')).expect,
   sinon = require('sinon'),
   asyncTask = require('../lib/async-task'),
-  {modules, markBuilt} = require('octopus-modules'),
+  {modules} = require('octopus-modules'),
   {empty} = require('octopus-test-utils');
 
 describe('async-task', () => {

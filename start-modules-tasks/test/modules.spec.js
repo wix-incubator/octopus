@@ -267,8 +267,7 @@ describe('tasks', () => {
         return start(
           inputConnector(rawModulesList),
           tasks.iter.forEach()(item => start(
-            tasks.module.exec(item)('qweqweqweqwe qwe'),
-            input => log => Promise.resolve().then(() => console.log(input))
+            tasks.module.exec(item)('qweqweqweqwe qwe')
           ))
         ).catch(e => {
           expect(e.message).to.be.string('Command failed: -c qweqweqweqwe qwe');
