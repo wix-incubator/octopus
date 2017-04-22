@@ -38,7 +38,8 @@ module.exports.writeJson = module => fileName => json => {
 module.exports.exec = module => command => () => {
   return function exec(log/*, reporter*/) {
     log(`executing '${command}'`);
-    return execa(command, {cwd: module.path});
+    return execa(command, {cwd: module.path})
+      .then(output => output.err ? Promise.reject(output.err) : Promise.resolve(output));
   }
 };
 

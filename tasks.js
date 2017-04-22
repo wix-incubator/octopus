@@ -23,29 +23,31 @@ module.exports.sync = () => start(
 
 module.exports.bootstrap = () => start(
   startModulesTasks.modules.load(),
-  startModulesTasks.modules.removeUnchanged(),
+  startModulesTasks.modules.removeUnchanged('bootstrap'),
   startModulesTasks.iter.async()((module, input, asyncReporter) => Start(asyncReporter)(
     startTasks.ifTrue(module.dependencies.length > 0)(() =>
       Start(asyncReporter)(startModulesTasks.module.exec(module)(`npm link ${module.dependencies.map(item => item.path).join(' ')}`))
     ),
-    startModulesTasks.module.exec(module)('npm install --cache-min 3600 && npm link')
+    startModulesTasks.module.exec(module)('npm install --cache-min 3600 && npm link'),
+    startModulesTasks.module.markBuilt(module, 'bootstrap')
   ))
 )
 
 module.exports.test = () => start(
   startModulesTasks.modules.load(),
-  startModulesTasks.modules.removeUnchanged(),
-  startModulesTasks.iter.async()(module => start(
+  startModulesTasks.modules.removeUnchanged('test'),
+  startModulesTasks.iter.async()((module, input, asyncReporter) => Start(asyncReporter)(
     startModulesTasks.module.exec(module)('npm run test'),
-    startModulesTasks.module.markBuilt(module)
+    startModulesTasks.module.markBuilt(module, 'test')
   ))
 )
 
-module.exports.unbuild = () => start(
+module.exports.clean = () => start(
   startModulesTasks.modules.load(),
   startModulesTasks.iter.async()((module, input, asyncReporter) => Start(asyncReporter)(
-    startModulesTasks.module.markUnbuilt(module)
-  ))
+    startModulesTasks.module.exec(module)('rm -rf node_modules && rm -rf target && rm -f npm-shrinkwarp.json && rm -f yarn.lock')
+    )
+  )
 )
 
 module.exports.release = () => start(
@@ -54,13 +56,4 @@ module.exports.release = () => start(
     startModulesTasks.module.exec(module)('npm run release'),
     startModulesTasks.module.exec(module)('npm publish')
   ))
-)
-
-
-module.exports.clean = () => start(
-  startModulesTasks.modules.load(),
-  startModulesTasks.iter.async()((module, input, asyncReporter) => Start(asyncReporter)(
-    startModulesTasks.module.exec(module)('rm -rf node_modules && rm -rf target && rm -f npm-shrinkwarp.json && rm -f yarn.lock')
-    )
-  )
 )

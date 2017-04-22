@@ -239,6 +239,45 @@ describe('tasks', () => {
     });
   });
 
+  describe('exec', () => {
+
+    it('should execute command in package cwd', () => {
+      const {start, project, reporter} = setup();
+
+      return project.within(() => {
+        const rawModulesList = modules();
+        return start(
+          inputConnector(rawModulesList),
+          tasks.iter.forEach()(item => start(
+            tasks.module.exec(item)('pwd'),
+            input => log => Promise.resolve().then(() => log(input.stdout))
+          ))
+        ).then(() => {
+          expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', sinon.match('/nested/a'));
+          expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', sinon.match('/b'));
+        })
+      });
+    });
+
+    it('should reject for failing command', done => {
+      const {start, project} = setup();
+
+      project.within(() => {
+        const rawModulesList = modules();
+        return start(
+          inputConnector(rawModulesList),
+          tasks.iter.forEach()(item => start(
+            tasks.module.exec(item)('qweqweqweqwe qwe'),
+            input => log => Promise.resolve().then(() => console.log(input))
+          ))
+        ).catch(e => {
+          expect(e.message).to.be.string('Command failed: -c qweqweqweqwe qwe');
+          done();
+        })
+      });
+    });
+  });
+
   function setup() {
     const reporter = sinon.spy();
     const log = sinon.spy();
@@ -249,6 +288,4 @@ describe('tasks', () => {
 
     return {reporter, project, start, log};
   }
-
-
 });
