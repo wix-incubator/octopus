@@ -65,11 +65,22 @@ describe('tasks', () => {
 
     it('executes a command, prints it and returns output', () => {
       const reporter = sinon.spy();
+
       return start(reporter)(exec('echo a')).then(res => {
         expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'executing \'echo a\'');
         expect(res.stdout).to.equal('a\n');
       });
     });
+
+    it('rejects on execution failure', done => {
+      const reporter = sinon.spy();
+
+      start(reporter)(exec('qweqweqweqwe qwe')).catch(e => {
+        expect(e.message).to.be.string('Command failed: -c qweqweqweqwe qwe');
+        done()
+      });
+    });
+
   });
 
   describe('ifTrue', () => {

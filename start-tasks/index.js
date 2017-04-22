@@ -33,7 +33,8 @@ module.exports.readJson = fileName => () => {
 module.exports.exec = command => () => {
   return function exec(log/*, reporter*/) {
     log(`executing '${command}'`);
-    return execa(command);
+    return execa(command)
+      .then(output => output.err ? Promise.reject(output.err) : Promise.resolve(output));
   }
 };
 
