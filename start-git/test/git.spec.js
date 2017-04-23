@@ -106,7 +106,7 @@ describe('git tasks', () => {
         ctx.exec(`git tag 'GA-smth-${format(now - 50)}'`);
         ctx.exec(`git tag 'GA-smth-${format(now)}'`);
 
-        return git.latestTag('GA-smth-*')()(log, reporter).then(tag => {
+        return git.latestTag('GA-smth')()(log, reporter).then(tag => {
           expect(tag).to.equal(`GA-smth-${format(now)}`);
         });
       });
@@ -116,10 +116,10 @@ describe('git tasks', () => {
       const log = sinon.spy();
       const reporter = sinon.spy();
 
-      return initialized().within(ctx => {
-        const promise = git.latestTag('GA-smth-*')()(log, reporter);
+      return initialized().within(() => {
+        const promise = git.latestTag('GA-smth')()(log, reporter);
 
-        return expect(promise).to.eventually.be.rejectedWith('not tags matching pattern GA-smth-* found');
+        return expect(promise).to.eventually.be.rejectedWith('not tags matching pattern GA-smth found');
       });
     });
   });
@@ -129,10 +129,10 @@ describe('git tasks', () => {
     it('should create a git tag', () => {
       const log = sinon.spy();
       const reporter = sinon.spy();
-      return initialized().within(ctx => {
+      return initialized().within(() => {
 
-        return git.tag('GA-smth-*')()(log, reporter).then(createdTag => {
-          const tag = _.compact(exec(`git tag -l --sort=taggerdate 'GA-smth-*'`).toString().split('\n')).pop();
+        return git.tag('GA-smth')()(log, reporter).then(createdTag => {
+          const tag = _.compact(exec('git tag').toString().split('\n')).pop();
           expect(tag).to.equal(createdTag);
         });
       });
