@@ -1,3 +1,5 @@
+install:
+  - sudo apt-get update && sudo apt-get install git
 language: node_js
 node_js:
   - '6'
@@ -6,7 +8,6 @@ cache:
   directories:
     - $HOME/.yarn-cache
 script:
-  - npm install -g yarn
   - npm run bootstrap
   - npm run test
 deploy:
