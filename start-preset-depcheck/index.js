@@ -1,49 +1,58 @@
 const startModules = require('octopus-start-modules-tasks'),
-  startTasks = require('octopus-start-tasks'),
   start = require('start').default,
-  concurrent = require('start-concurrent').default;
+  depcheck = require('depcheck');
 
 const {iter, modules} = startModules;
-const {readJson, writeJson, mergeJson} = startModules.module;
 
-// module.exports.extraneous = () => {
-// };
-// module.exports.unmanaged = () => {
-// };
-// module.exports.latest = () => {
-// };
-// module.exports.where = () => {
-// };
-// module.exports.sync = () => {
-// };
-
-function syncDependenciesTask() {
-  return () => function syncDependencies(log, reporter) {
+function depcheckTask(depcheckOpts) {
+  return () => function depCheck(log, reporter) {
     return start(reporter)(
-      concurrent(modules.load(), startTasks.readJson('package.json')),
-      startTasks.props({
-        modules: inputArray => inputArray[0],
-        dependencies: inputArray => asDependencies(inputArray[1])
-      }),
-      iter.async({mapInput: opts => opts.modules, silent: true})((module, input, asyncReporter) => {
-        const {dependencies} = input;
-        const readPackageJson = readJson(module)('package.json');
-        const writePackageJson = writeJson(module)('package.json');
-        const logMerged = input => log(`${module.name}: ${input.key} (${input.currentValue} -> ${input.newValue})`);
-        const mergePackageJson = mergeJson(logMerged)(dependencies);
+      modules.load(),
+      iter.async()(item => {
+        return Promise.resolve().then(() => depcheck(item.path, depcheckOpts, unused => {
+          if (unused.dependencies || unused.devDependencies) {
 
-        return start(asyncReporter)(readPackageJson, mergePackageJson, writePackageJson);
+          } else {
+            Promise.resolve();
+          }
+        }))
       })
     )
   }
 }
-//
-function asDependencies({managedDependencies, managedPeerDependencies}) {
-  return {
-    dependencies: managedDependencies,
-    devDependencies: managedDependencies,
-    peerDependencies: managedPeerDependencies
-  }
-}
 
-module.exports.sync = syncDependenciesTask;
+module.exports = depcheckTask;
+
+const options = {
+  withoutDev: false, // [DEPRECATED] check against devDependencies
+  ignoreBinPackage: false, // ignore the packages with bin entry
+  ignoreDirs: [ // folder with these names will be ignored
+    'sandbox',
+    'dist',
+    'bower_components'
+  ],
+  ignoreMatches: [ // ignore dependencies that matches these globs
+    'grunt-*'
+  ],
+  parsers: { // the target parsers
+    '*.js': depcheck.parser.es6,
+    '*.jsx': depcheck.parser.jsx
+  },
+  detectors: [ // the target detectors
+    depcheck.detector.requireCallExpression,
+    depcheck.detector.importDeclaration
+  ],
+  specials: [ // the target special parsers
+    depcheck.special.eslint,
+    depcheck.special.webpack
+  ],
+};
+
+depcheck('/path/to/your/project', options, (unused) => {
+  console.log(unused.dependencies); // an array containing the unused dependencies
+  console.log(unused.devDependencies); // an array containing the unused devDependencies
+  console.log(unused.missing); // a lookup containing the dependencies missing in `package.json` and where they are used
+  console.log(unused.using); // a lookup indicating each dependency is used by which files
+  console.log(unused.invalidFiles); // files that cannot access or parse
+  console.log(unused.invalidDirs); // directories that cannot access
+});

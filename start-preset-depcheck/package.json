@@ -24,10 +24,8 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "lodash": "4.17.4",
-    "octopus-start-modules-tasks": "~0.0.1",
-    "octopus-start-tasks": "~0.0.1",
-    "start-concurrent": "0.1.0"
+    "depcheck": "^0.6.7",
+    "octopus-start-modules-tasks": "~0.0.1"
   },
   "peerDependencies": {
     "start": ">= 5.1.0"
