@@ -5,7 +5,7 @@ const {empty} = require('octopus-test-utils'),
   shelljs = require('shelljs'),
   start = require('start').default;
 
-describe('pre-push hook', () => {
+describe('idea', () => {
 
   it('should generate idea project files', () => {
     return aProject().within(() => {
@@ -39,6 +39,40 @@ describe('pre-push hook', () => {
     return aProject().within(() => {
       return start()(idea()).then(() => {
         expect(shelljs.cat('a/a.iml').stdout).to.be.string('<excludeFolder url="file://$MODULE_DIR$/node_modules" />');
+      });
+    });
+  });
+
+  it('generates [module-name].iml and marks test/tests as test root', () => {
+    const project = empty().module('a', module => {
+      module.packageJson({version: '1.0.0'});
+      module.addFolder('./test');
+      module.addFolder('./tests');
+    });
+
+    return project.within(() => {
+      return start()(idea()).then(() => {
+        const imlFile = shelljs.cat('a/a.iml').stdout;
+        expect(imlFile).to.be.string('<sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />');
+        expect(imlFile).to.be.string('<sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />');
+      });
+    });
+  });
+
+  it('generates [module-name].iml and marks src/lib/scripts as source roots', () => {
+    const project = empty().module('a', module => {
+      module.packageJson({version: '1.0.0'});
+      module.addFolder('./src');
+      module.addFolder('./lib');
+      module.addFolder('./scripts');
+    });
+
+    return project.within(() => {
+      return start()(idea()).then(() => {
+        const imlFile = shelljs.cat('a/a.iml').stdout;
+        expect(imlFile).to.be.string('<sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />');
+        expect(imlFile).to.be.string('<sourceFolder url="file://$MODULE_DIR$/lib" isTestSource="false" />');
+        expect(imlFile).to.be.string('<sourceFolder url="file://$MODULE_DIR$/scripts" isTestSource="false" />');
       });
     });
   });

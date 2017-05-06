@@ -68,7 +68,7 @@ function createModulesXml() {
 function createModuleIml(module) {
   return () => function createModuleIml(/*log, reporter*/) {
     return Promise.resolve().then(() => {
-      const directories = shelljs.ls().filter(entry => shelljs.test('-d', entry));
+      const directories = shelljs.ls(module.path).filter(entry => shelljs.test('-d', join(module.path, entry)));
 
       const sourceFolders = [];
       supportedSourceFolders.forEach(sourceFolder => {
