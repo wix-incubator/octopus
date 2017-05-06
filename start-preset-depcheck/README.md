@@ -16,7 +16,7 @@ const depcheck = require('octopus-start-preset-depcheck'),
 
 const start = new Start();
 
-module.exports.depCheck = start(depcheck({ignoreMatches: ['mocha*']}));
+module.exports.depCheck = start(depcheck({ignoreMatches: ['mocha']}));
 ```
 
 ## API

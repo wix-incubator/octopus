@@ -1,8 +1,7 @@
-const {empty, fs} = require('octopus-test-utils'),
-  {expect} = require('chai').use(require('sinon-chai')),
+const {empty} = require('octopus-test-utils'),
+  {expect} = require('chai'),
   Start = require('start').default,
-  sinon = require('sinon'),
-  depcheck = require('..');
+  depcheckTask = require('..');
 
 describe('depcheck', () => {
 
@@ -12,7 +11,7 @@ describe('depcheck', () => {
         module.packageJson({version: '1.0.0', dependencies: {lodash: 'latest'}});
       });
 
-    project.within(() => new Start()(depcheck()))
+    project.within(() => new Start()(depcheckTask()))
       .catch(err => {
         expect(err.message).to.be.string('module b has unused dependencies: lodash');
         done();
@@ -29,7 +28,7 @@ describe('depcheck', () => {
         module.addFile('index.js', 'require("a")');
       });
 
-    return project.within(() => new Start()(depcheck()));
+    return project.within(() => new Start()(depcheckTask()));
   });
 
   it('should respect provided overrides', () => {
@@ -39,8 +38,7 @@ describe('depcheck', () => {
         module.packageJson({version: '1.0.0', dependencies: {lodash: 'latest'}});
       });
 
-    return project.within(() => new Start()(depcheck(depcheckOptions)));
+    return project.within(() => new Start()(depcheckTask(depcheckOptions)));
   });
-
 
 });
