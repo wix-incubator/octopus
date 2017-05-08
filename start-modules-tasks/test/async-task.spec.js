@@ -6,7 +6,7 @@ const expect = require('chai').use(require('sinon-chai')).use(require('chai-as-p
 
 describe('async-task', () => {
 
-  it('should call callback in correct module order', () => {
+  it('should call callback in correct module order and log names with counters', () => {
     const action = sinon.stub();
     const reporter = sinon.spy();
     const log = sinon.spy();
@@ -14,7 +14,7 @@ describe('async-task', () => {
 
     return aComplexProject().within(() => {
       const loadedModules = modules();
-      const promise = asyncTask()(action)(loadedModules)(log, reporter).then(() => {
+      return asyncTask()(action)(loadedModules)(log, reporter).then(() => {
         expect(action).to.have.callCount(4);
 
         expect(action.getCall(0)).to.be.calledWith(loadedModules[0]);
@@ -22,8 +22,24 @@ describe('async-task', () => {
         expect(action.getCall(2)).to.be.calledWith(loadedModules[2]);
         expect(action.getCall(3)).to.be.calledWith(loadedModules[3]);
       });
+    });
+  });
 
-      return promise;
+  it('should correctly log task number and count', () => {
+    const action = sinon.stub();
+    const reporter = sinon.spy();
+    const log = sinon.spy();
+    action.returns(Promise.resolve());
+
+    return aComplexProject().within(() => {
+      return asyncTask()(action)(modules())(log, reporter).then(() => {
+        expect(action).to.have.callCount(4);
+
+        expect(reporter).to.have.been.calledWith(sinon.match.any, sinon.match.any, sinon.match('(1/4)'));
+        expect(reporter).to.have.been.calledWith(sinon.match.any, sinon.match.any, sinon.match('(2/4)'));
+        expect(reporter).to.have.been.calledWith(sinon.match.any, sinon.match.any, sinon.match('(3/4)'));
+        expect(reporter).to.have.been.calledWith(sinon.match.any, sinon.match.any, sinon.match('(4/4)'));
+      });
     });
   });
 
@@ -120,7 +136,10 @@ describe('async-task', () => {
       const partialModules = loadedModules.filter(module => module.name === 'd');
 
       return asyncTask()(action)(partialModules)(log, reporter)
-        .then(() => expect(action).to.have.callCount(1));
+        .then(() => {
+          expect(action).to.have.callCount(1);
+          expect(reporter).to.have.been.calledWith(sinon.match.any, sinon.match.any, sinon.match('(1/1)'));
+        });
     });
   });
 

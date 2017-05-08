@@ -16,6 +16,7 @@ module.exports = ({mapInput = DEFAULTS.mapInput, silent = DEFAULTS.silent, threa
 
   const allModulesNames = modules.map(module => module.name);
   const completedModulesNames = buildCompletedModuleNames(modules);
+  const filteredOutModuleNames = buildCompletedModuleNames(modules);
 
   const isDepBuilt = dep => !allModulesNames.includes(dep) || completedModulesNames.includes(dep);
 
@@ -47,7 +48,8 @@ module.exports = ({mapInput = DEFAULTS.mapInput, silent = DEFAULTS.silent, threa
         const taskReporter = collectingReporter(reporter);
         //TODO: test silent
         if (!silent) {
-          taskReporter.reporter('asyncModules', 'info', `${module.name} (${module.relativePath}) (${completedModulesNames.length + 1}/${modules.length})`);
+          const taskNumber = runningModules.length + completedModulesNames.length - filteredOutModuleNames.length;
+          taskReporter.reporter('asyncModules', 'info', `${module.name} (${module.relativePath}) (${taskNumber}/${modules.length})`);
         }
 
         return asyncAction(module, taskInput, taskReporter.reporter).then(() => {
@@ -109,5 +111,5 @@ function collectingReporter(reporter) {
 function buildCompletedModuleNames(modules) {
   const moduleToBuildNames = modules.map(module => module.name);
   const dependencyNames = _.flatten(modules.map(module => module.dependencies.map(dep => dep.name)));
-  return _.difference(dependencyNames, moduleToBuildNames);
+  return _.uniq(_.difference(dependencyNames, moduleToBuildNames));
 }
