@@ -117,10 +117,10 @@ describe('async-task', () => {
 
     return aComplexProject().within(() => {
       const loadedModules = modules();
-      const partialModules = loadedModules.filter(module => module.name === 'c' || module.name === 'd');
+      const partialModules = loadedModules.filter(module => module.name === 'd');
 
       return asyncTask()(action)(partialModules)(log, reporter)
-        .then(() => expect(action).to.have.callCount(2));
+        .then(() => expect(action).to.have.callCount(1));
     });
   });
 

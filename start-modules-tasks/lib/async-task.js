@@ -20,7 +20,7 @@ module.exports = ({mapInput = DEFAULTS.mapInput, silent = DEFAULTS.silent, threa
   const isDepBuilt = dep => !allModulesNames.includes(dep) || completedModulesNames.includes(dep);
 
   modules.forEach(module => {
-    if (canRun(module, allModulesNames)) {
+    if (canRun(module, completedModulesNames)) {
       runnableModules.push(module);
     } else {
       notYetRunnableModules.push(module);
