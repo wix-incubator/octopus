@@ -25,7 +25,7 @@
     "octopus-start-modules": "latest",
     "octopus-start-modules-tasks": "latest",
     "octopus-start-prepush": "latest",
-    "octopus-start-preset-depcheck": "0.0.1",
+    "octopus-start-preset-depcheck": "latest",
     "octopus-start-reporter": "latest",
     "octopus-start-tasks": "latest",
     "start": "~5.1.0",
