@@ -1,0 +1,42 @@
+{
+  "name": "octopus-start-preset-depcheck",
+  "version": "0.0.1",
+  "description": "depcheck task preset for octopus/start",
+  "author": "Vilius Lukosius",
+  "license": "ISC",
+  "homepage": "https://github.com/wix/octopus",
+  "main": "index.js",
+  "scripts": {
+    "build": ":",
+    "lint": "eslint *.js **/*.js",
+    "test": "mocha 'test/**/*.spec.js' 'test/**/*.it.js'",
+    "posttest": "npm run lint -s",
+    "release": "npm-version-up --no-shrinkwrap"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wix/octopus"
+  },
+  "bugs": {
+    "url": "https://github.com/wix/octopus/issues"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "dependencies": {
+    "depcheck": "~0.6.7",
+    "octopus-start-modules-tasks": "~0.0.1"
+  },
+  "peerDependencies": {
+    "start": ">= 5.1.0"
+  },
+  "devDependencies": {
+    "start": "5.1.0",
+    "octopus-test-utils": "~0.0.2",
+    "chai": "3.5.0",
+    "eslint": "3.12.2",
+    "eslint-plugin-mocha": "4.8.0",
+    "mocha": "3.2.0",
+    "npm-version-up": "0.0.4"
+  }
+}
