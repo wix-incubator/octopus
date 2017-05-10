@@ -1,9 +1,9 @@
-const {expect} = require('chai').expect;
+const {expect} = require('chai');
 
 describe('module builder', function () {
 
   it('should pass', () => {
-    expec(true).to.equal(true);
+    expect(true).to.equal(true);
   });
 
 });
