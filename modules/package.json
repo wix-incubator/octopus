@@ -33,14 +33,11 @@
   },
   "devDependencies": {
     "chai": "3.5.0",
-    "chai-as-promised": "6.0.0",
     "chai-shallow-deep-equal": "1.4.6",
     "eslint": "3.12.2",
     "eslint-plugin-mocha": "4.8.0",
     "mocha": "3.2.0",
     "npm-version-up": "0.0.4",
-    "octopus-test-utils": "~0.0.2",
-    "sinon": "1.17.7",
-    "sinon-chai": "2.8.0"
+    "octopus-test-utils": "~0.0.2"
   }
 }

@@ -5,7 +5,8 @@ const Start = require('start').default,
   startTasks = require('octopus-start-tasks'),
   startModulesTasks = require('octopus-start-modules-tasks'),
   prepush = require('octopus-start-prepush'),
-  idea = require('octopus-start-idea');
+  idea = require('octopus-start-idea'),
+  depcheck = require('octopus-start-preset-depcheck');
 
 const start = Start(reporter());
 
@@ -15,6 +16,7 @@ module.exports['modules:sync'] = () => start(modules.sync());
 module.exports['deps:sync'] = () => start(dependencies.sync());
 module.exports['idea'] = () => start(idea());
 module.exports['init'] = () => start(prepush());
+module.exports['depcheck'] = () => start(depcheck());
 
 module.exports.sync = () => start(
   modules.sync(),
