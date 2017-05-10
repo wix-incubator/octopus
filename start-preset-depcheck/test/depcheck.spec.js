@@ -1,7 +1,9 @@
 const {empty} = require('octopus-test-utils'),
-  {expect} = require('chai'),
+  {expect} = require('chai').use(require('sinon-chai')),
   Start = require('start').default,
-  depcheckTask = require('..');
+  depcheckTask = require('..'),
+  sinon = require('sinon'),
+  {removeSync} = require('fs-extra');
 
 describe('depcheck', () => {
 
@@ -39,6 +41,22 @@ describe('depcheck', () => {
       });
 
     return project.within(() => new Start()(depcheckTask(depcheckOptions)));
+  });
+
+  it('build modules incrementally', () => {
+    const reporter = sinon.spy();
+    const project = empty()
+      .module('a', module => module.packageJson({version: '1.0.0'}))
+      .module('b', module => module.packageJson({version: '1.0.0'}));
+
+    return project.within(() => {
+      return Promise.resolve()
+        .then(() => new Start(reporter)(depcheckTask()))
+        .then(() => expect(reporter).to.have.been.calledWith(sinon.match.any, sinon.match.any, 'Filtered-out 0 unchanged modules'))
+        .then(() => removeSync('a/target'))
+        .then(() => new Start(reporter)(depcheckTask()))
+        .then(() => expect(reporter).to.have.been.calledWith(sinon.match.any, sinon.match.any, 'Filtered-out 1 unchanged modules'));
+    });
   });
 
 });
