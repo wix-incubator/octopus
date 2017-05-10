@@ -82,7 +82,7 @@ describe('idea', () => {
       return start()(idea()).then(() => {
         const node = shelljs.exec('which node').stdout.split('/node/')[1].replace('\n', '');
 
-        expect(shelljs.cat('.idea/workspace.xml').stdout).to.be.string('/node_modules/mocha');
+        expect(shelljs.cat('.idea/workspace.xml').stdout).to.be.string('$PROJECT_DIR$/a/node_modules/mocha');
         expect(shelljs.cat('.idea/workspace.xml').stdout).to.be.string('<configuration default="false" name="a" type="mocha-javascript-test-runner" factoryName="Mocha">');
         expect(shelljs.cat('.idea/workspace.xml').stdout).to.be.string('<env name="DEBUG" value="wix:*" />');
         expect(shelljs.cat('.idea/workspace.xml').stdout).to.be.string('<test-kind>PATTERN</test-kind>');
