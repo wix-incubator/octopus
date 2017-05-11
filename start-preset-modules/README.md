@@ -1,15 +1,15 @@
-# octopus-start-modules
+# octopus-start-preset-modules
 
 ## install
 
 ```bash
-npm install --save-dev octopus-start-modules
+npm install --save-dev octopus-start-preset-modules
 ```
 
 ## Usage
 
 ```js
-const {sync, where, list} = require('octopus-start-modules'),
+const {sync, where, list} = require('octopus-start-preset-modules'),
   Start = require('start');
 
 const start = new Start();

@@ -1,5 +1,5 @@
 {
-  "name": "octopus-start-prepush",
+  "name": "octopus-start-preset-prepush",
   "version": "0.0.1",
   "description": "task for start that adds prepush git hooks",
   "author": "Vilius Lukosius",

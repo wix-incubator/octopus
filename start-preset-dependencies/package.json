@@ -1,10 +1,10 @@
 {
-  "name": "octopus-start-idea",
+  "name": "octopus-start-preset-dependencies",
   "version": "0.0.1",
-  "description": "task for start that generates intellij project for repo",
+  "description": "tasks for start that adds dependency management support",
   "author": "Vilius Lukosius",
   "license": "ISC",
-  "homepage": "https://github.com/wix/octopus/start-prepush",
+  "homepage": "https://github.com/wix/octopus",
   "main": "index.js",
   "scripts": {
     "build": ":",
@@ -24,23 +24,22 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "handlebars": "4.0.6",
     "octopus-start-modules-tasks": "~0.0.1",
-    "octopus-start-tasks": "~0.0.1"
+    "octopus-start-tasks": "~0.0.1",
+    "start-concurrent": "0.1.0"
   },
   "peerDependencies": {
     "start": ">= 5.1.0"
   },
   "devDependencies": {
+    "start": "5.1.0",
+    "octopus-test-utils": "~0.0.2",
     "chai": "3.5.0",
     "eslint": "3.12.2",
     "eslint-plugin-mocha": "4.8.0",
     "mocha": "3.2.0",
     "npm-version-up": "0.0.4",
-    "octopus-test-utils": "~0.0.2",
-    "shelljs": "0.7.5",
     "sinon": "1.17.7",
-    "sinon-chai": "2.8.0",
-    "start": "5.1.0"
+    "sinon-chai": "2.8.0"
   }
 }
