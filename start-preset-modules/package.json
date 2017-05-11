@@ -1,7 +1,7 @@
 {
-  "name": "octopus-start-dependencies",
+  "name": "octopus-start-preset-modules",
   "version": "0.0.1",
-  "description": "tasks for start that adds dependency management support",
+  "description": "tasks for start that adds module management support",
   "author": "Vilius Lukosius",
   "license": "ISC",
   "homepage": "https://github.com/wix/octopus",
@@ -24,9 +24,9 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
+    "lodash": "4.17.4",
     "octopus-start-modules-tasks": "~0.0.1",
-    "octopus-start-tasks": "~0.0.1",
-    "start-concurrent": "0.1.0"
+    "octopus-start-tasks": "~0.0.1"
   },
   "peerDependencies": {
     "start": ">= 5.1.0"

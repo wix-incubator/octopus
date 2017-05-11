@@ -1,11 +1,11 @@
-# octopus-start-prepush
+# octopus-start-preset-prepush
 
 [start-runner](https://github.com/start-runner) task that adds a git pre-push script that runs task `sync` on before git push.
 
 # install
 
 ```bash
-npm install --save-dev octopus-start-prepush
+npm install --save-dev octopus-start-preset-prepush
 ```
 
 # Usage
@@ -13,7 +13,7 @@ npm install --save-dev octopus-start-prepush
 Add task to **modules.spec.js** and another task `sync` that will be invoked before git push: 
 ```js
 const Start = require('start'),
- prepush = require('octopus-start-prepush');
+ prepush = require('octopus-start-preset-prepush');
 
 const start = new Start();
 
