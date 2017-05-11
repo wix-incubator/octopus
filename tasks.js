@@ -1,11 +1,11 @@
 const Start = require('start').default,
   reporter = require('octopus-start-reporter'),
-  modules = require('octopus-start-modules'),
-  dependencies = require('octopus-start-dependencies'),
+  modules = require('octopus-start-preset-modules'),
+  dependencies = require('octopus-start-preset-dependencies'),
   startTasks = require('octopus-start-tasks'),
   startModulesTasks = require('octopus-start-modules-tasks'),
-  prepush = require('octopus-start-prepush'),
-  idea = require('octopus-start-idea'),
+  prepush = require('octopus-start-preset-prepush'),
+  idea = require('octopus-start-preset-idea'),
   depcheck = require('octopus-start-preset-depcheck');
 
 const start = Start(reporter());
