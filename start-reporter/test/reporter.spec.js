@@ -26,11 +26,11 @@ describe('reporter', () => {
     expect(out.log).to.not.have.been.called;
   });
 
-  it('should log error on failure', () => {
+  it('should not log error on failure as it is delegated to root start runner', () => {
     const out = mockConsole();
     reporter(out)('fnName', 'reject', new Error('qwe'));
 
-    expect(out.error).to.have.been.calledWith(sinon.match(/fnName.*failed with Error: qwe/));
+    expect(out.error).to.not.have.been.called;
   });
 
   function mockConsole() {
