@@ -16,7 +16,7 @@ module.exports['modules:sync'] = () => start(modules.sync());
 module.exports['deps:sync'] = () => start(dependencies.sync());
 module.exports['idea'] = () => start(idea());
 module.exports['init'] = () => start(prepush());
-module.exports['depcheck'] = () => start(depcheck());
+module.exports['depcheck'] = () => start(depcheck({ignoreMatches: ['start-simple-cli']}));
 
 module.exports.sync = () => start(
   modules.sync(),
