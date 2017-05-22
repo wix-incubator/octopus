@@ -33,3 +33,6 @@ Say you have `package.json` in root of your project like:
 ```
 
 upon invocation of this task for all submodules that have `lodash` defined in `dependencies` or `devDependencies` version of `lodash` will be updated to `~1.0.0`.
+
+### unmanaged()
+List dependencies, that are present in modules `dependencies`, `devDependencies`, `peerDependencies`, but not defined in root `package.json` as `managed*Dependencies`.
