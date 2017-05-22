@@ -30,8 +30,6 @@ module.exports = (out = console) => {
       const color = namesAndColors[name];
 
       out.log(`[${chalk[color](name)}]: ${message}`);
-    } else if (type === 'reject') {
-      out.error(`[${chalk.red(name)}]: failed with ${message.stack}`);
     }
   };
 };

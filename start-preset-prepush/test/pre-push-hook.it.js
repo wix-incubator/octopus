@@ -4,7 +4,7 @@ const {empty} = require('octopus-test-utils'),
 describe('pre-push hook it', function () {
   this.timeout(20000);
 
-  it('should add a pre-push hook 2', () => {
+  it('should add a pre-push hook', () => {
     const remoteGitRepo = empty()
       .inDir(ctx => ctx.exec('git --bare init'));
 
@@ -31,7 +31,7 @@ describe('pre-push hook it', function () {
 
 const buildJsFile = `
 const Start = require('start').default;
-const prepush = require('octopus-start-prepush');
+const prepush = require('octopus-start-preset-prepush');
 
 const start = new Start();
 
