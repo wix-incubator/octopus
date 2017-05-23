@@ -36,6 +36,7 @@ module.exports.exec = command => () => {
     return execThen(command)
       .then(({err, stdout, stderr}) => {
         if (err) {
+          console.log(err);
           log(stdout + stderr);
           return Promise.reject(err);
         } else {
