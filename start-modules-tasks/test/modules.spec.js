@@ -272,7 +272,7 @@ describe('tasks', () => {
           .then(() => done(new Error('expected failure')))
           .catch(e => {
             expect(reporter).to.have.been.calledWith('exec', 'info', '/bin/sh: qweqweqweqwe: command not found\n');
-            expect(e.message).to.be.string('Command failed: -c qweqweqweqwe qwe\n/bin/sh: qweqweqweqwe: command not found\n');
+            expect(e.message).to.be.string('Command failed: -c qweqweqweqwe qwe');
             done();
           });
       });
