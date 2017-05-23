@@ -24,7 +24,7 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "depcheck": "~0.6.7",
+    "depcheck": "0.6.7",
     "octopus-start-modules-tasks": "~0.0.1"
   },
   "peerDependencies": {

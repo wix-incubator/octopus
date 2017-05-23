@@ -39,7 +39,6 @@ function logUnmanaged(deps, log) {
   const toSortedUniqKeys = R.compose(R.sort(R.ascend), R.uniq, R.values);
   Object.keys(deps.dependencies).forEach(depKey => {
     const modulesAndVersions = toSortedUniqKeys(deps.dependencies[depKey]);
-    console.log(modulesAndVersions);
     log(`Unmanaged dependency ${depKey} (${modulesAndVersions.join(', ')})`);
   });
 

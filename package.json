@@ -63,7 +63,10 @@
     "execa": "0.6.3",
     "start-concurrent": "0.1.0",
     "start-simple-cli": "4.1.1",
-    "chalk": "1.1.3"
+    "chalk": "1.1.3",
+    "dateformat": "2.0.0",
+    "depcheck": "0.6.7",
+    "ramda": "0.23.0"
   },
   "managedPeerDependencies": {
     "start": ">= 5.1.0"

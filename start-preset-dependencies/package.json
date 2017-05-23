@@ -26,7 +26,7 @@
   "dependencies": {
     "octopus-start-modules-tasks": "~0.0.1",
     "octopus-start-tasks": "~0.0.1",
-    "ramda": "^0.23.0",
+    "ramda": "0.23.0",
     "start-concurrent": "0.1.0"
   },
   "peerDependencies": {
