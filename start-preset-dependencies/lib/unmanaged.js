@@ -1,6 +1,7 @@
 const startModules = require('octopus-start-modules-tasks'),
   startTasks = require('octopus-start-tasks'),
-  start = require('start').default;
+  start = require('start').default,
+  R = require('ramda');
 
 const {iter, modules} = startModules;
 const {readJson} = startModules.module;
@@ -35,14 +36,16 @@ function executeUnmanaged(innerModules, deps) {
 }
 
 function logUnmanaged(deps, log) {
+  const toSortedUniqKeys = R.compose(R.sort(R.ascend), R.uniq, R.values);
   Object.keys(deps.dependencies).forEach(depKey => {
-    const modulesAndVersions = Object.keys(deps.dependencies[depKey]).map(module => `${module} (${deps.dependencies[depKey][module]})`);
-    log(`Unmanaged dependency ${depKey} in ${modulesAndVersions.join(', ')}`);
+    const modulesAndVersions = toSortedUniqKeys(deps.dependencies[depKey]);
+    console.log(modulesAndVersions);
+    log(`Unmanaged dependency ${depKey} (${modulesAndVersions.join(', ')})`);
   });
 
   Object.keys(deps.peerDependencies).forEach(depKey => {
-    const modulesAndVersions = Object.keys(deps.peerDependencies[depKey]).map(module => `${module} (${deps.peerDependencies[depKey][module]})`);
-    log(`Unmanaged peerDependency ${depKey} in ${modulesAndVersions.join(', ')}`);
+    const modulesAndVersions = toSortedUniqKeys(deps.peerDependencies[depKey]);
+    log(`Unmanaged peerDependency ${depKey} (${modulesAndVersions.join(', ')})`);
   });
 }
 

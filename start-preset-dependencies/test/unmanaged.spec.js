@@ -11,8 +11,8 @@ describe('unmanaged task', () => {
 
     project.within(() => {
       return start(unmanaged()).catch(e => {
-        expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'Unmanaged dependency highdash in a (1.1.0), b (1.1.0)');
-        expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'Unmanaged peerDependency bar in a (> 1.0.0)');
+        expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'Unmanaged dependency highdash (1.1.0, 1.2.0)');
+        expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'Unmanaged peerDependency bar (> 1.0.0)');
         expect(e.message).to.be.string('Unmanaged dependencies found, see output above');
         done();
       });
@@ -49,7 +49,7 @@ describe('unmanaged task', () => {
         dependencies: {
           a: '~1.0.0',
           lodash: '~1.0.0',
-          highdash: '1.1.0'
+          highdash: '1.2.0'
         }
       }));
 
