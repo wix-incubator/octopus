@@ -39,3 +39,6 @@ List dependencies, that are present in modules `dependencies`, `devDependencies`
 
 ### extraneous()
 List dependencies, that are present in root `package.json` as `managed*Dependencies`, but not defined in modules `dependencies`, `devDependencies`, `peerDependencies`.
+
+### latest()
+List dependencies, that are present in root `package.json` as `managed*Dependencies` and needs updating based on latest version published in npmjs.org.
