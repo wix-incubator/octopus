@@ -1,4 +1,4 @@
-# octopus-modules
+# octopus-modules [![npm](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/package/octopus-modules)
 
 Library that exports functions thar emit/operate on npm multi-module repos.
 
