@@ -9,6 +9,6 @@ const sync = require('./lib/sync'),
 // module.exports.where = () => {
 // };
 
-module.exports.sync = sync;
-module.exports.unmanaged = unmanaged;
-module.exports.extraneous = extraneous;
+module.exports.sync = sync.task;
+module.exports.unmanaged = unmanaged.task;
+module.exports.extraneous = extraneous.task;

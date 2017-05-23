@@ -25,7 +25,7 @@ function extraneousDependenciesTask() {
 
 function executeExtraneous(deps) {
   return ({managedDependencies = {}, managedPeerDependencies = {}}) => {
-    return (log/*, reporter*/) => {
+    return function extraneous(log/*, reporter*/) {
       cleanManagedDeps(deps, managedDependencies, managedPeerDependencies);
       logExtraneous({managedDependencies, managedPeerDependencies}, log, 'managedDependencies');
       logExtraneous({managedDependencies, managedPeerDependencies}, log, 'managedPeerDependencies');
@@ -34,11 +34,13 @@ function executeExtraneous(deps) {
   }
 }
 
-function logExtraneous(deps, log, key) {
-  const managedDependencies = deps[key];
+function logExtraneous(deps, log, dependencyType) {
+  const managedDependencies = deps[dependencyType];
   const toSortedUniqKeys = R.compose(R.sort((a, b) => a.localeCompare(b)), R.uniq, R.keys);
-  const modulesAndVersions = toSortedUniqKeys(managedDependencies);
-  log(`Extraneous ${key}: ${modulesAndVersions.join(', ')}`);
+  const modules = toSortedUniqKeys(managedDependencies);
+  if (modules.length > 0) {
+    log(`Extraneous ${dependencyType}: ${modules.join(', ')}`);
+  }
 }
 
 function rejectIfExtraneous(deps) {
@@ -78,4 +80,5 @@ function fill(deps) {
 }
 
 
-module.exports = extraneousDependenciesTask;
+module.exports.task = extraneousDependenciesTask;
+module.exports.logExtraneous = logExtraneous;
