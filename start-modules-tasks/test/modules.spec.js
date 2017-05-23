@@ -250,7 +250,7 @@ describe('tasks', () => {
           inputConnector(rawModulesList),
           tasks.iter.forEach()(item => start(
             tasks.module.exec(item)('pwd'),
-            input => log => Promise.resolve().then(() => log(input.stdout))
+            input => log => Promise.resolve().then(() => log(input))
           ))
         ).then(() => {
           expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', sinon.match('/nested/a'));
@@ -260,7 +260,7 @@ describe('tasks', () => {
     });
 
     it('should reject for failing command', done => {
-      const {start, project} = setup();
+      const {start, project, reporter} = setup();
 
       project.within(() => {
         const rawModulesList = modules();
@@ -268,11 +268,13 @@ describe('tasks', () => {
           inputConnector(rawModulesList),
           tasks.iter.forEach()(item => start(
             tasks.module.exec(item)('qweqweqweqwe qwe')
-          ))
-        ).catch(e => {
-          expect(e.message).to.be.string('Command failed: -c qweqweqweqwe qwe');
-          done();
-        })
+          )))
+          .then(() => done(new Error('expected failure')))
+          .catch(e => {
+            expect(reporter).to.have.been.calledWith('exec', 'info', sinon.match('/bin/sh: qweqweqweqwe: command not found'));
+            expect(e.message).to.be.string('Command failed: -c qweqweqweqwe qwe');
+            done();
+          });
       });
     });
   });

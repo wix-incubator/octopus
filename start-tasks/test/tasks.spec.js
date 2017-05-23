@@ -68,14 +68,15 @@ describe('tasks', () => {
 
       return start(reporter)(exec('echo a')).then(res => {
         expect(reporter).to.have.been.calledWith(sinon.match.any, 'info', 'executing \'echo a\'');
-        expect(res.stdout).to.equal('a\n');
+        expect(res).to.equal('a\n');
       });
     });
 
-    it('rejects on execution failure', done => {
+    it('rejects on execution failure and log stdout/stdderr', done => {
       const reporter = sinon.spy();
 
       start(reporter)(exec('qweqweqweqwe qwe')).catch(e => {
+        expect(reporter).to.have.been.calledWith('exec', 'info', sinon.match('/bin/sh: qweqweqweqwe: command not found'));
         expect(e.message).to.be.string('Command failed: -c qweqweqweqwe qwe');
         done()
       });

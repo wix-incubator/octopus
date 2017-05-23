@@ -1,7 +1,7 @@
 const Promise = require('bluebird'),
   _ = require('lodash'),
   {readFileAsync} = Promise.promisifyAll(require('fs')),
-  execa = require('exec-then'),
+  execThen = require('exec-then'),
   {join} = require('path');
 
 
@@ -33,8 +33,15 @@ module.exports.readJson = fileName => () => {
 module.exports.exec = command => () => {
   return function exec(log/*, reporter*/) {
     log(`executing '${command}'`);
-    return execa(command)
-      .then(output => output.err ? Promise.reject(output.err) : Promise.resolve(output));
+    return execThen(command)
+      .then(({err, stdout, stderr}) => {
+        if (err) {
+          log(stdout + stderr);
+          return Promise.reject(err);
+        } else {
+          return stdout;
+        }
+      });
   }
 };
 
