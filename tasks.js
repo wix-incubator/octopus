@@ -24,6 +24,8 @@ module.exports['depcheck'] = () => start(depcheck({ignoreMatches: ['start-simple
 module.exports.sync = () => start(
   modules.sync(),
   dependencies.sync(),
+  dependencies.unmanaged(),
+  dependencies.extraneous(),
   module.exports.docs
 )
 
