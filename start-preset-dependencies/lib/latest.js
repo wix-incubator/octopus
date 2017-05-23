@@ -16,22 +16,23 @@ function latestDependenciesTask() {
 function checkForLatestDependencies() {
   return ({managedDependencies, managedPeerDependencies}) => {
     return function latest(log/*, reporter*/) {
-      const depsPromises = Object.keys(cleanLatest(managedDependencies)).map(depName => fetchLatestVersion(depName, managedDependencies[depName]));
-      const peerDepsPromises = Object.keys(cleanLatest(managedPeerDependencies)).map(depName => fetchLatestVersion(depName, managedPeerDependencies[depName]));
+      return Promise.resolve().then(() => {
+        const depsPromises = Object.keys(cleanLatest(managedDependencies || {})).map(depName => fetchLatestVersion(depName, managedDependencies[depName]));
+        const peerDepsPromises = Object.keys(cleanLatest(managedPeerDependencies || {})).map(depName => fetchLatestVersion(depName, managedPeerDependencies[depName]));
 
-      return Promise.all([Promise.all(depsPromises), Promise.all(peerDepsPromises)]).then(([deps, peerDeps]) => {
-        deps.forEach(({name, currentVersion, latestVersion}) => {
-          if (!satisfies(latestVersion, validRange(currentVersion))) {
-            log(`Update found for dependency ${name}: ${currentVersion} -> ${latestVersion}`);
-          }
+        return Promise.all([Promise.all(depsPromises), Promise.all(peerDepsPromises)]).then(([deps, peerDeps]) => {
+          deps.forEach(({name, currentVersion, latestVersion}) => {
+            if (!satisfies(latestVersion, validRange(currentVersion))) {
+              log(`Update found for dependency ${name}: ${currentVersion} -> ${latestVersion}`);
+            }
+          });
+
+          peerDeps.forEach(({name, currentVersion, latestVersion}) => {
+            if (!satisfies(latestVersion, validRange(currentVersion))) {
+              log(`Update found for peerDependency ${name}: ${currentVersion} -> ${latestVersion}`);
+            }
+          });
         });
-
-        peerDeps.forEach(({name, currentVersion, latestVersion}) => {
-          if (!satisfies(latestVersion, validRange(currentVersion))) {
-            log(`Update found for peerDependency ${name}: ${currentVersion} -> ${latestVersion}`);
-          }
-        });
-
       });
     }
   }
