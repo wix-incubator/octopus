@@ -1,4 +1,4 @@
-# octopus-start-preset-modules
+# octopus-start-preset-modules [![npm](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/package/octopus-start-preset-modules)
 
 ## install
 

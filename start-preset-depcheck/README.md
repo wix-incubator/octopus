@@ -1,4 +1,4 @@
-# octopus-start-preset-depcheck
+# octopus-start-preset-depcheck [![npm](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/package/octopus-start-preset-depcheck)
 
 Task for executing [depcheck](https://github.com/depcheck/depcheck) for all modules in project.
 
