@@ -35,16 +35,12 @@ module.exports.exec = command => () => {
     log(`executing '${command}'`);
     return execThen(command)
       .then(({err, stdout, stderr}) => {
-        console.log(err + stdout + stderr);
         if (err) {
           log(stdout + stderr);
           return Promise.reject(err);
         } else {
           return stdout;
         }
-      }).catch(e => {
-        console.log(e);
-        return Promise.reject(e);
       });
   }
 };
