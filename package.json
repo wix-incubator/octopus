@@ -20,14 +20,15 @@
     "url": "https://github.com/wix/octopus/issues"
   },
   "devDependencies": {
+    "markdown-magic": "^0.1.15",
     "octopus-start-modules-tasks": "latest",
-    "octopus-start-reporter": "latest",
-    "octopus-start-tasks": "latest",
+    "octopus-start-preset-depcheck": "latest",
     "octopus-start-preset-dependencies": "latest",
     "octopus-start-preset-idea": "latest",
     "octopus-start-preset-modules": "latest",
     "octopus-start-preset-prepush": "latest",
-    "octopus-start-preset-depcheck": "latest",
+    "octopus-start-reporter": "latest",
+    "octopus-start-tasks": "latest",
     "start": "~5.1.0",
     "start-simple-cli": "~4.1.1"
   },

@@ -1,11 +1,14 @@
 # octopus [![Build Status](https://img.shields.io/travis/wix/octopus/master.svg?label=build%20status)](https://travis-ci.org/wix/octopus)
 
 <!-- ⛔️ AUTO-GENERATED-CONTENT:START (TOC) -->
+- [Core modules](#core-modules)
+- [Presets](#presets)
+<!-- ⛔️ AUTO-GENERATED-CONTENT:START (TOC) -->
 <!-- ⛔️ AUTO-GENERATED-CONTENT:END -->
 
 Octopus is a set of modules for [start](https://github.com/start-runner/start) but to manage a multi-module npm project with traits:
  - tasks to recursively discover/load npm modules;
- - have means for incremental task running - run tests for all, change 1 module, run tests for just one module + dependees;
+ - have means for incremental task running - run tests for all, change 1 module, run tests for just one changed module and its dependees;
  - presets for managing versions across multiple modules, sync module versions;
  - generic tasks that you compose and achieve basically anything.
 

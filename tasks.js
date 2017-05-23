@@ -6,7 +6,8 @@ const Start = require('start').default,
   startModulesTasks = require('octopus-start-modules-tasks'),
   prepush = require('octopus-start-preset-prepush'),
   idea = require('octopus-start-preset-idea'),
-  depcheck = require('octopus-start-preset-depcheck');
+  depcheck = require('octopus-start-preset-depcheck'),
+  markdownMagic = require('markdown-magic');
 
 const start = Start(reporter());
 
@@ -22,7 +23,8 @@ module.exports['depcheck'] = () => start(depcheck({ignoreMatches: ['start-simple
 
 module.exports.sync = () => start(
   modules.sync(),
-  dependencies.sync()
+  dependencies.sync(),
+  module.exports.docs
 )
 
 module.exports.bootstrap = () => start(
@@ -61,3 +63,11 @@ module.exports.release = () => start(
     startModulesTasks.module.exec(module)('npm publish || true')
   ))
 )
+
+module.exports.docs = () => start(() => {
+  return function generateDocs(log /*, reporter*/) {
+    return Promise.resolve().then(() => {
+      markdownMagic('./*.md');
+    })
+  }
+});
