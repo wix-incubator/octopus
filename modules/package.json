@@ -26,18 +26,18 @@
   "dependencies": {
     "graphlib": "2.1.1",
     "lodash": "4.17.4",
-    "minimatch": "3.0.3",
+    "minimatch": "3.0.4",
     "object-filter": "1.0.2",
-    "parse-gitignore": "0.3.1",
-    "shelljs": "0.7.5"
+    "parse-gitignore": "0.4.0",
+    "shelljs": "0.7.7"
   },
   "devDependencies": {
     "chai": "3.5.0",
     "chai-shallow-deep-equal": "1.4.6",
-    "eslint": "3.12.2",
-    "eslint-plugin-mocha": "4.8.0",
-    "mocha": "3.2.0",
-    "npm-version-up": "0.0.4",
+    "eslint": "3.19.0",
+    "eslint-plugin-mocha": "4.9.0",
+    "mocha": "3.4.1",
+    "npm-version-up": "0.1.5",
     "octopus-test-utils": "~0.0.2"
   }
 }

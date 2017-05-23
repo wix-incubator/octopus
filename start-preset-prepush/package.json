@@ -24,17 +24,17 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "fs-extra": "2.1.2"
+    "fs-extra": "3.0.1"
   },
   "devDependencies": {
     "chai": "3.5.0",
-    "eslint": "3.12.2",
-    "eslint-plugin-mocha": "4.8.0",
-    "mocha": "3.2.0",
-    "npm-version-up": "0.0.4",
+    "eslint": "3.19.0",
+    "eslint-plugin-mocha": "4.9.0",
+    "mocha": "3.4.1",
+    "npm-version-up": "0.1.5",
     "octopus-test-utils": "~0.0.2",
-    "sinon": "1.17.7",
-    "sinon-chai": "2.8.0",
+    "sinon": "2.3.1",
+    "sinon-chai": "2.10.0",
     "start-simple-cli": "4.1.1"
   }
 }
