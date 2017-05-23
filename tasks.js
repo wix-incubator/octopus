@@ -15,6 +15,7 @@ module.exports['modules:where'] = moduleName => start(modules.where(moduleName))
 module.exports['modules:sync'] = () => start(modules.sync());
 module.exports['deps:sync'] = () => start(dependencies.sync());
 module.exports['deps:unmanaged'] = () => start(dependencies.unmanaged());
+module.exports['deps:extraneous'] = () => start(dependencies.extraneous());
 module.exports['idea'] = () => start(idea());
 module.exports['init'] = () => start(prepush());
 module.exports['depcheck'] = () => start(depcheck({ignoreMatches: ['start-simple-cli']}));

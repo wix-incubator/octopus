@@ -29,7 +29,7 @@ function executeExtraneous(deps) {
       cleanManagedDeps(deps, managedDependencies, managedPeerDependencies);
       logExtraneous({managedDependencies, managedPeerDependencies}, log, 'managedDependencies');
       logExtraneous({managedDependencies, managedPeerDependencies}, log, 'managedPeerDependencies');
-      return rejectIfExtraneous(deps);
+      return rejectIfExtraneous({managedDependencies, managedPeerDependencies});
     };
   }
 }
@@ -42,7 +42,7 @@ function logExtraneous(deps, log, key) {
 }
 
 function rejectIfExtraneous(deps) {
-  if ((Object.keys(deps.dependencies).length + Object.keys(deps.peerDependencies).length) > 0) {
+  if ((Object.keys(deps.managedDependencies).length + Object.keys(deps.managedPeerDependencies).length) > 0) {
     return Promise.reject(new Error('Extraneous dependencies found, see output above'));
   } else {
     return Promise.resolve();
