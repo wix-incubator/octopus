@@ -42,6 +42,9 @@ module.exports.exec = command => () => {
         } else {
           return stdout;
         }
+      }).catch(e => {
+        console.log(e);
+        return Promise.reject(e);
       });
   }
 };
