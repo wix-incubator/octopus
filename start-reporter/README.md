@@ -1,4 +1,4 @@
-# octopus-start-reporter
+# octopus-start-reporter [![npm](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/package/octopus-start-reporter)
 
 Reporter intended to be used withing `octopus` ecosystem. Differences from other `start` reporters:
   - supports debug output;

@@ -1,4 +1,4 @@
-# octopus-start-preset-dependencies
+# octopus-start-preset-dependencies [![npm](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/package/octopus-start-preset-dependencies)
 
 ## install
 

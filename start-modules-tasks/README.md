@@ -1,4 +1,4 @@
-# octopus-start-modules-tasks
+# octopus-start-modules-tasks [![npm](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/package/octopus-start-modules-tasks)
 
 ## install
 

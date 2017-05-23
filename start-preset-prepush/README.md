@@ -1,4 +1,4 @@
-# octopus-start-preset-prepush
+# octopus-start-preset-prepush [![npm](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/package/octopus-start-preset-prepush)
 
 [start-runner](https://github.com/start-runner) task that adds a git pre-push script that runs task `sync` on before git push.
 

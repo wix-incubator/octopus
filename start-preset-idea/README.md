@@ -1,4 +1,4 @@
-# octopus-start-preset-idea
+# octopus-start-preset-idea [![npm](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/package/octopus-start-preset-idea)
 
 [start-runner](https://github.com/start-runner) task that adds support for generating [Idea](https://www.jetbrains.com/idea/) project for all modules in repo.
 

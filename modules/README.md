@@ -2,6 +2,12 @@
 
 Library that exports functions thar emit/operate on npm multi-module repos.
 
+## Install
+
+```bash
+npm install --save octopus-modules
+```
+
 ## API
 
 ### modules(): [module]
