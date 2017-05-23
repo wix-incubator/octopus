@@ -4,7 +4,7 @@ const Promise = require('bluebird'),
   _ = require('lodash'),
   deepKeys = require('deep-keys'),
   deepEqual = require('deep-equal'),
-  execa = require('exec-then'),
+  execThen = require('exec-then'),
   modules = require('octopus-modules');
 
 module.exports.readJson = module => fileName => () => {
@@ -38,8 +38,16 @@ module.exports.writeJson = module => fileName => json => {
 module.exports.exec = module => command => () => {
   return function exec(log/*, reporter*/) {
     log(`executing '${command}'`);
-    return execa(command, {cwd: module.path})
-      .then(output => output.err ? Promise.reject(output.err) : Promise.resolve(output));
+    return execThen(command, {cwd: module.path})
+      .then(({err, stdout, stderr}) => {
+        if (err) {
+          log(stdout + stderr);
+          return Promise.reject(err);
+        } else {
+          return stdout + stderr;
+        }
+      });
+
   }
 };
 
