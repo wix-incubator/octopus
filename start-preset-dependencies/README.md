@@ -36,3 +36,6 @@ upon invocation of this task for all submodules that have `lodash` defined in `d
 
 ### unmanaged()
 List dependencies, that are present in modules `dependencies`, `devDependencies`, `peerDependencies`, but not defined in root `package.json` as `managed*Dependencies`.
+
+### extraneous()
+List dependencies, that are present in root `package.json` as `managed*Dependencies`, but not defined in modules `dependencies`, `devDependencies`, `peerDependencies`.

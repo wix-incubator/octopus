@@ -1,5 +1,6 @@
 const sync = require('./lib/sync'),
-  unmanaged = require('./lib/unmanaged');
+  unmanaged = require('./lib/unmanaged'),
+  extraneous = require('./lib/extraneous');
 
 // module.exports.extraneous = () => {
 // };
@@ -10,3 +11,4 @@ const sync = require('./lib/sync'),
 
 module.exports.sync = sync;
 module.exports.unmanaged = unmanaged;
+module.exports.extraneous = extraneous;
