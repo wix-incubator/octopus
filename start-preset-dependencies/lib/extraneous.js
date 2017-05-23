@@ -25,24 +25,26 @@ function extraneousDependenciesTask() {
 
 function executeExtraneous(deps) {
   return ({managedDependencies = {}, managedPeerDependencies = {}}) => {
-    return (log/*, reporter*/) => {
+    return function extraneous(log/*, reporter*/) {
       cleanManagedDeps(deps, managedDependencies, managedPeerDependencies);
       logExtraneous({managedDependencies, managedPeerDependencies}, log, 'managedDependencies');
       logExtraneous({managedDependencies, managedPeerDependencies}, log, 'managedPeerDependencies');
-      return rejectIfExtraneous(deps);
+      return rejectIfExtraneous({managedDependencies, managedPeerDependencies});
     };
   }
 }
 
-function logExtraneous(deps, log, key) {
-  const managedDependencies = deps[key];
+function logExtraneous(deps, log, dependencyType) {
+  const managedDependencies = deps[dependencyType];
   const toSortedUniqKeys = R.compose(R.sort((a, b) => a.localeCompare(b)), R.uniq, R.keys);
-  const modulesAndVersions = toSortedUniqKeys(managedDependencies);
-  log(`Extraneous ${key}: ${modulesAndVersions.join(', ')}`);
+  const modules = toSortedUniqKeys(managedDependencies);
+  if (modules.length > 0) {
+    log(`Extraneous ${dependencyType}: ${modules.join(', ')}`);
+  }
 }
 
 function rejectIfExtraneous(deps) {
-  if ((Object.keys(deps.dependencies).length + Object.keys(deps.peerDependencies).length) > 0) {
+  if ((Object.keys(deps.managedDependencies).length + Object.keys(deps.managedPeerDependencies).length) > 0) {
     return Promise.reject(new Error('Extraneous dependencies found, see output above'));
   } else {
     return Promise.resolve();
@@ -78,4 +80,5 @@ function fill(deps) {
 }
 
 
-module.exports = extraneousDependenciesTask;
+module.exports.task = extraneousDependenciesTask;
+module.exports.logExtraneous = logExtraneous;

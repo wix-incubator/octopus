@@ -26,7 +26,7 @@ function unmanagedDependenciesTask() {
 
 function executeUnmanaged(innerModules, deps) {
   return ({managedDependencies = {}, managedPeerDependencies = {}}) => {
-    return (log/*, reporter*/) => {
+    return function unmanaged(log/*, reporter*/) {
       cleanProjectDeps(innerModules, deps);
       cleanManagedDeps(deps, managedDependencies, managedPeerDependencies);
       logUnmanaged(deps, log);
@@ -88,4 +88,4 @@ function fill(deps) {
 }
 
 
-module.exports = unmanagedDependenciesTask;
+module.exports.task = unmanagedDependenciesTask;

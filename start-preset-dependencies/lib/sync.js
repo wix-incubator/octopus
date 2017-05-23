@@ -35,4 +35,4 @@ function asDependencies({managedDependencies, managedPeerDependencies}) {
   }
 }
 
-module.exports = syncDependenciesTask;
+module.exports.task = syncDependenciesTask;
