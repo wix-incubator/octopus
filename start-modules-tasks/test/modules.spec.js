@@ -271,7 +271,7 @@ describe('tasks', () => {
           )))
           .then(() => done(new Error('expected failure')))
           .catch(e => {
-            expect(reporter).to.have.been.calledWith('exec', 'info', sinon.match('qweqweqweqwe: command not found'));
+            expect(reporter).to.have.been.calledWith('exec', 'info', sinon.match('not found'));
             expect(e.message).to.be.string('Command failed: -c qweqweqweqwe qwe');
             done();
           });
