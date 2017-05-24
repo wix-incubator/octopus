@@ -5,14 +5,24 @@ const {empty} = require('octopus-test-utils'),
   {latest} = require('..'),
   {execSync} = require('child_process');
 
-describe('latest task', function() {
+describe('latest task', function () {
   this.timeout(30000);
 
   it('should list dependencies that can be updated', () => {
     const ramdaVersion = execSync('npm info ramda dist-tags.latest').toString().trim('\n');
     const lodashVersion = execSync('npm info lodash dist-tags.latest').toString().trim('\n');
-    const {reporter, project, start} = setup();
-
+    const {reporter, project, start} = setup({
+      managedDependencies: {
+        lodash: 'latest',
+        shelljs: '*',
+        ramda: '0.0.1',
+        url: '>0.0.1'
+      },
+      managedPeerDependencies: {
+        ramda: '> 0.0.1',
+        lodash: '0.0.1'
+      }
+    });
 
     return project.within(() => {
       return start(latest())
@@ -28,22 +38,21 @@ describe('latest task', function() {
     });
   });
 
-  function setup() {
+  it('should not reject for missing managedDependencies, managedPeerDependencies', () => {
+    const {project, start} = setup();
+
+    return project.within(() => {
+      return start(latest());
+    });
+  });
+
+  function setup(packageJsonOverrides = {}) {
     const reporter = sinon.spy();
     const project = empty()
-      .packageJson({
+      .packageJson(Object.assign({
         name: 'root',
-        private: true,
-        managedDependencies: {
-          lodash: 'latest',
-          shelljs: '*',
-          ramda: '0.0.1',
-          url: '>0.0.1'},
-        managedPeerDependencies: {
-          ramda: '> 0.0.1',
-          lodash: '0.0.1'
-        }
-      });
+        private: true
+      }, packageJsonOverrides));
 
     const start = new Start(reporter);
 
