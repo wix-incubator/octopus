@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo 'Syncing project (npm start sync):'
 npm start sync
