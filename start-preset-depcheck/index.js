@@ -4,14 +4,15 @@ const tasks = require('octopus-start-modules-tasks'),
 
 function checkModule(item, depcheckOpts) {
   return () => () => Promise.resolve()
-    .then(() => depcheck(item.path, depcheckOpts, ({dependencies, devDependencies}) => {
+    .then(() => depcheck(item.path, depcheckOpts, val => val))
+    .then(({dependencies, devDependencies}) => {
       const unusedDeps = devDependencies.concat(dependencies);
       if (unusedDeps.length > 0) {
         return Promise.reject(new Error(`module ${item.name} has unused dependencies: ${unusedDeps.join(', ')}`));
       } else {
         return Promise.resolve();
       }
-    }));
+    });
 }
 
 function depcheckTask(depcheckOpts = {}) {
