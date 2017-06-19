@@ -17,7 +17,11 @@ exports.makePackageBuilt = makePackageBuilt;
 exports.npmLinks = npmLinks;
 
 function findListOfNpmPackagesAndLocalDependencies(baseDir) {
-  return findListOfPackagesAndLocalDependencies(path.resolve(baseDir), baseDir)
+  const packages = findListOfPackagesAndLocalDependencies(path.resolve(baseDir), baseDir);
+  const removes = new Set(packages
+    .filter(pkg => pkg.parentModule)
+    .map(pkg => pkg.parentModule.dir));
+  return packages.filter(pkg => !removes.has(pkg.dir));
 }
 
 exports.prepareBuildOrder = function (packages, resumeFrom) {
@@ -41,7 +45,7 @@ exports.figureOutPackagesDependingOn = function (packages, onlyDependingOn) {
 
 function sortPackagesByDependencies(packages) {
   return applyGraphFnToPackages(toposort, packages);
-};
+}
 
 function figureOutAllPackagesThatNeedToBeBuilt(allPackages, changedPackages) {
   const transitiveClosureOfPackagesToBuild = new Set(_.map(changedPackages, el => el.relativePath));
@@ -88,7 +92,7 @@ function isNodeModulesDir(dir) {
   return dir === 'node_modules';
 }
 
-function findListOfPackagesAndLocalDependencies(baseDir, workDir, depth) {
+function findListOfPackagesAndLocalDependencies(baseDir, workDir, depth, parentModule) {
   workDir = path.resolve(workDir);
   depth = depth || 0;
   return inDir(workDir, function () {
@@ -101,10 +105,16 @@ function findListOfPackagesAndLocalDependencies(baseDir, workDir, depth) {
         .filter(entry => shelljs.test('-d', entry))
         .map(function (dir) {
           if ((!isAnNpmProject(dir) || isAnNpmPrivateProject(dir)) && !isNodeModulesDir(dir)) {
-            return findListOfPackagesAndLocalDependencies(baseDir, dir, anNpmPackageObjectFrom, depth + 1);
+            let parentModule;
+            if (isAnNpmPrivateProject(dir)) {
+              parentModule = anNpmPackageObjectFrom(dir, path.resolve(dir), path.relative(baseDir, dir));
+            }
+            const nestedPackages = findListOfPackagesAndLocalDependencies(baseDir, dir, depth + 1, parentModule);
+            nestedPackages.push(parentModule);
+            return nestedPackages;
           }
           else if (isAnNpmProject(dir)) {
-            return anNpmPackageObjectFrom(dir, path.resolve(dir), path.relative(baseDir, dir));
+            return anNpmPackageObjectFrom(dir, path.resolve(dir), path.relative(baseDir, dir), parentModule);
           } else {
             return undefined;
           }
@@ -140,7 +150,7 @@ function packageNames(packageObj) {
   return [].concat(packageObj.npm ? packageObj.npm.name : []);
 }
 
-function anNpmPackageObjectFrom(npmDir, fullPathToNpmDir, relativePath) {
+function anNpmPackageObjectFrom(npmDir, fullPathToNpmDir, relativePath, parentModule) {
   let config = {};
   let packageJson = {};
 
@@ -165,6 +175,7 @@ function anNpmPackageObjectFrom(npmDir, fullPathToNpmDir, relativePath) {
     dir: npmDir,
     fullPath: fullPathToNpmDir,
     relativePath: relativePath,
+    parentModule: parentModule,
     npm: {
       name: packageJson.name,
       version: packageJson.version,

@@ -8,7 +8,7 @@ const removeByPath = modules.removeNotInPaths;
 
 describe('modules', () => {
 
-  it('should traverse into private package, but not include it', () => {
+  it('should traverse into private package, but exclude if they have siblings', () => {
     const project = fixtures.empty()
       .packageJson({name: 'root', private: true, dependencies: {name: 'a', version: '1.0.0'}})
       .module('a', module => module.packageJson({name: 'a', version: '1.0.0'}))
@@ -18,6 +18,17 @@ describe('modules', () => {
       expect(emitModuleNames()).to.deep.equal(['a', 'b']);
     });
   });
+
+  it('should include leaf private packages', () => {
+    const project = fixtures.empty()
+      .module('a', module => module.packageJson({name: 'a', version: '1.0.0'}))
+      .module('nested/b', module => module.packageJson({version: '1.0.0', dependencies: {'a': '~1.0.0'}, private: true}));
+
+    return project.within(() => {
+      expect(emitModuleNames()).to.deep.equal(['a', 'b']);
+    });
+  });
+
 
   it('should not traverse into node_modules', () => {
     const project = fixtures.empty()
@@ -42,7 +53,7 @@ describe('modules', () => {
     });
   });
 
-  it('should traverse into nested private module', () => {
+  it('should traverse into nested private module, but exclude them if they have siblings', () => {
     const project = fixtures.empty()
       .module('a', module => {
         module.packageJson({name: 'a', version: '1.0.0', private: true});
