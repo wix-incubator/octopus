@@ -30,6 +30,7 @@ Octopus is a set of modules for [start](https://github.com/start-runner/start) b
  - [octopus-start-preset-modules](start-preset-modules) - manage module versions across monorepo;
  - [octopus-start-preset-idea](start-preset-idea) - generate multi-module IntelliJ Idea project with run-tasks for mocha, etc.; 
  - [octopus-start-preset-depcheck](start-preset-depcheck) - preset for running [depcheck](https://github.com/depcheck/depcheck) across multiple modules.
+ - [octopus-start-npm-tasks](start-npm-tasks) - tasks for all-npm things. 
 
 ## Example usage
 
