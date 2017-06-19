@@ -22,14 +22,6 @@ function findListOfNpmPackagesAndLocalDependencies(baseDir) {
     .filter(pkg => pkg.parentModule)
     .map(pkg => pkg.parentModule.dir));
   return packages.filter(pkg => !removes.has(pkg.dir));
-  //
-  //
-  // // const fullPaths = new Set(packages.map(pkg => pkg.fullPath));
-  // //
-  // // fullPaths.delete(baseDir);
-  // // console.log(fullPaths);
-  // console.log(packages);
-  // return packages;
 }
 
 exports.prepareBuildOrder = function (packages, resumeFrom) {
