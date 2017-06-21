@@ -15,8 +15,7 @@ npm install --save-dev octopus-start-tasks
 
 Say given input is String 'what', then:
 
-js
-```
+```js
 props({one: input => 'say ' + what})
 ```
  
