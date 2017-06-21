@@ -1,6 +1,6 @@
 # octopus-start-git [![npm](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/package/octopus-start-git)
 
-Library that exports functions thar emit/operate on npm multi-module repos.
+Library that exports functions that emit/operate on npm multi-module repos.
 
 ## Install
 
