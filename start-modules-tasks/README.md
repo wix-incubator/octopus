@@ -30,7 +30,7 @@ Parameters:
  - label - custom label where you can have several groups of built/unbuilt modules and have built/unbuilt for separate tasks/groups of tasks.
 
 ### modules.removeGitUnchanged(refspec)
-Removes modules from list returned ex. by `modules.load()` that do not have changes when compared to `refspec` - branch or such.  
+Removes modules from the list returned by `modules.load()`, that do not have changes (when compared to `refspec` - branch), and aren't dependent on any of the modules, that do have changes.  
 
 ### modules.removeExtraneousDependencies()
 Removes dependencies in modules that are left after `removeUnchanged` or `removeGitUnchanged`. In some cases you might want for dependencies to stay (npm links) and in others you want them to be removed.  
