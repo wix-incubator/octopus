@@ -33,15 +33,16 @@ module.exports.readJson = fileName => () => {
 module.exports.exec = command => () => {
   return function exec(log/*, reporter*/) {
     log(`executing '${command}'`);
-    return execThen(command)
-      .then(({err, stdout, stderr}) => {
-        if (err) {
-          log(stdout + stderr);
-          return Promise.reject(err);
-        } else {
-          return stdout;
-        }
-      });
+    return execThen(command).then((res = {}) => {
+      if (res.err) {
+        const error = res.err;
+        error.stdout = res.stdout;
+        error.stderr = res.stderr;
+        return Promise.reject(error);
+      } else {
+        return res.stdout;
+      }
+    });
   }
 };
 

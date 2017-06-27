@@ -260,7 +260,7 @@ describe('tasks', () => {
     });
 
     it('should reject for failing command', done => {
-      const {start, project, reporter} = setup();
+      const {start, project} = setup();
 
       project.within(() => {
         const rawModulesList = modules();
@@ -271,8 +271,8 @@ describe('tasks', () => {
           )))
           .then(() => done(new Error('expected failure')))
           .catch(e => {
-            expect(reporter).to.have.been.calledWith('exec', 'info', sinon.match('not found'));
             expect(e.message).to.be.string('Command failed: -c qweqweqweqwe qwe');
+            expect(e.stderr).to.be.string('not found');
             done();
           });
       });

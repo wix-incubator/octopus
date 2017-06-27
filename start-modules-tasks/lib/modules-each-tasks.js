@@ -38,16 +38,16 @@ module.exports.writeJson = module => fileName => json => {
 module.exports.exec = module => command => () => {
   return function exec(log/*, reporter*/) {
     log(`executing '${command}'`);
-    return execThen(command, {cwd: module.path})
-      .then(({err, stdout, stderr}) => {
-        if (err) {
-          log(stdout + stderr);
-          return Promise.reject(err);
-        } else {
-          return stdout + stderr;
-        }
-      });
-
+    return execThen(command, {cwd: module.path}).then((res = {}) => {
+      if (res.err) {
+        const error = res.err;
+        error.stdout = res.stdout;
+        error.stderr = res.stderr;
+        return Promise.reject(error);
+      } else {
+        return res.stdout;
+      }
+    });
   }
 };
 

@@ -76,8 +76,8 @@ describe('tasks', () => {
       const reporter = sinon.spy();
 
       start(reporter)(exec('qweqweqweqwe qwe')).catch(e => {
-        expect(reporter).to.have.been.calledWith('exec', 'info', sinon.match('not found'));
         expect(e.message).to.be.string('Command failed: -c qweqweqweqwe qwe');
+        expect(e.stderr).to.be.string('not found');
         done()
       });
     });
