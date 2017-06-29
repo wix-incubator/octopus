@@ -271,8 +271,8 @@ describe('tasks', () => {
           )))
           .then(() => done(new Error('expected failure')))
           .catch(e => {
-            expect(e.message).to.be.string('Command failed: -c qweqweqweqwe qwe');
-            expect(e.stderr).to.be.string('not found');
+            expect(e.message).to.be.string('message: \'Command failed: -c qweqweqweqwe qwe');
+            expect(e.message).to.be.string('not found');
             done();
           });
       });

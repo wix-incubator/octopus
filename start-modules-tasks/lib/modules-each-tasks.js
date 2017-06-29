@@ -40,10 +40,7 @@ module.exports.exec = module => command => () => {
     log(`executing '${command}'`);
     return execThen(command, {cwd: module.path}).then((res = {}) => {
       if (res.err) {
-        const error = res.err;
-        error.stdout = res.stdout;
-        error.stderr = res.stderr;
-        return Promise.reject(error);
+        return Promise.reject(new Error(`message: '${res.err.message}'\n stdout: ${res.stdout}\n, stderr: ${res.stderr}\n`));
       } else {
         return res.stdout;
       }
