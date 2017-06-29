@@ -1,4 +1,7 @@
 language: node_js
+branches:
+  only:
+  - master
 node_js:
   - '6'
   - '7'
@@ -20,5 +23,3 @@ deploy:
     node: '7'
 after_deploy:
   - npm run publish-all
-
-
